@@ -30,3 +30,4 @@ nav:
   - Home: index.md
   - Contributing: CONTRIBUTING.md
   - Architecture: ARCHITECTURE.md
+  - OpenVPN: OPEN_VPN.md
