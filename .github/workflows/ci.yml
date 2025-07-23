@@ -1,0 +1,153 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: poetry install --no-root
+
+      - name: Run Ruff
+        working-directory: ./backend
+        run: poetry run ruff check .
+
+      - name: Run Black
+        working-directory: ./backend
+        run: poetry run black --check .
+
+      - name: Run Isort
+        working-directory: ./backend
+        run: poetry run isort --check-only .
+
+      - name: Run Mypy
+        working-directory: ./backend
+        run: poetry run mypy --strict .
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Run ESLint
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Run Prettier
+        working-directory: ./frontend
+        run: npm run format:check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: poetry install --no-root
+
+      - name: Run Pytest
+        working-directory: ./backend
+        run: poetry run pytest -q --cov=app --cov-report=xml
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Run Vitest
+        working-directory: ./frontend
+        run: npm run test:coverage
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker images
+        uses: docker/bake-action@v4
+        with:
+          files: ./docker-compose.yml
+          targets: api,ui
+          push: false # Only build, not push for CI
+
+  analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build images for SBOM
+        uses: docker/bake-action@v4
+        with:
+          files: ./docker-compose.yml
+          targets: api,ui
+          load: true # Load images into docker daemon for syft
+
+      - name: Generate SBOM for API
+        uses: anchore/syft-action@v0.10.0
+        with:
+          image: ghcr.io/${{ github.repository_owner }}/optical-api:dev
+          format: spdx-json
+          output: api-sbom.spdx.json
+
+      - name: Generate SBOM for UI
+        uses: anchore/syft-action@v0.10.0
+        with:
+          image: ghcr.io/${{ github.repository_owner }}/optical-ui:dev
+          format: spdx-json
+          output: ui-sbom.spdx.json
+
+      - name: Upload SBOMs
+        uses: actions/upload-artifact@v4
+        with:
+          name: sboms
+          path: |
+            api-sbom.spdx.json
+            ui-sbom.spdx.json

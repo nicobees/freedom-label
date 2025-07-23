@@ -1,0 +1,29 @@
+
+[tool.poetry]
+name = "freedom-label-backend"
+version = "0.1.0"
+description = ""
+authors = ["Gemini <gemini@google.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111.0"
+pydantic = {extras = ["email"], version = "^2.7.1"}
+uvicorn = "^0.29.0"
+pydantic-settings = "^2.2.1"
+loguru = "^0.7.2"
+prometheus-fastapi-instrumentator = "^6.1.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.0"
+httpx = "^0.27.0"
+anyio = "^4.3.0"
+ruff = "^0.4.2"
+black = "^24.4.2"
+isort = "^5.13.2"
+mypy = "^1.9.0"
+pre-commit = "^3.7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
