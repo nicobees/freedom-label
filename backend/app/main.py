@@ -1,6 +1,7 @@
 
 
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 from loguru import logger
@@ -11,9 +12,18 @@ from app.print.services import print_label
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+Instrumentator().instrument(app).expose(app)
+
 @app.on_event("startup")
 async def startup():
-    Instrumentator().instrument(app).expose(app)
     logger.info("Application started")
 
 @app.on_event("shutdown")

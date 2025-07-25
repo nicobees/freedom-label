@@ -3,6 +3,8 @@ import { zodValidator } from '@tanstack/zod-form-adapter';
 import { z } from 'zod';
 import { DarkModeToggle } from './components/DarkModeToggle';
 
+const API_ENDPOINT = 'http://localhost:8000';
+
 export function App() {
   const form = useForm({
     defaultValues: {
@@ -11,7 +13,8 @@ export function App() {
       dueDate: '',
     },
     onSubmit: async ({ value }) => {
-      await fetch('/api/print-label', {
+      const uri = `${API_ENDPOINT}/print-label`;
+      await fetch(uri, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
