@@ -1,0 +1,18 @@
+# Environments
+.env
+.env.*
+
+# IDEs
+.vscode/
+.idea/
+
+# Node
+node_modules/
+package.json
+package-lock.json
+
+# Gemini
+.gemini/
+
+# Prompts
+frontend/prompts/
