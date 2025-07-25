@@ -34,7 +34,10 @@ line-length = 88
 select = ["ALL"]
 
 [tool.ruff.format]
-quote-style = "single"
+quote-style = "double"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
 
 [tool.mypy]
 strict = true
