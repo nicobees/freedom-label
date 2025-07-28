@@ -3,24 +3,16 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from fpdf import FPDF
 
-producer_name = "FREEDOMLAC"
+if TYPE_CHECKING:
+    from app.main import LabelData
 
-DEBUG_BORDER = False
+DEBUG_BORDER = True
 
-
-# name (str): Patient name
-# lotto (str): Lot number
-# scadenza (str): Expiration date
-# bc (str): BC value
-# dia (str): DIA value
-# pwr (str): Power value
-# cyl (str): Cylinder value
-# ax (str): Axis value
-# add (str): Addition value
-# sag (str): Sagittal value
+PRODUCER_NAME = "occhialeria"
 
 
 def _setup_pdf() -> FPDF:
@@ -48,21 +40,50 @@ def _setup_pdf() -> FPDF:
     return pdf
 
 
-def _add_header_section(pdf: FPDF) -> None:
+def _add_header_section(
+    pdf: FPDF,
+    label_data: LabelData,
+    producer_name: str = PRODUCER_NAME,
+) -> None:
     """Add producer name and product description header."""
     # Producer name
     pdf.set_font("openSansCondensedBold", "", 11)
     pdf.set_xy(pdf.l_margin, pdf.t_margin)
-    pdf.cell(w=23, h=3, text=producer_name, align="C", border=DEBUG_BORDER)
+
+    current_dir = Path(__file__).parent
+    img_dir = current_dir / "img"
+
+    img_width = 4
+    img_height = 4
+    pdf.image(img_dir / "logo.png", w=img_width, h=img_height, type="PNG")
+    pdf.c_margin = 0
+    pdf.set_xy(pdf.l_margin + img_width, pdf.t_margin)
+    pdf.cell(w=20, h=3, text=producer_name.upper(), align="L", border=DEBUG_BORDER)
 
     # Product description
     pdf.set_font("openSansCondensedRegular", "", 8)
-    product_description = "MED-04-PRISMA-(BitHD)\n01234567890123456789"
+
     pdf.c_margin = 0
-    pdf.multi_cell(w=25, h=3, text=product_description, align="L", border=DEBUG_BORDER)
+    pdf.multi_cell(
+        w=25,
+        h=3,
+        text=label_data.description,
+        align="R",
+        border=DEBUG_BORDER,
+    )
+
+    header_y_next = pdf.get_y()
+    header_bottom_margin = 1
+
+    pdf.set_y(
+        header_y_next + header_bottom_margin,
+    )
 
 
-def _add_patient_section(pdf: FPDF) -> tuple[float, float]:
+def _add_patient_section(
+    pdf: FPDF,
+    label_data: LabelData,
+) -> tuple[float, float]:
     """Add patient information section and return positioning info."""
     # Patient info heading
     pdf.set_x(pdf.l_margin)
@@ -80,12 +101,13 @@ def _add_patient_section(pdf: FPDF) -> tuple[float, float]:
 
     # Patient info
     pdf.set_font("openSansBold", "", 8)
-    patient_info = "Gabriele Cara\n01234567890123"
+    patient_info_name = label_data.patient_info.name
+    patient_info_surname = label_data.patient_info.surname
     patient_info_line_height = 3
     pdf.multi_cell(
         w=23,
         h=patient_info_line_height,
-        text=patient_info,
+        text=f"{patient_info_name}\n{patient_info_surname}",
         align="L",
         border=DEBUG_BORDER,
         new_x="RIGHT",
@@ -105,7 +127,7 @@ def _add_patient_section(pdf: FPDF) -> tuple[float, float]:
     return patient_info_x_right, patient_info_y_top
 
 
-def _add_production_info(pdf: FPDF, label_details: dict[str, str]) -> None:
+def _add_production_info(pdf: FPDF, label_data: LabelData) -> None:
     """Add lot number and expiration date information."""
     # Lot number
     pdf.set_font("openSansCondensedRegular", "", 6)
@@ -123,7 +145,7 @@ def _add_production_info(pdf: FPDF, label_details: dict[str, str]) -> None:
     pdf.cell(
         w=18,
         h=2.5,
-        text=f"{label_details['lotto']}",
+        text=label_data.batch,
         align="L",
         border=DEBUG_BORDER,
         new_x="LMARGIN",
@@ -146,7 +168,7 @@ def _add_production_info(pdf: FPDF, label_details: dict[str, str]) -> None:
     pdf.cell(
         w=14,
         h=2.5,
-        text=f"{label_details['scadenza']}",
+        text=label_data.due_date,
         align="L",
         border=DEBUG_BORDER,
         new_x="LMARGIN",
@@ -157,24 +179,22 @@ def _add_production_info(pdf: FPDF, label_details: dict[str, str]) -> None:
 def _add_company_info(pdf: FPDF) -> None:
     """Add company information section."""
     pdf.set_font("openSansRegular", "", 4)
+    company_name = PRODUCER_NAME.capitalize()
     pdf.cell(
-        w=23,
-        h=2,
+        w=10,
+        h=2.5,
         text="Prodotto da:",
         align="L",
         border=DEBUG_BORDER,
-        new_x="LMARGIN",
-        new_y="NEXT",
+        new_x="RIGHT",
+        new_y="LAST",
     )
 
     pdf.set_font("openSansRegular", "", 5)
-    company_info = (
-        "FREEDOM LAC S.r.L.\nViale Sant'Avendrace, 265\n09122 Cagliari - CA - Italy"
-    )
-    pdf.multi_cell(
-        w=23,
-        h=2,
-        text=company_info,
+    pdf.cell(
+        w=13,
+        h=2.5,
+        text=f"{company_name}",
         align="L",
         border=DEBUG_BORDER,
         new_x="LMARGIN",
@@ -186,6 +206,7 @@ def _add_eye_specifications(
     pdf: FPDF,
     patient_info_x_right: float,
     patient_info_y_top: float,
+    label_data: LabelData,
 ) -> None:
     """Add eye designation and specifications table."""
     pdf.set_y(patient_info_y_top)
@@ -204,15 +225,14 @@ def _add_eye_specifications(
         new_y="LAST",
     )
 
-    # Specifications table
     table_data = (
-        ("BC:", "08,40"),
-        ("DIA:", "14,40"),
-        ("Pwr:", "+01,50"),
-        ("Cyl:", "-03,50"),
-        ("AX:", "120"),
-        ("ADD:", "+01,50"),
-        ("SAG:", "01,50"),
+        ("BC:", label_data.lens_specs.left.bc),
+        ("DIA:", label_data.lens_specs.left.dia),
+        ("Pwr:", label_data.lens_specs.left.pwr),
+        ("Cyl:", label_data.lens_specs.left.cyl),
+        ("AX:", label_data.lens_specs.left.ax),
+        ("ADD:", label_data.lens_specs.left.add),
+        ("SAG:", label_data.lens_specs.left.sag),
     )
 
     pdf.set_font("openSansRegular", "", 7)
@@ -235,13 +255,13 @@ def _add_eye_specifications(
                 row.cell(datum)
 
 
-def create_freedomlac_pdf(output_filename: str, label_details: dict[str, str]) -> str:
+def create_freedomlac_pdf(output_filename: str, label_data: LabelData) -> str:
     """Create a FreedomLac PDF label with the specified dimensions and data.
 
     Args:
     ----
         output_filename (str): Name of the output PDF file
-        label_details (dict[str, str]): Dictionary containing label details
+        label_data (LabelData): The complete label data.
 
     Returns:
     -------
@@ -252,19 +272,21 @@ def create_freedomlac_pdf(output_filename: str, label_details: dict[str, str]) -
     pdf = _setup_pdf()
 
     # Add all sections
-    _add_header_section(pdf)
-    patient_info_x_right, patient_info_y_top = _add_patient_section(pdf)
-    _add_production_info(pdf, label_details)
+    _add_header_section(pdf, label_data)
+    patient_info_x_right, patient_info_y_top = _add_patient_section(pdf, label_data)
+    _add_production_info(pdf, label_data)
     _add_company_info(pdf)
-    _add_eye_specifications(pdf, patient_info_x_right, patient_info_y_top)
+    _add_eye_specifications(
+        pdf,
+        patient_info_x_right,
+        patient_info_y_top,
+        label_data,
+    )
 
     # Save PDF
     current_dir = Path(__file__).parent
     output_local_path = "output"
     output_path = current_dir / output_local_path / output_filename
     pdf.output(output_path)
-
-    print(f"PDF created successfully: {output_filename}")  # noqa: T201
-    print(f"{label_details.values()}")  # noqa: T201
 
     return str(output_path)

@@ -2,14 +2,17 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 from prometheus_fastapi_instrumentator import Instrumentator
-from pydantic import BaseModel, Field
-from typing_extensions import Annotated
 
 from app.print.services import print_label
+
+if TYPE_CHECKING:
+    from backend.app.models import LabelData
 
 app = FastAPI()
 
@@ -36,14 +39,6 @@ async def shutdown() -> None:
     logger.info("Application shutdown")
 
 
-class LabelRequest(BaseModel):
-    """Request model for printing a label."""
-
-    patient_name: Annotated[str, Field(min_length=1, max_length=64)]
-    pwr: Annotated[str, Field(min_length=1, max_length=6)]
-    due_date: Annotated[str, Field(min_length=1, max_length=7)]
-
-
 @app.get("/health")
 def health_check() -> dict[str, str]:
     """Perform a health check.
@@ -57,12 +52,12 @@ def health_check() -> dict[str, str]:
 
 
 @app.post("/print-label")
-async def print_label_endpoint(label_request: LabelRequest) -> dict[str, str]:
+async def print_label_endpoint(label_data: LabelData) -> dict[str, str]:
     """Endpoint to print a label.
 
     Args:
     ----
-        label_request (LabelRequest): The request body containing label details.
+        label_data (LabelData): The request body containing label details.
 
     Returns:
     -------
@@ -70,8 +65,8 @@ async def print_label_endpoint(label_request: LabelRequest) -> dict[str, str]:
 
     """
     await print_label(
-        patient_name=label_request.patient_name,
-        pwr=label_request.pwr,
-        due_date=label_request.due_date,
+        patient_name=label_data.patient_info.name,
+        pwr=label_data.lens_specs.left.pwr,
+        due_date=label_data.due_date,
     )
     return {"status": "ok"}
