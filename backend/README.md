@@ -27,17 +27,30 @@ To run the backend application locally, follow these steps:
     ```
     The API will be accessible at `http://localhost:8000`.
 
-## Running in Production (Docker Compose)
+## Docker Environments
 
-The backend application can be run as part of the Docker Compose setup for production.
+The backend application can be run in two Docker environments: `test` and `prod`.
 
-1.  **Ensure you are in the project root directory:**
-    ```bash
-    cd /path/to/freedom-label
-    ```
+### Test Environment
 
-2.  **Build and run the Docker Compose services:**
-    ```bash
-    docker compose --profile=prod up -d api
-    ```
-    This will build the backend Docker image and start the API service. The API will be accessible via the UI service or directly if ports are exposed.
+To run the backend in the test environment, navigate to the `devops` directory and run:
+
+```bash
+docker-compose -f docker-compose.yml up -d backend
+```
+
+### Production Environment
+
+To run the backend in the production environment, you can use the `update-app.sh` script located in the `devops` directory. This script will pull the latest version of the backend image from GHCR and restart the service.
+
+To update to the latest version:
+
+```bash
+./devops/update-app.sh
+```
+
+To update to a specific version:
+
+```bash
+./devops/update-app.sh b-v1.2.3
+```

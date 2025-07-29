@@ -1,23 +1,28 @@
-
 # syntax=docker/dockerfile:1
 
+# Builder stage
 FROM python:3.12-slim as builder
+
+ENV POETRY_VERSION=1.8.2
+
+RUN pip install "poetry==$POETRY_VERSION"
 
 WORKDIR /app
 
-RUN pip install poetry
-
 COPY pyproject.toml poetry.lock* ./
 
-RUN poetry install --no-dev --no-root
+RUN poetry install --no-root --no-dev
 
+# Runtime stage
 FROM python:3.12-slim as runtime
 
 WORKDIR /app
 
 COPY --from=builder /app/ /app/
+COPY ./app ./app
 
-COPY . ./
+RUN useradd --create-home appuser
+USER appuser
 
 EXPOSE 8000
 

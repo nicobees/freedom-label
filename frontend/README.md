@@ -23,17 +23,30 @@ To run the frontend application locally, follow these steps:
     The application will be accessible at `http://localhost:5173` (or another port if 5173 is in use).
     It will automatically proxy API requests to the backend running on port 8000.
 
-## Running in Production (Docker Compose)
+## Docker Environments
 
-The frontend application can be run as part of the Docker Compose setup for production.
+The frontend application can be run in two Docker environments: `test` and `prod`.
 
-1.  **Ensure you are in the project root directory:**
-    ```bash
-    cd /path/to/freedom-label
-    ```
+### Test Environment
 
-2.  **Build and run the Docker Compose services:**
-    ```bash
-    docker compose --profile=prod up -d ui
-    ```
-    This will build the frontend Docker image and start the UI service, accessible on port 80 (or as configured in `nginx.conf`).
+To run the frontend in the test environment, navigate to the `devops` directory and run:
+
+```bash
+docker-compose -f docker-compose.yml up -d frontend
+```
+
+### Production Environment
+
+To run the frontend in the production environment, you can use the `update-app.sh` script located in the `devops` directory. This script will pull the latest version of the frontend image from GHCR and restart the service.
+
+To update to the latest version:
+
+```bash
+./devops/update-app.sh
+```
+
+To update to a specific version:
+
+```bash
+./devops/update-app.sh f-v1.2.3
+```
