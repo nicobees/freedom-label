@@ -16,13 +16,13 @@ type PatientInfo = z.infer<typeof PatientInfoSchema>;
 
 // Zod schema for LeftRightSpecs
 const LeftRightSpecsSchema = z.object({
-  bc: z.string().regex(/^\d{1,2}\.\d{2}$/, "Invalid BC format"),
-  dia: z.string().regex(/^\d{1,2}\.\d{2}$/, "Invalid DIA format"),
-  pwr: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, "Invalid PWR format"),
-  cyl: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, "Invalid CYL format"),
-  ax: z.string().regex(/^\d{3}$/, "Invalid AX format"),
-  add: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, "Invalid ADD format"),
-  sag: z.string().regex(/^\d{1,2}\.\d{2}$/, "Invalid SAG format"),
+  bc: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid BC format'),
+  dia: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid DIA format'),
+  pwr: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid PWR format'),
+  cyl: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid CYL format'),
+  ax: z.string().regex(/^\d{3}$/, 'Invalid AX format'),
+  add: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid ADD format'),
+  sag: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid SAG format'),
 });
 
 // Inferred type for LeftRightSpecs
@@ -31,7 +31,7 @@ type LeftRightSpecs = z.infer<typeof LeftRightSpecsSchema>;
 // Zod schema for LensSpecs
 const LensSpecsSchema = z.object({
   left: LeftRightSpecsSchema,
-  right: LeftRightSpecsSchema,
+  right: LeftRightSpecsSchema.optional(),
 });
 
 // Inferred type for LensSpecs
@@ -41,8 +41,10 @@ type LensSpecs = z.infer<typeof LensSpecsSchema>;
 const LabelDataSchema = z.object({
   patient_info: PatientInfoSchema,
   description: z.string().min(0).max(24),
-  batch: z.string().regex(/^\d{2}-\d{4}$/, "Invalid batch format (e.g., 25-0001)"),
-  due_date: z.string().regex(/^\d{2}\/\d{4}$/, "Invalid date format (MM/YYYY)"),
+  batch: z
+    .string()
+    .regex(/^\d{2}-\d{4}$/, 'Invalid batch format (e.g., 25-0001)'),
+  due_date: z.string().regex(/^\d{2}\/\d{4}$/, 'Invalid date format (MM/YYYY)'),
   lens_specs: LensSpecsSchema,
 });
 
@@ -58,12 +60,12 @@ export function App() {
       due_date: '',
       lens_specs: {
         left: { bc: '', dia: '', pwr: '', cyl: '', ax: '', add: '', sag: '' },
-        right: { bc: '', dia: '', pwr: '', cyl: '', ax: '', add: '', sag: '' },
       },
     },
     validatorAdapter: zodValidator,
     onSubmit: async ({ value }) => {
       const uri = `${API_ENDPOINT}/print-label`;
+      console.info('inside sumbit: ', value);
       await fetch(uri, {
         method: 'POST',
         headers: {
@@ -186,7 +188,7 @@ export function App() {
         </div>
 
         {/* Batch and Due Date */}
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="mt-4 grid grid-cols-2 gap-4">
           <form.Field
             name="batch"
             validators={{
@@ -248,14 +250,19 @@ export function App() {
         </div>
 
         {/* Lens Specs - Left Eye */}
-        <h4 className="text-lg font-semibold mt-6 dark:text-white">Left Eye Specs</h4>
+        <h4 className="mt-6 text-lg font-semibold dark:text-white">
+          Left Eye Specs
+        </h4>
         <div className="grid grid-cols-3 gap-4">
           {Object.keys(LeftRightSpecsSchema.shape).map((key) => (
             <form.Field
               key={key}
-              name={`lens_specs.left.${key}` as `lens_specs.left.${keyof LeftRightSpecs}`}
+              name={
+                `lens_specs.left.${key}` as `lens_specs.left.${keyof LeftRightSpecs}`
+              }
               validators={{
-                onChange: LeftRightSpecsSchema.shape[key as keyof LeftRightSpecs],
+                onChange:
+                  LeftRightSpecsSchema.shape[key as keyof LeftRightSpecs],
               }}
               children={(field) => (
                 <>
@@ -285,14 +292,19 @@ export function App() {
         </div>
 
         {/* Lens Specs - Right Eye */}
-        <h4 className="text-lg font-semibold mt-6 dark:text-white">Right Eye Specs</h4>
+        {/* <h4 className="mt-6 text-lg font-semibold dark:text-white">
+          Right Eye Specs
+        </h4>
         <div className="grid grid-cols-3 gap-4">
           {Object.keys(LeftRightSpecsSchema.shape).map((key) => (
             <form.Field
               key={key}
-              name={`lens_specs.right.${key}` as `lens_specs.right.${keyof LeftRightSpecs}`}
+              name={
+                `lens_specs.right.${key}` as `lens_specs.right.${keyof LeftRightSpecs}`
+              }
               validators={{
-                onChange: LeftRightSpecsSchema.shape[key as keyof LeftRightSpecs],
+                onChange:
+                  LeftRightSpecsSchema.shape[key as keyof LeftRightSpecs],
               }}
               children={(field) => (
                 <>
@@ -312,14 +324,14 @@ export function App() {
                   />
                   {field.state.meta.errors && (
                     <p className="mt-2 text-sm text-red-600">
-                      {field.state.meta.errors.join(', ')}
+                      {field.state.meta.errors.map((error) => error.message).join(', ')}
                     </p>
                   )}
                 </>
               )}
             />
           ))}
-        </div>
+        </div> */}
 
         <div className="mt-4">
           <form.Subscribe

@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 from prometheus_fastapi_instrumentator import Instrumentator
 
+from app.models import LabelData
 from app.print.services import print_label
 
 if TYPE_CHECKING:
@@ -65,8 +66,6 @@ async def print_label_endpoint(label_data: LabelData) -> dict[str, str]:
 
     """
     await print_label(
-        patient_name=label_data.patient_info.name,
-        pwr=label_data.lens_specs.left.pwr,
-        due_date=label_data.due_date,
+        label_data,
     )
     return {"status": "ok"}

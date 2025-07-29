@@ -18,10 +18,8 @@ async def print_label(label_data: LabelData) -> bool:
 
     """
     pdf_path = create_freedomlac_pdf(
-        output_filename="temp.pdf",
-        lotto=label_data.batch,
-        scadenza=label_data.due_date,
-        pwr=label_data.lens_specs.left.pwr,
+        "temp.pdf",
+        label_data,
     )
 
     return print_pdf(pdf_path)
