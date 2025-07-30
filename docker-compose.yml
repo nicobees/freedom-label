@@ -1,19 +1,31 @@
 services:
-  api:
+  backend:
     build: ./backend
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/optical-api:${TAG:-dev}
+    image: backend:b-0.0.1
+    # image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_BACKEND}:b-0.0.1
     restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on: []
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-    depends_on: [db]
-  ui:
+  frontend:
     build: ./frontend
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/optical-ui:${TAG:-dev}
-    restart: unless-stopped
-    depends_on: [api]
+    image: frontend:f-0.0.1
+    # image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_FRONTEND}:f-0.0.1
+    ports:
+      - "8080:8080"
+    depends_on: [backend]
+    # These security options are recommended but not strictly required for MVP
+    # --security-opt no-new-privileges prevents privilege escalation
+    security_opt:
+      - no-new-privileges:true
+    # This prevents the container from gaining additional capabilities
+    # cap_drop:
+    #   - ALL
   # db:
   #   image: postgres:16-alpine
   #   restart: unless-stopped
@@ -21,3 +33,4 @@ services:
   #     - db:/var/lib/postgresql/data
 # volumes:
 #   db:
+

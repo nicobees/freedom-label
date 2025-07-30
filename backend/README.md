@@ -7,16 +7,19 @@ This is the backend application for the Freedom Label monorepo, built with FastA
 To run the backend application locally, follow these steps:
 
 1.  **Navigate to the backend directory:**
+
     ```bash
     cd backend
     ```
 
 2.  **Install Poetry (if you haven't already):**
+
     ```bash
     pip install poetry
     ```
 
 3.  **Install project dependencies:**
+
     ```bash
     poetry install
     ```
@@ -54,3 +57,9 @@ To update to a specific version:
 ```bash
 ./devops/update-app.sh b-v1.2.3
 ```
+
+#### Commands to handle docker images
+
+docker build . -t ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_BACKEND:b-0.0.1
+
+docker push ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_BACKEND:b-0.0.1
