@@ -66,8 +66,14 @@ export function App() {
     },
     // validator: zodValidator,
     onSubmit: async ({ value }) => {
-      const uri = `${API_ENDPOINT}/print-label`;
+      const base_uri = `${API_ENDPOINT}/print-label`;
       console.info('inside sumbit: ', value);
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const debugParam = urlParams.get('debug');
+
+      const uri = debugParam ? `${base_uri}?debug=${debugParam}` : base_uri;
+
       await fetch(uri, {
         method: 'POST',
         headers: {

@@ -1,5 +1,7 @@
 """Module for printing PDF files."""
 
+import os
+
 
 def print_pdf(
     file_name: str,
@@ -25,7 +27,7 @@ def print_pdf(
 
     # The following lines are commented out because they interact with the system's
     # printer and are not suitable for environments without a printer.
-    # printer = os.popen(commandToRun, 'w')  # noqa: ERA001
-    # printer.close()  # noqa: ERA001
+    printer = os.popen(command_to_run, "w")  # noqa: S605
+    printer.close()
 
     return True
