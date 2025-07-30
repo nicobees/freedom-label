@@ -3,17 +3,17 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import App from './App.tsx';
-import { Docs } from './components/Docs.tsx';
+// import { Docs } from './components/Docs.tsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
   },
-  {
-    path: '/docs/ui',
-    element: <Docs />,
-  },
+  // {
+  //   path: '/docs/ui',
+  //   element: <Docs />,
+  // },
 ]);
 
 createRoot(document.getElementById('root')!).render(

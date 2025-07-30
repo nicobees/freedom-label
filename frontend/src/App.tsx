@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
+// import { zodValidator } from '@tanstack/zod-form-adapter';
 import { z } from 'zod';
 import { DarkModeToggle } from './components/DarkModeToggle';
 
@@ -12,7 +12,8 @@ const PatientInfoSchema = z.object({
 });
 
 // Inferred type for PatientInfo
-type PatientInfo = z.infer<typeof PatientInfoSchema>;
+
+// type PatientInfo = z.infer<typeof PatientInfoSchema>;
 
 // Zod schema for LeftRightSpecs
 const LeftRightSpecsSchema = z.object({
@@ -35,7 +36,8 @@ const LensSpecsSchema = z.object({
 });
 
 // Inferred type for LensSpecs
-type LensSpecs = z.infer<typeof LensSpecsSchema>;
+
+// type LensSpecs = z.infer<typeof LensSpecsSchema>;
 
 // Zod schema for the main LabelData
 const LabelDataSchema = z.object({
@@ -62,7 +64,7 @@ export function App() {
         left: { bc: '', dia: '', pwr: '', cyl: '', ax: '', add: '', sag: '' },
       },
     },
-    validatorAdapter: zodValidator,
+    // validator: zodValidator,
     onSubmit: async ({ value }) => {
       const uri = `${API_ENDPOINT}/print-label`;
       console.info('inside sumbit: ', value);

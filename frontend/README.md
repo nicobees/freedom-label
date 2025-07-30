@@ -7,11 +7,13 @@ This is the frontend application for the Freedom Label monorepo, built with Reac
 To run the frontend application locally, follow these steps:
 
 1.  **Navigate to the frontend directory:**
+
     ```bash
     cd frontend
     ```
 
 2.  **Install dependencies:**
+
     ```bash
     npm install
     ```
@@ -50,3 +52,9 @@ To update to a specific version:
 ```bash
 ./devops/update-app.sh f-v1.2.3
 ```
+
+#### Commands to handle docker images
+
+docker build . -t ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_FRONTEND:f-0.0.1
+
+docker push ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_FRONTEND:f-0.0.1
