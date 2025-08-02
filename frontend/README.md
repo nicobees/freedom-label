@@ -37,22 +37,6 @@ To run the frontend in the test environment, navigate to the `devops` directory 
 docker-compose -f docker-compose.yml up -d frontend
 ```
 
-### Production Environment
-
-To run the frontend in the production environment, you can use the `update-app.sh` script located in the `devops` directory. This script will pull the latest version of the frontend image from GHCR and restart the service.
-
-To update to the latest version:
-
-```bash
-./devops/update-app.sh
-```
-
-To update to a specific version:
-
-```bash
-./devops/update-app.sh f-v1.2.3
-```
-
 #### Commands to handle docker images
 
 docker build . -t ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_FRONTEND:f-0.0.1

@@ -10,10 +10,6 @@ const router = createBrowserRouter([
     path: '/',
     element: <App />,
   },
-  // {
-  //   path: '/docs/ui',
-  //   element: <Docs />,
-  // },
 ]);
 
 createRoot(document.getElementById('root')!).render(
