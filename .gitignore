@@ -1,22 +1,20 @@
 .DS_Store
 
-# Environments
-.env
-.env.*
-
 # IDEs
 .vscode/
 .idea/
+
+# Gemini
+.gemini/
+
+# Environments
+.env
+.env.*
+!.env.example
 
 # Node
 node_modules/
 package.json
 package-lock.json
 
-# Gemini
-.gemini/
-
-# Prompts
-frontend/prompts/
-
-.http
+temp/*
