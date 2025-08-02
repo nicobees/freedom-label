@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import random
-from datetime import datetime
-
 from app.models import LabelData
-from app.print.create_pdf import create_freedomlac_pdf
-from app.print.print_pdf import print_pdf
+from app.services.create.create_pdf import create_label_pdf
+from app.services.print.print_pdf import print_pdf
+from app.utils.filename import generate_random_filename
 
 
 async def print_label(
@@ -27,11 +25,9 @@ async def print_label(
         bool: True if the label printing process is successful, False otherwise.
 
     """
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    random_int = random.randint(1000, 9999)
-    pdf_filename = f"{timestamp}_{random_int}.pdf"
+    pdf_filename = generate_random_filename()
 
-    pdf_path = create_freedomlac_pdf(
+    pdf_path = create_label_pdf(
         pdf_filename,
         label_data,
     )

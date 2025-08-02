@@ -255,7 +255,7 @@ def _add_eye_specifications(
                 row.cell(datum)
 
 
-def create_freedomlac_pdf(output_filename: str, label_data: LabelData) -> str:
+def create_label_pdf(output_filename: str, label_data: LabelData) -> str:
     """Create a FreedomLac PDF label with the specified dimensions and data.
 
     Args:
@@ -284,8 +284,8 @@ def create_freedomlac_pdf(output_filename: str, label_data: LabelData) -> str:
     )
 
     # Save PDF
-    current_dir = Path(__file__).parent
-    output_local_path = "output"
+    current_dir = Path(__file__).parent.parent
+    output_local_path = "pdf_output"
     output_path = current_dir / output_local_path / output_filename
     pdf.output(output_path)
 
