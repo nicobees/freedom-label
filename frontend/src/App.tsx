@@ -1,7 +1,7 @@
 import { useForm } from '@tanstack/react-form';
 // import { zodValidator } from '@tanstack/zod-form-adapter';
 import { z } from 'zod';
-import { DarkModeToggle } from './components/DarkModeToggle';
+
 
 const API_ENDPOINT = 'http://localhost:8000';
 
@@ -85,11 +85,8 @@ export function App() {
   });
 
   return (
-    <div className="p-2">
-      <div className="flex justify-end">
-        <DarkModeToggle />
-      </div>
-      <h3 className="text-center text-2xl font-bold dark:text-white">
+    <div className="app-container">
+      <h3 className="app-header">
         Freedom Label
       </h3>
       <form
@@ -98,10 +95,10 @@ export function App() {
           e.stopPropagation();
           void form.handleSubmit();
         }}
-        className="mx-auto mt-4 max-w-xl"
+        className="app-form"
       >
         {/* Patient Info */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid-cols-2">
           <form.Field
             name="patient_info.name"
             validators={{
@@ -111,7 +108,7 @@ export function App() {
               <>
                 <label
                   htmlFor={field.name}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                  className="form-field-label"
                 >
                   Patient Name:
                 </label>
@@ -121,10 +118,10 @@ export function App() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                  className="form-field-input"
                 />
                 {field.state.meta.errors && (
-                  <p className="mt-2 text-sm text-red-600">
+                  <p className="error-message">
                     {field.state.meta.errors.join(', ')}
                   </p>
                 )}
@@ -140,7 +137,7 @@ export function App() {
               <>
                 <label
                   htmlFor={field.name}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                  className="form-field-label"
                 >
                   Patient Surname:
                 </label>
@@ -150,10 +147,10 @@ export function App() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                  className="form-field-input"
                 />
                 {field.state.meta.errors && (
-                  <p className="mt-2 text-sm text-red-600">
+                  <p className="error-message">
                     {field.state.meta.errors.join(', ')}
                   </p>
                 )}
@@ -173,7 +170,7 @@ export function App() {
               <>
                 <label
                   htmlFor={field.name}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                  className="form-field-label"
                 >
                   Description:
                 </label>
@@ -183,10 +180,10 @@ export function App() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                  className="form-field-input"
                 />
                 {field.state.meta.errors && (
-                  <p className="mt-2 text-sm text-red-600">
+                  <p className="error-message">
                     {field.state.meta.errors.join(', ')}
                   </p>
                 )}
@@ -196,7 +193,7 @@ export function App() {
         </div>
 
         {/* Batch and Due Date */}
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid-cols-2">
           <form.Field
             name="batch"
             validators={{
@@ -206,7 +203,7 @@ export function App() {
               <>
                 <label
                   htmlFor={field.name}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                  className="form-field-label"
                 >
                   Batch:
                 </label>
@@ -216,10 +213,10 @@ export function App() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                  className="form-field-input"
                 />
                 {field.state.meta.errors && (
-                  <p className="mt-2 text-sm text-red-600">
+                  <p className="error-message">
                     {field.state.meta.errors.join(', ')}
                   </p>
                 )}
@@ -235,7 +232,7 @@ export function App() {
               <>
                 <label
                   htmlFor={field.name}
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                  className="form-field-label"
                 >
                   Due Date:
                 </label>
@@ -245,10 +242,10 @@ export function App() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                  className="form-field-input"
                 />
                 {field.state.meta.errors && (
-                  <p className="mt-2 text-sm text-red-600">
+                  <p className="error-message">
                     {field.state.meta.errors.join(', ')}
                   </p>
                 )}
@@ -258,10 +255,10 @@ export function App() {
         </div>
 
         {/* Lens Specs - Left Eye */}
-        <h4 className="mt-6 text-lg font-semibold dark:text-white">
+        <h4 className="section-header">
           Left Eye Specs
         </h4>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid-cols-3">
           {Object.keys(LeftRightSpecsSchema.shape).map((key) => (
             <form.Field
               key={key}
@@ -276,7 +273,7 @@ export function App() {
                 <>
                   <label
                     htmlFor={field.name}
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    className="form-field-label"
                   >
                     {key.toUpperCase()}:
                   </label>
@@ -286,10 +283,10 @@ export function App() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                    className="form-field-input"
                   />
                   {field.state.meta.errors && (
-                    <p className="mt-2 text-sm text-red-600">
+                    <p className="error-message">
                       {field.state.meta.errors.join(', ')}
                     </p>
                   )}
@@ -348,7 +345,7 @@ export function App() {
               <button
                 type="submit"
                 disabled={!canSubmit}
-                className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+                className="submit-button"
               >
                 {isSubmitting ? 'Printing...' : 'Print'}
               </button>

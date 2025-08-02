@@ -1,7 +1,8 @@
 # ================================
 # Build Stage - React/TypeScript
 # ================================
-FROM node:22-alpine AS build
+# Using arm32v7/node for Raspberry Pi 2 (32-bit ARMv7) compatibility
+FROM arm32v7/node:22-alpine AS build
 
 # Set working directory
 WORKDIR /app
@@ -19,9 +20,8 @@ RUN npm run build
 # ================================
 # Production Stage - Nginx
 # ================================
-# Using nginx-unprivileged image that runs nginx as non-root user (uid 101)
-# This is a security best practice to avoid running processes as root
-FROM nginxinc/nginx-unprivileged:1.27-alpine AS production
+# Using arm32v7/nginx for Raspberry Pi 2 (32-bit ARMv7) compatibility
+FROM arm32v7/nginx:alpine AS production
 
 # Copy built React assets from build stage
 # The --chown flag ensures files are owned by the nginx user (uid 101)
