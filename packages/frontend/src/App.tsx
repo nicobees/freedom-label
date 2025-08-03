@@ -5,6 +5,24 @@ import { z } from 'zod';
 
 const API_ENDPOINT = 'http://localhost:8000';
 
+const createUriWithParams = (baseUri: string, paramNames: string[]): string => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryParams: string[] = [];
+
+  paramNames.forEach(paramName => {
+    const paramValue = urlParams.get(paramName);
+    if (paramValue) {
+      queryParams.push(`${paramName}=${encodeURIComponent(paramValue)}`);
+    }
+  });
+
+  if (queryParams.length > 0) {
+    return `${baseUri}?${queryParams.join('&')}`;
+  }
+
+  return baseUri;
+};
+
 // Zod schema for PatientInfo
 const PatientInfoSchema = z.object({
   name: z.string().min(2).max(14),
@@ -69,10 +87,7 @@ export function App() {
       const base_uri = `${API_ENDPOINT}/label/create-print`;
       console.info('inside sumbit: ', value);
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const debugParam = urlParams.get('debug');
-
-      const uri = debugParam ? `${base_uri}?debug=${debugParam}` : base_uri;
+      const uri = createUriWithParams(base_uri, ['debug', 'debug_border']);
 
       await fetch(uri, {
         method: 'POST',

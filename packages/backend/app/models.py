@@ -41,3 +41,9 @@ class LabelData(BaseModel):
     batch: Annotated[str, Field(pattern=r"^\d{2}-\d{4}$")]
     due_date: Annotated[str, Field(pattern=r"^(\d{2}/\d{4})?$")]
     lens_specs: LensSpecs
+
+
+class PathData(BaseModel):
+    """Represents the path data for the existing label file."""
+
+    pdf_path: Annotated[str, Field()]

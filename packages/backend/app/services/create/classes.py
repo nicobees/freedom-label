@@ -85,8 +85,8 @@ class SingleLensTemplate(LabelTemplate):
 
         # Patient info
         self.pdf.set_font("openSansBold", "", 8)
-        patient_info_name = self.label_data.patient_info.name
-        patient_info_surname = self.label_data.patient_info.surname
+        patient_info_name = self.label_data.patient_info.name.capitalize()
+        patient_info_surname = self.label_data.patient_info.surname.capitalize()
         patient_info_line_height = 3
         self.pdf.multi_cell(
             w=23,
@@ -307,8 +307,8 @@ class DoubleLensTemplate(LabelTemplate):
 
         # Patient info
         self.pdf.set_font("openSansBold", "", 8)
-        patient_info_name = self.label_data.patient_info.name
-        patient_info_surname = self.label_data.patient_info.surname
+        patient_info_name = self.label_data.patient_info.name.capitalize()
+        patient_info_surname = self.label_data.patient_info.surname.capitalize()
         patient_info_line_height = 3
         self.pdf.multi_cell(
             w=23,
