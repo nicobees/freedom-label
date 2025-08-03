@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from fastapi import HTTPException
 from fpdf import FPDF
 
 from app.services.create.classes import select_template
@@ -277,11 +278,18 @@ def create_label_pdf(
 
     """
     # Select label template
-    template_instance = select_template(
-        label_data=label_data,
-        left=label_data.lens_specs.left is not None,
-        right=label_data.lens_specs.right is not None,
-        show_borders=show_borders,
-    )
+    try:
+        template_class = select_template(
+            left=label_data.lens_specs.left is not None,
+            right=label_data.lens_specs.right is not None,
+        )
+    except TypeError:
+        raise HTTPException(
+            status_code=400,
+            detail="Wrong template selection",
+            headers={"X-Error-Code": "VALIDATION_ERROR"},
+        ) from TypeError
+
+    template_instance = template_class(label_data=label_data, show_borders=show_borders)
 
     return template_instance.save_template_as_pdf(output_filename)

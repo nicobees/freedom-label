@@ -2,12 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from app.services.create.models import LabelTemplate
-
-if TYPE_CHECKING:
-    from app.models import LabelData
 
 # Defined at the module level, after the class definitions
 
@@ -30,22 +25,18 @@ def _select_class(left: bool, right: bool) -> type[LabelTemplate]:
 
 
 def select_template(
-    label_data: LabelData,
     left: bool,
     right: bool,
-    show_borders: bool = True,
-) -> LabelTemplate:
-    """Select and instantiate the appropriate template.
+) -> type[LabelTemplate]:
+    """Select and return the appropriate template class.
 
     Based on whether one or two lenses are needed.
 
     Args:
     ----
-        label_data (LabelData): The data for the label.
         left (bool): Whether the left lens is present.
         right (bool): Whether the right lens is present.
-        show_borders (bool, optional): Whether to show debug borders.
-            Defaults to True.
+
 
     Raises:
     ------
@@ -53,14 +44,14 @@ def select_template(
 
     Returns:
     -------
-        LabelTemplate: An instance of the selected template.
+        type[LabelTemplate]: The class of the selected template.
 
     """
     template_class = _select_class(left=left, right=right)
 
     if not issubclass(template_class, LabelTemplate):
         raise TypeError
-    return template_class(label_data=label_data, show_borders=show_borders)
+    return template_class
 
 
 class SingleLensTemplate(LabelTemplate):
