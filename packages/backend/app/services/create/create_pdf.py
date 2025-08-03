@@ -257,13 +257,19 @@ def _add_eye_specifications(
                 row.cell(datum)
 
 
-def create_label_pdf(output_filename: str, label_data: LabelData) -> str:
+def create_label_pdf(
+    output_filename: str,
+    label_data: LabelData,
+    show_borders: bool = False,
+) -> str:
     """Create a FreedomLac PDF label with the specified dimensions and data.
 
     Args:
     ----
-        output_filename (str): Name of the output PDF file
+        output_filename (str): Name of the output PDF file.
         label_data (LabelData): The complete label data.
+        show_borders (bool, optional): Whether to show debug borders.
+            Defaults to False.
 
     Returns:
     -------
@@ -275,6 +281,7 @@ def create_label_pdf(output_filename: str, label_data: LabelData) -> str:
         label_data=label_data,
         left=label_data.lens_specs.left is not None,
         right=label_data.lens_specs.right is not None,
+        show_borders=show_borders,
     )
 
     return template_instance.save_template_as_pdf(output_filename)

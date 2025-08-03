@@ -31,18 +31,25 @@ def validate_label_data(label_data: LabelData) -> None:
 async def print_label(
     label_data: LabelData,
     print_disabled: bool = False,
+    show_borders: bool = False,
 ) -> str:
-    """Print a label with the given label data.
+    """Generate and prints a label PDF from the provided data.
+
+    This function takes label data, creates a PDF file for it,
+    and then sends it to the printer. It can also be used to just
+    generate the PDF without printing.
 
     Args:
     ----
         label_data (LabelData): The complete label data.
-        print_disabled (bool): Print disabled flag. If True, the print command will be
-        skipped
+        print_disabled (bool): If True, the print command will be skipped,
+            and only the PDF will be generated. Defaults to False.
+        show_borders (bool): If True, borders will be shown on the generated
+            label for debugging purposes. Defaults to False.
 
     Returns:
     -------
-        bool: True if the label printing process is successful, False otherwise.
+        str: The file path of the generated PDF label.
 
     """
     pdf_filename = generate_random_filename()
@@ -50,6 +57,7 @@ async def print_label(
     pdf_path = create_label_pdf(
         pdf_filename,
         label_data,
+        show_borders=show_borders,
     )
 
     if print_disabled:

@@ -33,6 +33,7 @@ def select_template(
     label_data: LabelData,
     left: bool,
     right: bool,
+    show_borders: bool = True,
 ) -> LabelTemplate:
     """Select and instantiate the appropriate template.
 
@@ -43,6 +44,8 @@ def select_template(
         label_data (LabelData): The data for the label.
         left (bool): Whether the left lens is present.
         right (bool): Whether the right lens is present.
+        show_borders (bool, optional): Whether to show debug borders.
+            Defaults to True.
 
     Raises:
     ------
@@ -57,13 +60,13 @@ def select_template(
 
     if not issubclass(template_class, LabelTemplate):
         raise TypeError
-    return template_class(label_data=label_data)
+    return template_class(label_data=label_data, show_borders=show_borders)
 
 
 class SingleLensTemplate(LabelTemplate):
     """Concrete implementation of Template for single lens labels."""
 
-    def add_patient_section(self) -> tuple[float, float]:
+    def add_patient_section(self, lower_margin: float = 2) -> tuple[float, float]:
         """Add the patient information section to the PDF.
 
         This method should be implemented by subclasses to add patient-specific
@@ -84,7 +87,7 @@ class SingleLensTemplate(LabelTemplate):
             2,
             patient_info_heading,
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="LMARGIN",
             new_y="NEXT",
         )
@@ -99,7 +102,7 @@ class SingleLensTemplate(LabelTemplate):
             h=patient_info_line_height,
             text=f"{patient_info_name}\n{patient_info_surname}",
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="RIGHT",
             new_y="TOP",
         )
@@ -111,12 +114,12 @@ class SingleLensTemplate(LabelTemplate):
         self.pdf.set_y(
             patient_info_y_top
             + (patient_info_line_height * patient_info_lines_amount)
-            + 0.5,
+            + lower_margin,
         )
 
         return patient_info_x_right, patient_info_y_top
 
-    def add_production_info(self) -> None:
+    def add_production_info(self, lower_margin: float = 4) -> None:
         """Add the production information section to the PDF.
 
         This method should be implemented by subclasses to add production
@@ -129,7 +132,7 @@ class SingleLensTemplate(LabelTemplate):
             h=2.2,
             text="Lotto: ",
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="RIGHT",
             new_y="LAST",
         )
@@ -140,7 +143,7 @@ class SingleLensTemplate(LabelTemplate):
             h=2.5,
             text=self.label_data.batch,
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="LMARGIN",
             new_y="NEXT",
         )
@@ -152,7 +155,7 @@ class SingleLensTemplate(LabelTemplate):
             h=2.2,
             text="Scadenza: ",
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="RIGHT",
             new_y="LAST",
         )
@@ -163,9 +166,15 @@ class SingleLensTemplate(LabelTemplate):
             h=2.5,
             text=self.label_data.due_date,
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="LMARGIN",
             new_y="NEXT",
+        )
+
+        production_info_y_lower = self.pdf.get_y()
+
+        self.pdf.set_y(
+            production_info_y_lower + lower_margin,
         )
 
     def add_company_info(self) -> None:
@@ -181,7 +190,7 @@ class SingleLensTemplate(LabelTemplate):
             h=2.5,
             text="Prodotto da:",
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="RIGHT",
             new_y="LAST",
         )
@@ -192,10 +201,23 @@ class SingleLensTemplate(LabelTemplate):
             h=2.5,
             text=f"{company_name}",
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="LMARGIN",
             new_y="NEXT",
         )
+
+    def _get_left_right_spec(self) -> tuple[str, str]:
+        """Get the specification for the left or right eye.
+
+        Returns
+        -------
+            tuple[str, str]: A tuple containing the side ("left" or "right")
+                and the corresponding label ("OS" or "OD").
+
+        """
+        label = "OS" if self.label_data.lens_specs.left is not None else "OD"
+        left_right = "left" if self.label_data.lens_specs.left is not None else "right"
+        return (left_right, label)
 
     def add_eye_specifications(
         self,
@@ -218,31 +240,33 @@ class SingleLensTemplate(LabelTemplate):
         self.pdf.set_y(patient_info_y_top)
         self.pdf.set_x(patient_info_x_right)
 
-        # Eye designation
+        # Right-Left spec
         self.pdf.set_font("openSansBold", "", 20)
-        left_right = "OS"
+        (left_right, label) = self._get_left_right_spec()
         self.pdf.cell(
             10,
             8,
-            left_right,
+            label,
             align="C",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="RIGHT",
             new_y="LAST",
         )
 
+        lens_spec_data = getattr(self.label_data.lens_specs, left_right, None) or {}
+
         table_data = (
-            ("BC:", self.label_data.lens_specs.left.bc),
-            ("DIA:", self.label_data.lens_specs.left.dia),
-            ("Pwr:", self.label_data.lens_specs.left.pwr),
-            ("Cyl:", self.label_data.lens_specs.left.cyl),
-            ("AX:", self.label_data.lens_specs.left.ax),
-            ("ADD:", self.label_data.lens_specs.left.add),
-            ("SAG:", self.label_data.lens_specs.left.sag),
+            ("BC:", getattr(lens_spec_data, "bc", "")),
+            ("DIA:", getattr(lens_spec_data, "dia", "")),
+            ("Pwr:", getattr(lens_spec_data, "pwr", "")),
+            ("Cyl:", getattr(lens_spec_data, "cyl", "")),
+            ("AX:", getattr(lens_spec_data, "ax", "")),
+            ("ADD:", getattr(lens_spec_data, "add", "")),
+            ("SAG:", getattr(lens_spec_data, "sag", "")),
         )
 
         self.pdf.set_font("openSansRegular", "", 7)
-        table_borders = "NONE" if not self.debug_border else "ALL"
+        table_borders = "NONE" if not self.show_borders else "ALL"
         self.pdf.set_x(self.pdf.get_x() + 1)
 
         with self.pdf.table(
@@ -285,7 +309,7 @@ class DoubleLensTemplate(LabelTemplate):
             2,
             patient_info_heading,
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="LMARGIN",
             new_y="NEXT",
         )
@@ -300,7 +324,7 @@ class DoubleLensTemplate(LabelTemplate):
             h=patient_info_line_height,
             text=f"{patient_info_name}\n{patient_info_surname}",
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="RIGHT",
             new_y="TOP",
         )
@@ -330,7 +354,7 @@ class DoubleLensTemplate(LabelTemplate):
             h=2.2,
             text="Lotto: ",
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="RIGHT",
             new_y="LAST",
         )
@@ -341,7 +365,7 @@ class DoubleLensTemplate(LabelTemplate):
             h=2.5,
             text=self.label_data.batch,
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="LMARGIN",
             new_y="NEXT",
         )
@@ -353,7 +377,7 @@ class DoubleLensTemplate(LabelTemplate):
             h=2.2,
             text="Scadenza: ",
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="RIGHT",
             new_y="LAST",
         )
@@ -364,7 +388,7 @@ class DoubleLensTemplate(LabelTemplate):
             h=2.5,
             text=self.label_data.due_date,
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="LMARGIN",
             new_y="NEXT",
         )
@@ -382,7 +406,7 @@ class DoubleLensTemplate(LabelTemplate):
             h=2.5,
             text="Prodotto da:",
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="RIGHT",
             new_y="LAST",
         )
@@ -393,7 +417,7 @@ class DoubleLensTemplate(LabelTemplate):
             h=2.5,
             text=f"{company_name}",
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="LMARGIN",
             new_y="NEXT",
         )
@@ -427,7 +451,7 @@ class DoubleLensTemplate(LabelTemplate):
             8,
             left_right,
             align="C",
-            border=self.debug_border,
+            border=self.show_borders,
             new_x="RIGHT",
             new_y="LAST",
         )
@@ -443,7 +467,7 @@ class DoubleLensTemplate(LabelTemplate):
         )
 
         self.pdf.set_font("openSansRegular", "", 7)
-        table_borders = "NONE" if not self.debug_border else "ALL"
+        table_borders = "NONE" if not self.show_borders else "ALL"
         self.pdf.set_x(self.pdf.get_x() + 1)
 
         with self.pdf.table(

@@ -104,22 +104,28 @@ async def print_label_endpoint(
 async def create_print_label_endpoint(
     label_data: LabelData,
     debug: Annotated[str | None, Query()] = None,
+    debug_border: Annotated[int | None, Query()] = None,
 ) -> dict[str, str]:
-    """Endpoint to print a label.
+    """Endpoint to create and optionally print a label.
 
     Args:
     ----
         label_data (LabelData): The request body containing label details.
-        debug (str | None): Debug flag. If "no-print", the print command will be
-            skipped.
+        debug (str | None, optional): If set to "no-print", the printing step
+            will be skipped. Defaults to None.
+        debug_border (int | None, optional): If set to 1, the generated PDF
+            will have visible borders for debugging. Defaults to None.
+
+    Raises:
+    ------
+        HTTPException: If the provided label data is invalid.
 
     Returns:
     -------
-        dict[str, str]: A dictionary with the status of the print operation.
+        dict[str, str]: A dictionary with the status of the operation and the
+            path to the generated PDF file.
 
     """
-    print_disabled = debug == "no-print"
-
     try:
         validate_label_data(label_data)
     except ValueError:
@@ -129,9 +135,13 @@ async def create_print_label_endpoint(
             headers={"X-Error-Code": "VALIDATION_ERROR"},
         ) from ValueError
 
+    print_disabled = debug == "no-print"
+    show_borders = debug_border == 1
+
     pdf_path = await print_label(
         label_data,
         print_disabled=print_disabled,
+        show_borders=show_borders,
     )
 
     return {"status": "ok", "pdf_filename": pdf_path}

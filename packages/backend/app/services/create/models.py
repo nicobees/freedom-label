@@ -58,7 +58,7 @@ class LabelTemplate(ABC):
         label_data: LabelData,
         producer_name: str = "occhialeria",
         page_setup_properties: PageSetupProperties | None = None,
-        debug_border: bool = False,
+        show_borders: bool = True,
     ) -> None:
         """Initialize the Template.
 
@@ -70,8 +70,8 @@ class LabelTemplate(ABC):
             page_setup_properties (PageSetupProperties | None, optional):
                 The page setup properties. If None, default values are used.
                 Defaults to None.
-            debug_border (bool, optional): Whether to show debug borders.
-                Defaults to False.
+            show_borders (bool, optional): Whether to show debug borders.
+                Defaults to True.
 
         """
         if page_setup_properties is None:
@@ -84,7 +84,7 @@ class LabelTemplate(ABC):
         )
         self.label_data = label_data
         self.producer_name = producer_name
-        self.debug_border = debug_border
+        self.show_borders = show_borders
 
     def page_setup(self, columns_amount: int | None) -> None:
         """Set up the page margins, auto page break, and add a new page.
@@ -131,14 +131,14 @@ class LabelTemplate(ABC):
         description.
         """
         # Producer name
-        self.pdf.set_font("openSansCondensedBold", "", 11)
+        self.pdf.set_font("openSansCondensedBold", "", 10.5)
         self.pdf.set_xy(self.pdf.l_margin, self.pdf.t_margin)
 
         current_dir = Path(__file__).parent
         img_dir = current_dir / "img"
 
-        img_width = 4
-        img_height = 4
+        img_width = 3.5
+        img_height = 3.5
         self.pdf.image(img_dir / "logo.png", w=img_width, h=img_height, type="PNG")
         self.pdf.c_margin = 0
         self.pdf.set_xy(self.pdf.l_margin + img_width, self.pdf.t_margin)
@@ -147,7 +147,7 @@ class LabelTemplate(ABC):
             h=3,
             text=self.producer_name.upper(),
             align="L",
-            border=self.debug_border,
+            border=self.show_borders,
         )
 
         # Product description
@@ -158,8 +158,8 @@ class LabelTemplate(ABC):
             w=25,
             h=3,
             text=self.label_data.description,
-            align="R",
-            border=self.debug_border,
+            align="C",
+            border=self.show_borders,
         )
 
         header_y_next = self.pdf.get_y()
