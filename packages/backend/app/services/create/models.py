@@ -5,11 +5,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from fpdf import FPDF
 from pydantic import BaseModel
 
-from app.models import LabelData
+if TYPE_CHECKING:
+    from app.models import LabelData
 
 
 class OrientationValues(str, Enum):

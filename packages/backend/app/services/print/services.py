@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
-from app.models import LabelData
+from typing import TYPE_CHECKING
+
 from app.services.create.create_pdf import create_label_pdf
 from app.services.print.print_pdf import print_pdf
 from app.utils.filename import generate_random_filename
+
+if TYPE_CHECKING:
+    from app.models import LabelData
 
 
 def validate_label_data(label_data: LabelData) -> None:
@@ -26,7 +30,7 @@ def validate_label_data(label_data: LabelData) -> None:
 
 async def print_label(
     label_data: LabelData,
-    print_disabled: bool = False,  # noqa: FBT001, FBT002
+    print_disabled: bool = False,
 ) -> str:
     """Print a label with the given label data.
 
@@ -49,7 +53,7 @@ async def print_label(
     )
 
     if print_disabled:
-        return pdf_path  # Indicate success without printing
+        return pdf_path
 
     print_pdf(pdf_path)
 

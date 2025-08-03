@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
-from app.models import LabelData
+from typing import TYPE_CHECKING
+
 from app.services.create.models import LabelTemplate
+
+if TYPE_CHECKING:
+    from app.models import LabelData
 
 # Defined at the module level, after the class definitions
 
