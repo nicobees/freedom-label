@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Annotated
-
 from pydantic import BaseModel, Field
+from typing_extensions import Annotated
 
 
 class PatientInfo(BaseModel):
@@ -29,7 +28,7 @@ class LeftRightSpecs(BaseModel):
 class LensSpecs(BaseModel):
     """Represents lens specifications for both left and right eyes."""
 
-    left: LeftRightSpecs | None = None
+    left: LeftRightSpecs
     right: LeftRightSpecs | None = None
 
 
@@ -41,9 +40,3 @@ class LabelData(BaseModel):
     batch: Annotated[str, Field(pattern=r"^\d{2}-\d{4}$")]
     due_date: Annotated[str, Field(pattern=r"^(\d{2}/\d{4})?$")]
     lens_specs: LensSpecs
-
-
-class PathData(BaseModel):
-    """Represents the path data for the existing label file."""
-
-    pdf_path: Annotated[str, Field()]

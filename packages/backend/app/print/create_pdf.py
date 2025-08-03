@@ -7,8 +7,6 @@ from typing import TYPE_CHECKING
 
 from fpdf import FPDF
 
-from app.services.create.classes import select_template
-
 if TYPE_CHECKING:
     from app.main import LabelData
 
@@ -257,31 +255,38 @@ def _add_eye_specifications(
                 row.cell(datum)
 
 
-def create_label_pdf(
-    output_filename: str,
-    label_data: LabelData,
-    show_borders: bool = False,
-) -> str:
+def create_freedomlac_pdf(output_filename: str, label_data: LabelData) -> str:
     """Create a FreedomLac PDF label with the specified dimensions and data.
 
     Args:
     ----
-        output_filename (str): Name of the output PDF file.
+        output_filename (str): Name of the output PDF file
         label_data (LabelData): The complete label data.
-        show_borders (bool, optional): Whether to show debug borders.
-            Defaults to False.
 
     Returns:
     -------
         str: The absolute path to the created PDF file.
 
     """
-    # Select label template
-    template_class = select_template(
-        left=label_data.lens_specs.left is not None,
-        right=label_data.lens_specs.right is not None,
+    # Set up PDF and fonts
+    pdf = _setup_pdf()
+
+    # Add all sections
+    _add_header_section(pdf, label_data)
+    patient_info_x_right, patient_info_y_top = _add_patient_section(pdf, label_data)
+    _add_production_info(pdf, label_data)
+    _add_company_info(pdf)
+    _add_eye_specifications(
+        pdf,
+        patient_info_x_right,
+        patient_info_y_top,
+        label_data,
     )
 
-    template_instance = template_class(label_data=label_data, show_borders=show_borders)
+    # Save PDF
+    current_dir = Path(__file__).parent
+    output_local_path = "output"
+    output_path = current_dir / output_local_path / output_filename
+    pdf.output(output_path)
 
-    return template_instance.save_template_as_pdf(output_filename)
+    return str(output_path)
