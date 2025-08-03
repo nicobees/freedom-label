@@ -1,7 +1,7 @@
 """Filename generator."""
 
+import random
 from datetime import datetime
-from random import random
 
 
 def generate_random_filename() -> str:

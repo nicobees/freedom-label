@@ -8,10 +8,26 @@ from app.services.print.print_pdf import print_pdf
 from app.utils.filename import generate_random_filename
 
 
+def validate_label_data(label_data: LabelData) -> None:
+    """Validate label data.
+
+    Args:
+    ----
+        label_data (LabelData): The complete label data.
+
+    Raises:
+    ------
+        ValueError: If the label data is invalid.
+
+    """
+    if label_data.lens_specs.left is None and label_data.lens_specs.right is None:
+        raise ValueError
+
+
 async def print_label(
     label_data: LabelData,
     print_disabled: bool = False,  # noqa: FBT001, FBT002
-) -> bool:
+) -> str:
     """Print a label with the given label data.
 
     Args:
@@ -33,6 +49,8 @@ async def print_label(
     )
 
     if print_disabled:
-        return True  # Indicate success without printing
+        return pdf_path  # Indicate success without printing
 
-    return print_pdf(pdf_path)
+    print_pdf(pdf_path)
+
+    return pdf_path

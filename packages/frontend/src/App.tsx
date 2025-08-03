@@ -66,7 +66,7 @@ export function App() {
     },
     // validator: zodValidator,
     onSubmit: async ({ value }) => {
-      const base_uri = `${API_ENDPOINT}/print-label`;
+      const base_uri = `${API_ENDPOINT}/label/create-print`;
       console.info('inside sumbit: ', value);
 
       const urlParams = new URLSearchParams(window.location.search);

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -12,7 +12,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from app.models import LabelData
 from app.services.create.create_pdf import create_label_pdf
 from app.services.print.print_pdf import print_pdf
-from app.services.print.services import print_label
+from app.services.print.services import print_label, validate_label_data
 from app.utils.filename import generate_random_filename
 
 if TYPE_CHECKING:
@@ -24,7 +24,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -120,8 +120,18 @@ async def create_print_label_endpoint(
     """
     print_disabled = debug == "no-print"
 
-    await print_label(
+    try:
+        validate_label_data(label_data)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid label data",
+            headers={"X-Error-Code": "VALIDATION_ERROR"},
+        ) from ValueError
+
+    pdf_path = await print_label(
         label_data,
         print_disabled=print_disabled,
     )
-    return {"status": "ok"}
+
+    return {"status": "ok", "pdf_filename": pdf_path}

@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from typing import Annotated
+
 from pydantic import BaseModel, Field
-from typing_extensions import Annotated
 
 
 class PatientInfo(BaseModel):
@@ -28,7 +29,7 @@ class LeftRightSpecs(BaseModel):
 class LensSpecs(BaseModel):
     """Represents lens specifications for both left and right eyes."""
 
-    left: LeftRightSpecs
+    left: LeftRightSpecs | None = None
     right: LeftRightSpecs | None = None
 
 

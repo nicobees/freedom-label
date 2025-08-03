@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING
 
 from fpdf import FPDF
 
+from app.services.create.classes import select_template
+
 if TYPE_CHECKING:
     from app.main import LabelData
 
@@ -268,25 +270,11 @@ def create_label_pdf(output_filename: str, label_data: LabelData) -> str:
         str: The absolute path to the created PDF file.
 
     """
-    # Set up PDF and fonts
-    pdf = _setup_pdf()
-
-    # Add all sections
-    _add_header_section(pdf, label_data)
-    patient_info_x_right, patient_info_y_top = _add_patient_section(pdf, label_data)
-    _add_production_info(pdf, label_data)
-    _add_company_info(pdf)
-    _add_eye_specifications(
-        pdf,
-        patient_info_x_right,
-        patient_info_y_top,
-        label_data,
+    # Select label template
+    template_instance = select_template(
+        label_data=label_data,
+        left=label_data.lens_specs.left is not None,
+        right=label_data.lens_specs.right is not None,
     )
 
-    # Save PDF
-    current_dir = Path(__file__).parent.parent
-    output_local_path = "pdf_output"
-    output_path = current_dir / output_local_path / output_filename
-    pdf.output(output_path)
-
-    return str(output_path)
+    return template_instance.save_template_as_pdf(output_filename)
