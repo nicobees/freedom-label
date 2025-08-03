@@ -34,5 +34,8 @@
   "isort.args": ["--profile", "black"],
   "python.formatting.provider": "black",
   "python.linting.enabled": true,
-  "python.linting.ruffEnabled": true
+  "python.linting.ruffEnabled": true,
+  "python.analysis.extraPaths": [
+    "./packages/backend/app/venv/lib/python3.13/site-packages"
+  ]
 }
