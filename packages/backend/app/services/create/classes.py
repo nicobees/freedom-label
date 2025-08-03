@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import importlib
-
 from app.models import LabelData
 from app.services.create.models import LabelTemplate
 
+# Defined at the module level, after the class definitions
 
-def _select_template(left: bool, right: bool) -> type[LabelTemplate]:
+
+def _select_class(left: bool, right: bool) -> type[LabelTemplate]:
     """Select the template class based on whether one or two lenses are needed.
 
     Args:
@@ -22,11 +22,7 @@ def _select_template(left: bool, right: bool) -> type[LabelTemplate]:
 
     """
     class_name = "DoubleLensTemplate" if left and right else "SingleLensTemplate"
-
-    module_name = f"app.services.create.classes.{class_name}"
-    module = importlib.import_module(module_name)
-
-    return getattr(module, class_name)
+    return TEMPLATE_MAP[class_name]
 
 
 def select_template(
@@ -53,7 +49,7 @@ def select_template(
         LabelTemplate: An instance of the selected template.
 
     """
-    template_class = _select_template(left=left, right=right)
+    template_class = _select_class(left=left, right=right)
 
     if not issubclass(template_class, LabelTemplate):
         raise TypeError
@@ -460,3 +456,9 @@ class DoubleLensTemplate(LabelTemplate):
                 row = table.row()
                 for datum in data_row:
                     row.cell(datum)
+
+
+TEMPLATE_MAP = {
+    "SingleLensTemplate": SingleLensTemplate,
+    "DoubleLensTemplate": DoubleLensTemplate,
+}

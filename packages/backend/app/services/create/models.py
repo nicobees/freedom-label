@@ -30,7 +30,7 @@ class UnitValues(str, Enum):
 class PageSetupProperties(BaseModel):
     """Main data structure for page setup properties."""
 
-    orientation: OrientationValues = "P"
+    orientation: OrientationValues = "L"
     unit: UnitValues = "mm"
     size: tuple[int, int] = (30, 50)
 
