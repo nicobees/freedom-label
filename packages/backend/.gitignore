@@ -8,5 +8,5 @@ poetry.lock
 
 .ruff_cache/*
 
-app/print/output/*
-!app/print/output/.gitkeep
+app/services/pdf_output/*
+!app/services/pdf_output/.gitkeep
