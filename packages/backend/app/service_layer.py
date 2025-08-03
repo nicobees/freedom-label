@@ -26,7 +26,12 @@ def validate_label_data(label_data: LabelData) -> None:
 
     """
     if label_data.lens_specs.left is None and label_data.lens_specs.right is None:
-        raise ValueError
+        error_message = (
+            "At least one between left and right lens specs should be defined."
+        )
+        raise ValueError(
+            error_message,
+        )
 
 
 async def create_label(

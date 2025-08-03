@@ -77,10 +77,10 @@ async def create_label_endpoint(
     """
     try:
         validate_label_data(label_data)
-    except ValueError:
+    except ValueError as error:
         raise HTTPException(
             status_code=400,
-            detail="Invalid label data",
+            detail=str(error),
             headers={"X-Error-Code": "VALIDATION_ERROR"},
         ) from ValueError
 
@@ -91,6 +91,12 @@ async def create_label_endpoint(
             label_data,
             show_borders=show_borders,
         )
+    except TypeError:
+        raise HTTPException(
+            status_code=400,
+            detail="Wrong template selection",
+            headers={"X-Error-Code": "VALIDATION_ERROR"},
+        ) from TypeError
     except FileNotFoundError as error:
         # TODO(nicobees): log error message as str(error)
         # https://github.com/nicobees/freedom-label/issues/2
@@ -158,10 +164,10 @@ async def create_print_label_endpoint(
     """
     try:
         validate_label_data(label_data)
-    except ValueError:
+    except ValueError as error:
         raise HTTPException(
             status_code=400,
-            detail="Invalid label data",
+            detail=str(error),
             headers={"X-Error-Code": "VALIDATION_ERROR"},
         ) from ValueError
 
@@ -174,6 +180,12 @@ async def create_print_label_endpoint(
             print_disabled=print_disabled,
             show_borders=show_borders,
         )
+    except TypeError:
+        raise HTTPException(
+            status_code=400,
+            detail="Wrong template selection",
+            headers={"X-Error-Code": "VALIDATION_ERROR"},
+        ) from TypeError
     except FileNotFoundError as error:
         # TODO(nicobees): log error message as str(error)
         # https://github.com/nicobees/freedom-label/issues/2
