@@ -1,0 +1,87 @@
+# Freedom Label frontend application
+
+## Project overall description
+
+The project consists of a web application written in React and TypeScript.
+The Users of the application are the workers of an Optical Lens factory: they build customised contact lenses for their customers and they need to create labels to attach to the lenses boxes. These labels will contain all the info that identifies the customer and the lens specs.
+
+Now we want to build the MVP of the application: further details later on will tell which parts will be included in the MVP.
+
+## Single Page App (SPA)
+
+The application is structured, created and styled with the "mobile first" approach, even if it will be mainly used in a desktop environment. This is a very important aspect to consider during the build of the application.
+The style will be handled by pure CSS, and there will be no style libraries involved.
+
+This is a single page app (SPA) that consists of three main views: first is the "Home View", which allows to navigate to the "Create Label View" view and to the "List Label View". List label view is not part of the MVP.
+An Header will be also always visible on top of the application.
+
+The navigation through views is handled with the best practices of a SPA: the User navigation will be synchronised with the browser history.
+
+### 1. Header
+
+The application will always show a header on top, which contains the title of the application: Freedom Label is the title.
+The header will also dynamically show the title of the current View.
+On the left side of the header there is an hamburger menu button. At the moment, the icon is disabled since this is not part of the MVP: a tooltip telling "Not available yet" will be shown when the User hover with the mouse on the icon.
+On the right side of the header there is a "language-switch" button: when the User clicks on it, a dropdown appears with the available languages.
+In the MVP, only english and italian are the supported languages. Please use the best practices (as of 2025) to handle translations and localisation in a React app with typescript, and use the best modules and libraries available. Every text visible to the User will have its proper translations, including the tooltip messages and the labels of the form input fields.
+The language switch has to seamless, without page refresh: when the User clicks on the different language, then suddenly all the strings will be updated in the view with the new values.
+The header also includes a left-arrow button that is synchronised with the application navigation allowing to go back to the previews view: considering that now the only view is the "Create Label" one, considering checking the status of the form before allowing the User to leave the view and go back to the "Homepage" view.
+The header is also showing the title of the current View where the User is at the moment.
+
+### 2. Views
+
+#### 2.1. Homepage
+
+The "Homepage" view, other than the header on top, will show only two buttons/links. These two buttons/links will allow the User tonavigate towards theother views.
+At the moment only two buttons will be visible: the first is for the "Create Label" view and the second is for the "Label List" view.
+The buttons are horizontally and vertically centered, and placed vertically in the view.
+Considering the "Label list" view is not part of the MVP, its relative button here will be disabled and it will have a tooltip ("Not available yet").
+
+#### 2.2. Create Label View
+
+This view consists of a form which will allow the User to insert all the data of the label.
+On form submit, the data will be sent to the backend server which will handle the printing itself: the API request to the server is not part of this MVP and now it will be simply mocked with a return value of 200 OK.
+
+This is the most important view of the entire application, since it will be the most used by the User.
+
+The form will have these specs:
+
+- React Form from Tanstack is used (@tanstack/react-form)
+- proper custom hooks are created in order to make the code more maintanable and accessible
+- Zod validation in integrated in the form: some fields needs proper regex, which will be provided specifically
+- debounce strategy for input text fields: 200ms interval, so that the form update is triggered not that often when the User is typing in a free input text field
+- history of every change will be kept by the form itself: we want the User to be able to "undo" and "redo" every change that is applied to the form values (of course, for the debounced fields, the history update is triggered only after the 200ms interval)
+
+Form consists of two sections: anagraphic-section, lens-spec-section.
+
+##### 2.2.1 anagraphic-section
+
+Three fields will be visible at the moment:
+
+- name (`name`): string, mandatory, min length 2, max length 30, debounced field
+- surname (`surname`): string, mandatory, min length 2, max length 30, debounced field
+- due date (`due_date`): mandatory, this field will save data as string "MM/YYYY", but it actually consists of two separated dropdown items, one for the month and one for the year, only future dates can be selected (i.e. if the year selected is the current one, the month listed will be only the future ones)
+  - month: mandatory, dropdown element that shows all the 12 months as integers from 1 to 12.
+  - year: mandatory, dropdown element that shows all the years from the current one to the next five
+
+##### 2.2.2 lens-spec-section
+
+The horizontal space is splitted in two columns layout, one for the left lens and the other for the right lens.
+Each lens-spec column will have the same type of fields.
+On top of the lens-spec column there is a checkbox/button that allows to activate or deactivate the specific lens spec. If both left and right lens are disabled, are unchecked, then the form is invalid because at least one of the two should be activated, should be checked and its field should be filled.
+
+Each lens spec has three fields, at the moment:
+
+- BC (`bc`): float (two inter digits, two decimal digits), regex is `/^\d{1,2}\.\d{2}$/`, mandatory
+- power (`pwr`): float (+/- sign, two inter digits, two decimal digits), regex is `/^[+-]?\d{1,2}\.\d{2}$/`, mandatory
+- saggital (`sag`): float (two inter digits, two decimal digits), regex is `/^\d{1,2}\.\d{2}$/`, mandatory
+
+It is needed that the User will insert the +/- sign using a dropdown menu, while the proper numeric value will be inserted in a usual input field.
+
+The User will also be able to automatically copy the left-lens-spec values to the right-lens-spec, and vice versa, in order to optimise the data insertion in the form. Two specific buttons will handle this feature: they will include proper text and proper icon so that will be clear to the User what they are meant to do.
+Also very important things to consider: also the automatic copy from left-to-right and viceversa in the lens-spec section will be added as entry in the history state of the form changes, hence this can also be "undo" and "redo" as the other changes. Please consider this changes as a whole: meaning that, if the User clicks on the "copy left lens spec to right" and then clicks on the "undo" button, than the all changes in the right-lens spec will be moved back to the previous history state (not one field only in the right-lens spec)
+
+At end of the form there will be two buttons:
+
+- "save": form data will be stored in the browser local storage. Not available in the MVP.
+- "print": form data will be sent as body of POST request to the backend server, only validation of the data will be checked at the moment and the API request will be only mocked with mocked return value 200 OK from the server.
