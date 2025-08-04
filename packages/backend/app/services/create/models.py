@@ -155,22 +155,15 @@ class LabelTemplate(ABC):
 
         self.pdf.c_margin = 0
         self.pdf.multi_cell(
-            w=25,
+            w=24.5,
             h=3,
             text=self.label_data.description,
             align="C",
             border=self.show_borders,
         )
 
-        header_y_next = self.pdf.get_y()
-        header_bottom_margin = 1
-
-        self.pdf.set_y(
-            header_y_next + header_bottom_margin,
-        )
-
     @abstractmethod
-    def add_patient_section(self) -> tuple[float, float]:
+    def add_patient_section(self) -> tuple[float, float] | None:
         """Add the patient information section to the PDF.
 
         This method should be implemented by subclasses to add patient-specific
@@ -200,7 +193,7 @@ class LabelTemplate(ABC):
         """
 
     @abstractmethod
-    def add_eye_specifications(
+    def add_lens_specifications(
         self,
         patient_info_x_right: float,
         patient_info_y_top: float,
@@ -231,7 +224,7 @@ class LabelTemplate(ABC):
         patient_info_x_right, patient_info_y_top = self.add_patient_section()
         self.add_production_info()
         self.add_company_info()
-        self.add_eye_specifications(
+        self.add_lens_specifications(
             patient_info_x_right,
             patient_info_y_top,
         )

@@ -10,8 +10,8 @@ from pydantic import BaseModel, Field
 class PatientInfo(BaseModel):
     """Represents patient's name and surname."""
 
-    name: Annotated[str, Field(min_length=2, max_length=14)]
-    surname: Annotated[str, Field(min_length=2, max_length=14)]
+    name: Annotated[str, Field(min_length=2, max_length=30)]
+    surname: Annotated[str, Field(min_length=2, max_length=30)]
 
 
 class LeftRightSpecs(BaseModel):

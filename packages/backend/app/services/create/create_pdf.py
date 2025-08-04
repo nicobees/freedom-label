@@ -277,9 +277,10 @@ def create_label_pdf(
 
     """
     # Select label template
+    lens_specs = getattr(label_data, "lens_specs", None)
     template_class = select_template(
-        left=label_data.lens_specs.left is not None,
-        right=label_data.lens_specs.right is not None,
+        left=lens_specs.left is not None,
+        right=lens_specs.right is not None,
     )
 
     template_instance = template_class(label_data=label_data, show_borders=show_borders)
