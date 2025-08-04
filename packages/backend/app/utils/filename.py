@@ -1,7 +1,7 @@
 """Filename generator."""
 
-import random
-from datetime import datetime
+import secrets
+from datetime import datetime, timezone
 
 
 def generate_random_filename() -> str:
@@ -12,6 +12,6 @@ def generate_random_filename() -> str:
         str: random filename
 
     """
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    random_int = random.randint(1000, 9999)
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    random_int = secrets.randbelow(9000) + 1000
     return f"{timestamp}_{random_int}.pdf"

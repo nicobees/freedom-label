@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Annotated
 
 from fastapi import FastAPI, HTTPException, Query
@@ -92,9 +93,11 @@ async def create_label_endpoint(
             show_borders=show_borders,
         )
     except TypeError:
+        error_message = "Wrong template selection"
+        logging.exception(error_message)
         raise HTTPException(
             status_code=400,
-            detail="Wrong template selection",
+            detail=error_message,
             headers={"X-Error-Code": "VALIDATION_ERROR"},
         ) from TypeError
     except FileNotFoundError as error:

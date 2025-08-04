@@ -25,8 +25,8 @@ const createUriWithParams = (baseUri: string, paramNames: string[]): string => {
 
 // Zod schema for PatientInfo
 const PatientInfoSchema = z.object({
-  name: z.string().min(2).max(14),
-  surname: z.string().min(2).max(14),
+  name: z.string().min(2).max(30),
+  surname: z.string().min(2).max(30),
 });
 
 // Inferred type for PatientInfo
