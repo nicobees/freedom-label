@@ -24,8 +24,5 @@
     "noUncheckedSideEffectImports": true
   },
   "include": ["src"],
-  "exclude": [
-    "src/**/*.test.tsx",
-    "src/**/*.spec.tsx"
-  ]
+  "exclude": ["src/**/*.test.tsx", "src/**/*.spec.tsx"]
 }
