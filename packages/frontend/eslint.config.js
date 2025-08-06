@@ -24,6 +24,9 @@ const constants = {
 
 export default tseslint.config([
   {
+    ignores: ['dist/', '**/*.config.js'],
+  },
+  {
     extends: [
       compat.configs['flat/recommended'],
       reactHooks.configs['recommended-latest'],
