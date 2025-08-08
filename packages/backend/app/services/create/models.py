@@ -29,6 +29,14 @@ class UnitValues(str, Enum):
     cm = "cm"
 
 
+class LensSpecType(str, Enum):
+    """Enum for the LensSpec type."""
+
+    left = "left"
+    right = "right"
+    double = "double"
+
+
 class PageSetupProperties(BaseModel):
     """Main data structure for page setup properties."""
 
@@ -56,6 +64,7 @@ class LabelTemplate(ABC):
     def __init__(
         self,
         label_data: LabelData,
+        lens_spec_type: LensSpecType,
         producer_name: str = "occhialeria",
         page_setup_properties: PageSetupProperties | None = None,
         show_borders: bool = True,
@@ -65,6 +74,7 @@ class LabelTemplate(ABC):
         Args:
         ----
             label_data (LabelData): The data to be included in the label.
+            lens_spec_type (LensSpecType): The type of LensSpec.
             producer_name (str, optional): The name of the producer.
                 Defaults to "occhialeria".
             page_setup_properties (PageSetupProperties | None, optional):
@@ -83,6 +93,7 @@ class LabelTemplate(ABC):
             format=page_setup_properties.size,
         )
         self.label_data = label_data
+        self.lens_spec_type = lens_spec_type
         self.producer_name = producer_name
         self.show_borders = show_borders
 
@@ -195,8 +206,9 @@ class LabelTemplate(ABC):
     @abstractmethod
     def add_lens_specifications(
         self,
-        patient_info_x_right: float,
-        patient_info_y_top: float,
+        lens_spec_type: LensSpecType,
+        left_margin: float | None = None,
+        top_margin: float | None = None,
     ) -> None:
         """Add the eye specifications section to the PDF.
 
@@ -205,10 +217,11 @@ class LabelTemplate(ABC):
 
         Args:
         ----
-            patient_info_x_right (float): The x-coordinate of the right edge of
-                the patient information section.
-            patient_info_y_top (float): The y-coordinate of the top edge of the
-                patient information section.
+            lens_spec_type (LensSpecType): The type of LensSpec.
+            left_margin (float): The x-coordinate of the right edge of
+                the current section.
+            top_margin (float): The y-coordinate of the top edge of the
+                current section.
 
         """
 
