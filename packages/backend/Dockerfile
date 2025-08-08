@@ -2,7 +2,7 @@
 
 FROM python:3.12-slim
 
-WORKDIR /app
+WORKDIR /freedom-label-app
 
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 
@@ -17,7 +17,7 @@ RUN poetry install --no-root --only main --no-dev
 COPY ./app ./app
 
 RUN useradd --create-home appuser
-RUN chown -R appuser:appuser /app/app/print/output
+RUN chown -R appuser:appuser /freedom-label-app/app/services/pdf_output
 USER appuser
 
 EXPOSE 8000
