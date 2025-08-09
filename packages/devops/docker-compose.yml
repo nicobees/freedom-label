@@ -1,17 +1,19 @@
 services:
   backend:
     build: ../backend
-    image: backend:b-0.0.1
-    # image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_BACKEND}:b-0.0.1
+    # image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_BACKEND}:${VERSION}
     restart: unless-stopped
     ports:
       - "8000:8000"
     depends_on: []
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+    volumes:
+      - pdf_output_data:/freedom-label-app/app/services/pdf_output
+
   # frontend:
   #   build: ./frontend
   #   image: frontend:f-0.0.1
@@ -26,3 +28,6 @@ services:
   #   # This prevents the container from gaining additional capabilities
   #   # cap_drop:
   #   #   - ALL
+
+volumes:
+  pdf_output_data:
