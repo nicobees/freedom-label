@@ -33,8 +33,8 @@ const PatientInfoSchema = z.object({
 
 // type PatientInfo = z.infer<typeof PatientInfoSchema>;
 
-// Zod schema for LeftRightSpecs
-const LeftRightSpecsSchema = z.object({
+// Zod schema for LensDataSpecs
+const LensDataSpecsSchema = z.object({
   bc: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid BC format'),
   dia: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid DIA format'),
   pwr: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid PWR format'),
@@ -44,13 +44,13 @@ const LeftRightSpecsSchema = z.object({
   sag: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid SAG format'),
 });
 
-// Inferred type for LeftRightSpecs
-type LeftRightSpecs = z.infer<typeof LeftRightSpecsSchema>;
+// Inferred type for LensDataSpecs
+type LensDataSpecs = z.infer<typeof LensDataSpecsSchema>;
 
 // Zod schema for LensSpecs
 const LensSpecsSchema = z.object({
-  left: LeftRightSpecsSchema,
-  right: LeftRightSpecsSchema.optional(),
+  left: LensDataSpecsSchema,
+  right: LensDataSpecsSchema.optional(),
 });
 
 // Inferred type for LensSpecs
@@ -274,15 +274,15 @@ export function App() {
           Left Eye Specs
         </h4>
         <div className="grid-cols-3">
-          {Object.keys(LeftRightSpecsSchema.shape).map((key) => (
+          {Object.keys(LensDataSpecsSchema.shape).map((key) => (
             <form.Field
               key={key}
               name={
-                `lens_specs.left.${key}` as `lens_specs.left.${keyof LeftRightSpecs}`
+                `lens_specs.left.${key}` as `lens_specs.left.${keyof LensDataSpecs}`
               }
               validators={{
                 onChange:
-                  LeftRightSpecsSchema.shape[key as keyof LeftRightSpecs],
+                  LensDataSpecsSchema.shape[key as keyof LensDataSpecs],
               }}
               children={(field) => (
                 <>
@@ -316,15 +316,15 @@ export function App() {
           Right Eye Specs
         </h4>
         <div className="grid grid-cols-3 gap-4">
-          {Object.keys(LeftRightSpecsSchema.shape).map((key) => (
+          {Object.keys(LensDataSpecsSchema.shape).map((key) => (
             <form.Field
               key={key}
               name={
-                `lens_specs.right.${key}` as `lens_specs.right.${keyof LeftRightSpecs}`
+                `lens_specs.right.${key}` as `lens_specs.right.${keyof LensDataSpecs}`
               }
               validators={{
                 onChange:
-                  LeftRightSpecsSchema.shape[key as keyof LeftRightSpecs],
+                  LensDataSpecsSchema.shape[key as keyof LensDataSpecs],
               }}
               children={(field) => (
                 <>

@@ -1,15 +1,14 @@
-"""Concrete classes for the pdf template."""
+"""Module with instances of Abstract classes for Single and Double lens templates."""
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
-from app.services.create.models import LabelTemplate, LensSpecType
+from app.models import LensDataSpecs, TableData
+from app.services.create.models import LabelTemplate, LensSpecType, LensSpecTypeBase
 
 if TYPE_CHECKING:
     from app.models import LabelData
-
-# Defined at the module level, after the class definitions
 
 
 def _select_lens_spec_type(left: bool, right: bool) -> LensSpecType:
@@ -40,10 +39,10 @@ def _select_lens_spec_type(left: bool, right: bool) -> LensSpecType:
 def select_template(
     left: bool,
     right: bool,
-) -> tuple[type[LabelTemplate], LensSpecType]:
+) -> tuple[type[LabelTemplate[Any]], LensSpecType]:
     """Select and return the appropriate template class.
 
-    Based on whether one or two lenses are needed.
+    Based on whether one or two lenses are needed
 
     Args:
     ----
@@ -68,18 +67,113 @@ def select_template(
     return (template_class, lens_spec_type)
 
 
-class SingleLensTemplate(LabelTemplate):
+def _map_to_table_data(
+    data: LensDataSpecs,
+) -> list[tuple[str, str]]:
+    """Create the table data for the lens specifications.
+
+    Args:
+    ----
+        data (LensDataSpecs): The lens data specifications.
+
+    Returns:
+    -------
+        list[tuple[str, str]]: The table data.
+
+    """
+    if data is None:
+        return []
+
+    return [
+        ("BC:", data.bc),
+        ("DIA:", data.dia),
+        ("Pwr:", data.pwr),
+        ("Cyl:", data.cyl),
+        ("AX:", data.ax),
+        ("ADD:", data.add),
+        ("SAG:", data.sag),
+    ]
+
+
+def _map_to_table_data_with_borders(
+    data: LensDataSpecs,
+    left_or_right: LensSpecTypeBase,
+) -> list[tuple[TableData, TableData]]:
+    """Create the table data for the lens specifications with borders.
+
+    Args:
+    ----
+        data (LensDataSpecs): The lens data specifications.
+        left_or_right (LensSpecTypeBase): The side of the lens ("left" or "right").
+
+    Returns:
+    -------
+        list[tuple[TableData, TableData]]: The table data with borders.
+
+    """
+    if data is None:
+        return []
+
+    return [
+        (
+            TableData(
+                value="BC:",
+                border=1 | 4 if left_or_right.value == "left" else 4,
+            ),
+            TableData(
+                value=data.bc,
+                border=4 if left_or_right.value == "left" else 2 | 4,
+            ),
+        ),
+        (
+            TableData(value="DIA:", border=1 if left_or_right.value == "left" else 0),
+            TableData(
+                value=data.dia,
+                border=0 if left_or_right.value == "left" else 2,
+            ),
+        ),
+        (
+            TableData(value="Pwr:", border=1 if left_or_right.value == "left" else 0),
+            TableData(
+                value=data.pwr,
+                border=0 if left_or_right.value == "left" else 2,
+            ),
+        ),
+        (
+            TableData(value="Cyl:", border=1),
+            TableData(value=data.cyl, border=2),
+        ),
+        (
+            TableData(value="AX:", border=1),
+            TableData(value=data.ax, border=2),
+        ),
+        (
+            TableData(value="ADD:", border=1),
+            TableData(value=data.add, border=2),
+        ),
+        (
+            TableData(value="SAG:", border=1 | 8),
+            TableData(value=data.sag, border=2 | 8),
+        ),
+    ]
+
+
+class SingleLensTemplate(LabelTemplate[None]):
     """Concrete implementation of Template for single lens labels."""
 
-    def add_patient_section(self, lower_margin: float = 2) -> tuple[float, float]:
+    def add_patient_section(
+        self,
+        lower_margin: float = 2,
+    ) -> tuple[float, float] | None:
         """Add the patient information section to the PDF.
 
-        This method should be implemented by subclasses to add patient-specific
-        details to the label.
+        Args:
+        ----
+            lower_margin (float, optional): The lower margin. Defaults to 2.
 
-        Returns
+        Returns:
         -------
-            tuple[float, float]: A tuple containing the x and y coordinates of
+            tuple[float, float] | None: A tuple containing the x and y coordinates of
                 the bottom-right corner of the patient section.
 
         """
@@ -131,11 +225,18 @@ class SingleLensTemplate(LabelTemplate):
 
         return patient_info_x_right, patient_info_y_top
 
-    def add_production_info(self, lower_margin: float = 4) -> None:
+    def add_production_info(
+        self,
+        _left_margin: float | None = None,
+        _top_margin: float | None = None,
+    ) -> None:
         """Add the production information section to the PDF.
 
-        This method should be implemented by subclasses to add production
-        details such as serial numbers, dates, etc.
+        Args:
+        ----
+            _left_margin (float | None, optional): The left margin. Defaults to None.
+            _top_margin (float | None, optional): The top margin. Defaults to None.
+
         """
         # Lot number
         self.pdf.set_font("openSansCondensedRegular", "", 6)
@@ -149,7 +250,7 @@ class SingleLensTemplate(LabelTemplate):
             new_y="LAST",
         )
 
-        self.pdf.set_font("openSansCondensedRegular", "", 7.5)
+        self.pdf.set_font("openSansCondensedRegular", "", 7.5)  # type: ignore[arg-type]
         self.pdf.cell(
             w=18,
             h=2.5,
@@ -183,18 +284,8 @@ class SingleLensTemplate(LabelTemplate):
             new_y="NEXT",
         )
 
-        production_info_y_lower = self.pdf.get_y()
-
-        self.pdf.set_y(
-            production_info_y_lower + lower_margin,
-        )
-
     def add_company_info(self) -> None:
-        """Add the company information section to the PDF.
-
-        This method should be implemented by subclasses to add company-specific
-        details such as address, contact information, etc.
-        """
+        """Add the company information section to the PDF."""
         self.pdf.set_font("openSansRegular", "", 4)
         company_name = self.producer_name.capitalize()
         self.pdf.cell(
@@ -223,32 +314,32 @@ class SingleLensTemplate(LabelTemplate):
 
         Returns
         -------
-            tuple[str, str]: A tuple containing the side ("left" or "right")
-                and the corresponding label ("OS" or "OD").
+            str: The side label ("OS" or "OD").
 
         """
         return "OS" if self.lens_spec_type == LensSpecType.left else "OD"
 
     def add_lens_specifications(
         self,
-        left_margin: float,
-        top_margin: float,
+        lens_spec_type: LensSpecType,  # noqa: ARG002
+        left_margin: float | None = None,
+        top_margin: float | None = None,
     ) -> None:
         """Add the eye specifications section to the PDF.
 
-        This method should be implemented by subclasses to add detailed eye
-        prescription information.
-
         Args:
         ----
-            left_margin (float): The x-coordinate of the left edge of
-                the current section.
-            top_margin (float): The y-coordinate of the top edge of the
-                current section.
+            lens_spec_type (LensSpecType): The type of LensSpec.
+            left_margin (float | None, optional): The x-coordinate of the left edge of
+                the current section. Defaults to None.
+            top_margin (float | None, optional): The y-coordinate of the top edge of the
+                current section. Defaults to None.
 
         """
-        self.pdf.set_y(top_margin)
-        self.pdf.set_x(left_margin)
+        if top_margin is not None:
+            self.pdf.set_y(top_margin)
+        if left_margin is not None:
+            self.pdf.set_x(left_margin)
 
         # Right-Left spec
         self.pdf.set_font("openSansBold", "", 20)
@@ -263,28 +354,21 @@ class SingleLensTemplate(LabelTemplate):
             new_y="LAST",
         )
 
-        lens_spec_data = (
-            getattr(self.label_data.lens_specs, self.lens_spec_type, None) or {}
+        lens_spec_data = cast(
+            LensDataSpecs,
+            getattr(self.label_data.lens_specs, self.lens_spec_type.value, None) or {},
         )
 
-        table_data = (
-            ("BC:", getattr(lens_spec_data, "bc", "")),
-            ("DIA:", getattr(lens_spec_data, "dia", "")),
-            ("Pwr:", getattr(lens_spec_data, "pwr", "")),
-            ("Cyl:", getattr(lens_spec_data, "cyl", "")),
-            ("AX:", getattr(lens_spec_data, "ax", "")),
-            ("ADD:", getattr(lens_spec_data, "add", "")),
-            ("SAG:", getattr(lens_spec_data, "sag", "")),
-        )
+        table_data = _map_to_table_data(data=lens_spec_data)
 
         self.pdf.set_font("openSansRegular", "", 7)
-        table_borders = "NONE" if not self.show_borders else "ALL"
+        table_borders: str = "NONE" if not self.show_borders else "ALL"
         self.pdf.set_x(self.pdf.get_x() + 1)
 
         with self.pdf.table(
             width=14,
             col_widths=(5, 7),
-            line_height=2.8,
+            line_height=2.8,  # type: ignore[arg-type]
             align="L",
             first_row_as_headings=False,
             v_align="M",
@@ -294,10 +378,34 @@ class SingleLensTemplate(LabelTemplate):
             for data_row in table_data:
                 row = table.row()
                 for datum in data_row:
-                    row.cell(datum)
+                    row.cell(str(datum))
+
+    def page_build(self) -> None:
+        """Build the entire PDF page by calling the section methods."""
+        self.page_setup(columns_amount=2)
+        self.load_fonts()
+        self.add_header_section()
+        patient_section_coords = self.add_patient_section()
+        if patient_section_coords is None:
+            return
+        patient_info_x_right, patient_info_y_top = patient_section_coords
+        self.add_production_info()
+
+        production_info_y_lower = self.pdf.get_y()
+        lower_margin = 4
+        self.pdf.set_y(
+            production_info_y_lower + lower_margin,
+        )
+
+        self.add_company_info()
+        self.add_lens_specifications(
+            self.lens_spec_type,
+            patient_info_x_right,
+            patient_info_y_top,
+        )
 
 
-class DoubleLensTemplate(LabelTemplate):
+class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
     """Concrete implementation of Template for double lens labels."""
 
     def __init__(
@@ -325,9 +433,7 @@ class DoubleLensTemplate(LabelTemplate):
         self._patient_info_anagraphic_max_length = 18
 
     def _compute_patient_info_anagraphic(self, name: str, surname: str) -> str:
-        """Compute the patient's anagraphic information.
-
-        If the name and surname are too long, it will be truncated.
+        """Compute the patient's anagraphic information, truncating if it is too long.
 
         Args:
         ----
@@ -376,13 +482,13 @@ class DoubleLensTemplate(LabelTemplate):
         left_right = "left" if self.label_data.lens_specs.left is not None else "right"
         return (left_right, label)
 
-    def _set_xy_custom(self, x: float, y: float) -> None:
+    def _set_xy_custom(self, x: float | None, y: float | None) -> None:
         """Set the x and y coordinates of the PDF.
 
         Args:
         ----
-            x (float): The x coordinate.
-            y (float): The y coordinate.
+            x (float | None): The x coordinate.
+            y (float | None): The y coordinate.
 
         """
         if x and y:
@@ -397,65 +503,29 @@ class DoubleLensTemplate(LabelTemplate):
             self.pdf.set_y(y)
             return
 
-    def _create_table_data(self, left_or_right: str) -> list[tuple[str, str]]:
+    def _create_table_data(
+        self,
+        left_or_right: LensSpecTypeBase,
+    ) -> list[tuple[TableData, TableData]]:
         """Create the table data for the lens specifications.
 
         Args:
         ----
-            left_or_right (str): The side of the lens ("left" or "right").
+            left_or_right (LensSpecTypeBase): The side of the lens ("left" or "right").
 
         Returns:
         -------
-            list[tuple[str, str]]: The table data.
+            list[tuple[TableData, TableData]]: The table data.
 
         """
-        data = getattr(self.label_data.lens_specs, left_or_right, None) or {}
+        data = getattr(self.label_data.lens_specs, left_or_right.value, None)
+        if data is None:
+            return []
 
-        return (
-            (
-                {"value": "BC:", "border": 1 | 4 if left_or_right == "left" else 4},
-                {"value": data.bc, "border": 4 if left_or_right == "left" else 2 | 4},
-            ),
-            (
-                {"value": "DIA:", "border": 1 if left_or_right == "left" else 0},
-                {"value": data.dia, "border": 0 if left_or_right == "left" else 2},
-            ),
-            (
-                {"value": "Pwr:", "border": 1 if left_or_right == "left" else 0},
-                {"value": data.pwr, "border": 0 if left_or_right == "left" else 2},
-            ),
-            (
-                {"value": "Cyl:", "border": 1},
-                {"value": data.cyl, "border": 2},
-            ),
-            (
-                {"value": "AX:", "border": 1},
-                {"value": data.ax, "border": 2},
-            ),
-            (
-                {"value": "ADD:", "border": 1},
-                {"value": data.add, "border": 2},
-            ),
-            (
-                {"value": "SAG:", "border": 1 | 8},
-                {"value": data.sag, "border": 2 | 8},
-            ),
-        )
+        return _map_to_table_data_with_borders(data=data, left_or_right=left_or_right)
 
-    def add_patient_section(
-        self,
-    ) -> None:
-        """Add the patient information section to the PDF.
-
-        This method should be implemented by subclasses to add patient-specific
-        details to the label.
-
-        Returns
-        -------
-            tuple[float, float]: A tuple containing the x and y coordinates of
-                the bottom-right corner of the patient section.
-
-        """
+    def add_patient_section(self) -> None:
+        """Add the patient information section to the PDF."""
         current_y = self.pdf.get_y()
         top_margin = 0.5
 
@@ -499,16 +569,29 @@ class DoubleLensTemplate(LabelTemplate):
     def add_left_lens(
         self,
         _left_margin: float | None,
-        top_margin: float,
-    ) -> tuple[float, float] | None:
-        """Add the left lens specifications section to the PDF."""
-        self.pdf.set_font("openSansBold", "", 20)
-        self.pdf.set_y(top_margin)
+        top_margin: float | None,
+    ) -> tuple[float, float]:
+        """Add the left lens specifications section to the PDF.
 
-        table_data = self._create_table_data(left_or_right="left")
+        Args:
+        ----
+            _left_margin (float | None): The left margin.
+            top_margin (float | None): The top margin.
+
+        Returns:
+        -------
+            tuple[float, float]: The x and y coordinates of the bottom-right corner of
+            the section.
+
+        """
+        self.pdf.set_font("openSansBold", "", 20)
+        if top_margin is not None:
+            self.pdf.set_y(top_margin)
+
+        table_data = self._create_table_data(left_or_right=LensSpecTypeBase.left)
 
         self.pdf.set_font("openSansRegular", "", 7)
-        table_borders = "NONE" if not self.show_borders else "ALL"
+        table_borders: str = "NONE" if not self.show_borders else "ALL"
 
         left_lens_spec_x_left = self.pdf.get_x()
         left_lens_spec_x_right = left_lens_spec_x_left + self._lens_spec_width
@@ -517,7 +600,7 @@ class DoubleLensTemplate(LabelTemplate):
         with self.pdf.table(
             width=self._lens_spec_width,
             col_widths=(5, 7),
-            line_height=2.8,
+            line_height=2.8,  # type: ignore[arg-type]
             align="L",
             first_row_as_headings=False,
             v_align="M",
@@ -527,16 +610,12 @@ class DoubleLensTemplate(LabelTemplate):
             for data_row in table_data:
                 row = table.row()
                 for datum in data_row:
-                    row.cell(datum["value"], border=datum["border"])
+                    row.cell(datum.value, border=datum.border)
 
         return left_lens_spec_x_right, left_lens_spec_y_top
 
     def add_company_info(self) -> None:
-        """Add the company information section to the PDF.
-
-        This method should be implemented by subclasses to add company-specific
-        details such as address, contact information, etc.
-        """
+        """Add the company information section to the PDF."""
         self.pdf.set_font("openSansRegular", "", 4)
         company_name = self.producer_name.capitalize()
         self.pdf.cell(
@@ -564,7 +643,7 @@ class DoubleLensTemplate(LabelTemplate):
         self,
         left_margin: float,
         top_margin: float,
-    ) -> tuple[float, float] | None:
+    ) -> tuple[float, float]:
         """Add the left and right lens designation to the PDF.
 
         Args:
@@ -574,7 +653,7 @@ class DoubleLensTemplate(LabelTemplate):
 
         Returns:
         -------
-            tuple[float, float] | None: The x and y coordinates of the bottom-right
+            tuple[float, float]: The x and y coordinates of the bottom-right
                 corner of the section.
 
         """
@@ -607,22 +686,34 @@ class DoubleLensTemplate(LabelTemplate):
 
     def add_right_lens(
         self,
-        _left_margin: float,
-        top_margin: float,
-    ) -> None:
-        """Add the right lens specifications section to the PDF."""
+        _left_margin: float | None,
+        top_margin: float | None,
+    ) -> tuple[float, float]:
+        """Add the right lens specifications section to the PDF.
+
+        Args:
+        ----
+            _left_margin (float | None): The left margin.
+            top_margin (float | None): The top margin.
+
+        Returns:
+        -------
+            tuple[float, float]: The x and y coordinates of the bottom-right corner of
+            the section.
+
+        """
         self.pdf.set_font("openSansBold", "", 20)
         self._set_xy_custom(_left_margin, top_margin)
 
-        table_data = self._create_table_data(left_or_right="right")
+        table_data = self._create_table_data(left_or_right=LensSpecTypeBase.right)
 
         self.pdf.set_font("openSansRegular", "", 7)
-        table_borders = "NONE" if not self.show_borders else "ALL"
+        table_borders: str = "NONE" if not self.show_borders else "ALL"
 
         with self.pdf.table(
             width=self._lens_spec_width,
             col_widths=(5, 7),
-            line_height=2.8,
+            line_height=2.8,  # type: ignore[arg-type]
             align="L",
             first_row_as_headings=False,
             v_align="M",
@@ -632,22 +723,36 @@ class DoubleLensTemplate(LabelTemplate):
             for data_row in table_data:
                 row = table.row()
                 for datum in data_row:
-                    row.cell(datum["value"], border=datum["border"])
+                    row.cell(datum.value, border=datum.border)
+        return self.pdf.get_x(), self.pdf.get_y()
 
-    def add_production_info(self, left_margin: float, top_margin: float) -> None:
+    def add_production_info(
+        self,
+        _left_margin: float | None = None,
+        _top_margin: float | None = None,
+    ) -> None:
         """Add the production information section to the PDF.
 
-        This method should be implemented by subclasses to add production
-        details such as serial numbers, dates, etc.
+        Args:
+        ----
+            _left_margin (float | None, optional): The left margin. Defaults to None.
+            _top_margin (float | None, optional): The top margin. Defaults to None.
+
         """
         additional_top_margin = 2
         additional_left_margin = 1
 
-        current_left_margin = left_margin + additional_left_margin
-        self.pdf.set_xy(
-            current_left_margin,
-            top_margin + additional_top_margin,
+        current_left_margin = (
+            _left_margin + additional_left_margin
+            if _left_margin is not None
+            else _left_margin
         )
+
+        if current_left_margin is not None and _top_margin is not None:
+            self.pdf.set_xy(
+                current_left_margin,
+                _top_margin + additional_top_margin,
+            )
 
         # Lot number
         self.pdf.set_font("openSansCondensedRegular", "", 6)
@@ -661,7 +766,7 @@ class DoubleLensTemplate(LabelTemplate):
             new_y="LAST",
         )
 
-        self.pdf.set_font("openSansCondensedRegular", "", 7.5)
+        self.pdf.set_font("openSansCondensedRegular", "", 7.5)  # type: ignore[arg-type]
         self.pdf.cell(
             w=14,
             h=2.5,
@@ -672,7 +777,11 @@ class DoubleLensTemplate(LabelTemplate):
             new_y="NEXT",
         )
 
-        self.pdf.set_xy(current_left_margin, self.pdf.get_y() + additional_top_margin)
+        if current_left_margin is not None:
+            self.pdf.set_xy(
+                current_left_margin,
+                self.pdf.get_y() + additional_top_margin,
+            )
 
         # Expiration date
         self.pdf.set_font("openSansCondensedRegular", "", 6)
@@ -702,19 +811,21 @@ class DoubleLensTemplate(LabelTemplate):
         lens_spec_type: LensSpecType,
         left_margin: float | None = None,
         top_margin: float | None = None,
-    ) -> None:
+    ) -> tuple[float, float]:
         """Add the eye specifications section to the PDF.
-
-        This method should be implemented by subclasses to add detailed eye
-        prescription information.
 
         Args:
         ----
             lens_spec_type (LensSpecType): The type of LensSpec.
-            left_margin (float): The x-coordinate of the left edge of
-                the current section.
-            top_margin (float): The y-coordinate of the top edge of the
-                current section.
+            left_margin (float | None, optional): The x-coordinate of the left edge of
+                the current section. Defaults to None.
+            top_margin (float | None, optional): The y-coordinate of the top edge of the
+                current section. Defaults to None.
+
+        Returns:
+        -------
+            tuple[float, float]: The x and y coordinates of the bottom-right corner of
+            the section.
 
         """
         method_to_call = (
@@ -726,11 +837,7 @@ class DoubleLensTemplate(LabelTemplate):
         return method_to_call(_left_margin=left_margin, top_margin=top_margin)
 
     def page_build(self) -> None:
-        """Build the entire PDF page by calling the section methods.
-
-        This method orchestrates the creation of the PDF by calling the
-        various 'add' methods in the correct order.
-        """
+        """Build the entire PDF page by calling the section methods."""
         self.page_setup(columns_amount=2)
         self.load_fonts()
         self.add_header_section()
@@ -761,7 +868,10 @@ class DoubleLensTemplate(LabelTemplate):
             top_margin=left_spec_y_top,
         )
 
-        self.add_production_info(left_spec_x_right, left_right_y_bottom)
+        self.add_production_info(
+            _left_margin=left_spec_x_right,
+            _top_margin=left_right_y_bottom,
+        )
 
 
 TEMPLATE_MAP = {

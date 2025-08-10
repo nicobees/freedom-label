@@ -14,7 +14,7 @@ class PatientInfo(BaseModel):
     surname: Annotated[str, Field(min_length=2, max_length=30)]
 
 
-class LeftRightSpecs(BaseModel):
+class LensDataSpecs(BaseModel):
     """Represents lens specifications for left or right eye."""
 
     bc: Annotated[str, Field(pattern=r"^(\d{1,2}\.\d{2})?$")]
@@ -29,8 +29,8 @@ class LeftRightSpecs(BaseModel):
 class LensSpecs(BaseModel):
     """Represents lens specifications for both left and right eyes."""
 
-    left: LeftRightSpecs | None = None
-    right: LeftRightSpecs | None = None
+    left: LensDataSpecs | None = None
+    right: LensDataSpecs | None = None
 
 
 class LabelData(BaseModel):
@@ -47,3 +47,10 @@ class PathData(BaseModel):
     """Represents the path data for the existing label file."""
 
     pdf_path: Annotated[str, Field()]
+
+
+class TableData(BaseModel):
+    """Represents the table data for the lens specifications."""
+
+    value: str
+    border: int
