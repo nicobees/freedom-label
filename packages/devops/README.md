@@ -46,3 +46,16 @@ Pipelines that are configured with the `workflow_dispatch` event can be triggere
 3.  You will see a message "This workflow has a `workflow_dispatch` event trigger."
 4.  Click the **Run workflow** dropdown button.
 5.  You can select the branch and provide any optional inputs, then click **Run workflow**.
+
+### CI/CD Secrets
+
+To allow the CI/CD pipelines to work correctly, you need to add the following secrets to your repository settings:
+
+- `CR_PAT`: A Personal Access Token with `write:packages` and `read:packages` scopes to authenticate with the GitHub Container Registry.
+- `GITHUB_USERNAME`: Your GitHub username.
+- `GITHUB_REPOSITORY_NAME`: The name of your GitHub repository.
+- `GITHUB_IMAGE_BACKEND`: The name of the backend docker image.
+- `RPI_HOST`: The hostname or IP address of your Raspberry Pi.
+- `RPI_USERNAME`: The username to connect to your Raspberry Pi.
+- `RPI_PASSWORD`: The password to connect to your Raspberry Pi.
+- `APP_PATH`: The absolute path to the application on your Raspberry Pi.

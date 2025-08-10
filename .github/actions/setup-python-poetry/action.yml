@@ -1,0 +1,61 @@
+name: setup-python-poetry-deps
+description: "Checkout, setup Python, install Poetry, and install dependencies with caching."
+inputs:
+  python-version:
+    description: "Python version"
+    required: true
+    default: "3.12"
+  working-directory:
+    description: "Working directory"
+    required: true
+    default: "."
+  with-groups:
+    description: "Comma-separated Poetry groups to include (e.g., 'dev,test')"
+    required: false
+    default: ""
+runs:
+  using: "composite"
+  steps:
+    - name: Cache Poetry installer and cache dirs
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.local
+          ~/.cache/pipx
+          ~/.cache/pypoetry
+        key: poetry-installer-${{ runner.os }}-v1
+
+    - name: Install Poetry with pipx
+      shell: bash
+      run: |
+        set -euxo pipefail
+        python -m pip install --upgrade pip pipx
+        pipx ensurepath
+        # Make sure ~/.local/bin is exported for subsequent steps
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        pipx install --force poetry
+        poetry --version
+
+    - name: Configure Poetry to create venv in project
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: poetry config virtualenvs.in-project true
+
+    - name: Cache Poetry virtualenv (.venv)
+      id: cache-venv
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.working-directory }}/.venv
+        key: venv-${{ runner.os }}-py${{ inputs.python-version }}-${{ hashFiles(format('{0}/poetry.lock', inputs.working-directory)) }}
+
+    - name: Install dependencies (skip if venv cache hit)
+      if: steps.cache-venv.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set -euxo pipefail
+        ARGS="--no-interaction --no-root"
+        if [ -n "${{ inputs.with-groups }}" ]; then
+          ARGS="$ARGS --with ${{ inputs.with-groups }}"
+        fi
+        poetry install $ARGS

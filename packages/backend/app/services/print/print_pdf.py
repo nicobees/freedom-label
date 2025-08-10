@@ -30,7 +30,7 @@ def print_label_pdf(
         path_error_message = f" at path {file_name}." if file_name is not None else ""
         custom_error_message = f"File not found{path_error_message}."
         raise FileNotFoundError(custom_error_message)
-    print("Inside printing method")
+    # print("Inside printing method")  # noqa: ERA001
     return True
     command = "lpr"
     printer_name = "-P SN_420B"
