@@ -5,13 +5,16 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 from fpdf import FPDF
 from pydantic import BaseModel
 
 if TYPE_CHECKING:
     from app.models import LabelData
+
+
+T = TypeVar("T")
 
 
 class OrientationValues(str, Enum):
@@ -29,6 +32,13 @@ class UnitValues(str, Enum):
     cm = "cm"
 
 
+class LensSpecTypeBase(str, Enum):
+    """Base Enum for the LensSpec type."""
+
+    left = "left"
+    right = "right"
+
+
 class LensSpecType(str, Enum):
     """Enum for the LensSpec type."""
 
@@ -40,12 +50,12 @@ class LensSpecType(str, Enum):
 class PageSetupProperties(BaseModel):
     """Main data structure for page setup properties."""
 
-    orientation: OrientationValues = "L"
-    unit: UnitValues = "mm"
+    orientation: OrientationValues = OrientationValues.landscape
+    unit: UnitValues = UnitValues.mm
     size: tuple[int, int] = (30, 50)
 
 
-class LabelTemplate(ABC):
+class LabelTemplate(Generic[T], ABC):
     """Abstract base class for creating PDF labels.
 
     This class provides a template for generating PDF labels with a specific
@@ -88,8 +98,8 @@ class LabelTemplate(ABC):
             page_setup_properties = PageSetupProperties()
 
         self.pdf = FPDF(
-            orientation=page_setup_properties.orientation,
-            unit=page_setup_properties.unit,
+            orientation=page_setup_properties.orientation.value,
+            unit=page_setup_properties.unit.value,
             format=page_setup_properties.size,
         )
         self.label_data = label_data
@@ -142,7 +152,7 @@ class LabelTemplate(ABC):
         description.
         """
         # Producer name
-        self.pdf.set_font("openSansCondensedBold", "", 10.5)
+        self.pdf.set_font("openSansCondensedBold", "", 10.5)  # type: ignore[arg-type]
         self.pdf.set_xy(self.pdf.l_margin, self.pdf.t_margin)
 
         current_dir = Path(__file__).parent
@@ -188,7 +198,11 @@ class LabelTemplate(ABC):
         """
 
     @abstractmethod
-    def add_production_info(self) -> None:
+    def add_production_info(
+        self,
+        _left_margin: float | None,
+        _top_margin: float | None = None,
+    ) -> None:
         """Add the production information section to the PDF.
 
         This method should be implemented by subclasses to add production
@@ -209,7 +223,7 @@ class LabelTemplate(ABC):
         lens_spec_type: LensSpecType,
         left_margin: float | None = None,
         top_margin: float | None = None,
-    ) -> None:
+    ) -> T:
         """Add the eye specifications section to the PDF.
 
         This method should be implemented by subclasses to add detailed eye
@@ -225,22 +239,13 @@ class LabelTemplate(ABC):
 
         """
 
+    @abstractmethod
     def page_build(self) -> None:
         """Build the entire PDF page by calling the section methods.
 
         This method orchestrates the creation of the PDF by calling the
         various 'add' methods in the correct order.
         """
-        self.page_setup(columns_amount=2)
-        self.load_fonts()
-        self.add_header_section()
-        patient_info_x_right, patient_info_y_top = self.add_patient_section()
-        self.add_production_info()
-        self.add_company_info()
-        self.add_lens_specifications(
-            patient_info_x_right,
-            patient_info_y_top,
-        )
 
     def save_template_as_pdf(self, output_filename: str) -> str:
         """Save the generated PDF to a file.
@@ -260,6 +265,6 @@ class LabelTemplate(ABC):
         current_dir = Path(__file__).parent.parent
         output_local_path = "pdf_output"
         output_path = current_dir / output_local_path / output_filename
-        self.pdf.output(output_path)
+        self.pdf.output(str(output_path))
 
         return str(output_path)

@@ -81,7 +81,7 @@ async def print_label(
     output_local_path = "services/pdf_output"
     full_path = current_dir / output_local_path / pdf_path
 
-    print_label_pdf(file_path=full_path, file_name=pdf_path)
+    print_label_pdf(file_path=str(full_path), file_name=pdf_path)
 
     return pdf_path
 

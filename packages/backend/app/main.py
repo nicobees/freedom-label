@@ -108,6 +108,13 @@ async def create_label_endpoint(
             detail=str(error),
             headers={"X-Error-Code": "TEMPLATE_PDF_NOT_FOUND_ERROR"},
         ) from FileNotFoundError
+    except ValueError as error:
+        logging.exception(msg=str(error))
+        raise HTTPException(
+            status_code=400,
+            detail=str(error),
+            headers={"X-Error-Code": "VALIDATION_ERROR"},
+        ) from ValueError
 
     return {"status": "ok", "pdf_filename": pdf_path}
 
@@ -197,5 +204,12 @@ async def create_print_label_endpoint(
             detail=str(error),
             headers={"X-Error-Code": "TEMPLATE_PDF_NOT_FOUND_ERROR"},
         ) from FileNotFoundError
+    except ValueError as error:
+        logging.exception(msg=str(error))
+        raise HTTPException(
+            status_code=400,
+            detail=str(error),
+            headers={"X-Error-Code": "VALIDATION_ERROR"},
+        ) from ValueError
 
     return {"status": "ok", "pdf_filename": pdf_path}
