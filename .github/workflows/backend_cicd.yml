@@ -95,7 +95,7 @@ jobs:
         with:
           context: packages/backend
           push: true
-          tags: ghcr.io/${{ secrets.USERNAME }}/${{ secrets.REPOSITORY_NAME }}/${{ secrets.IMAGE_BACKEND }}:${{ env.VERSION }}
+          tags: ghcr.io/${{ vars.USERNAME }}/${{ vars.REPOSITORY_NAME }}/${{ vars.IMAGE_BACKEND }}:${{ env.VERSION }}
 
   release:
     if: github.event_name == 'workflow_dispatch'
