@@ -5,7 +5,14 @@ file @instructions/4_frontend_mvp_business_requirements.md.
 
 Based on these instructions, please create User Stories to accomplish all the required features. The User Stories has to be compliant with all the best practices of Agile development guidelines (some examples in https://www.atlassian.com/agile/project-management/user-stories and https://www.atlassian.com/work-management/project-management/acceptance-criteria), and they have to include detailed Acceptance Criteria on how to achieve the requirements.
 
-Please consider checking and referring the general instructions and guidelines for the frontend code development available in @docs/guidelines folder.
+The frontend application is already setup in terms of: eslint, prettier, .gitignore, Dockerfile, tsconfig, vite config. Hence, please refer to this settings when writing the User Stories, if needed.
+
+There should be no need to update these settings, but if there is the need, please choose one of the following (prefer the first option):
+
+1. add these changes in separate User Story
+2. create explicit Acceptance Criteria and/or Technical details in the same User Stories of other changes
+
+Please, also consider checking and referring the general instructions and guidelines for the frontend code development available in @docs/development_guidelines folder.
 
 The User Stories will be used later on as input to an Agentic AI (Claude Code, Gemini CLI, Cursor, GitHub Copilot, Windsurf, ...) that will actually implement the Acceptance Criteria and business requirements in the code: for this reason, please be very specific and detailed in the User Stories definition.
 

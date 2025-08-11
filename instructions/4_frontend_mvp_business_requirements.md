@@ -17,6 +17,9 @@ An Header will be also always visible on top of the application.
 
 The navigation through views is handled with the best practices of a SPA: the User navigation will be synchronised with the browser history.
 
+> Important note
+> The frontend application already has settings for linting (eslint), preffifying (prettier), .gitignore, docker (Dockerfile), typescript (tsconfig), vite. These settings (available in the root of the frontend package) are not meant to be changed, unless there is an explicit User Story to handle this.
+
 ### 1. Header
 
 The application will always show a header on top, which shows dynamically the title of the current View.
