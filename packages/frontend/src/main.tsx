@@ -1,15 +1,10 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { RouterProvider } from '@tanstack/react-router';
+import { createAppRouter } from './routes';
+import './styles/global.css';
 
-import App from './App.tsx';
-
-const router = createBrowserRouter([
-  {
-    element: <App />,
-    path: '/',
-  },
-]);
+const router = createAppRouter();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

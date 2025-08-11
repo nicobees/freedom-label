@@ -15,11 +15,11 @@ However, not all best practices can be automated. This document also covers guid
 ## Core Styling and Linting Tools
 
 - **Prettier:** An opinionated code formatter that automatically formats code to ensure a consistent style.
-    - Configuration: `.prettierrc.js` at the monorepo root.
+  - Configuration: `.prettierrc.js` at the monorepo root.
 - **ESLint:** A pluggable and configurable linter tool for identifying and reporting on patterns in JavaScript and TypeScript. It helps catch potential bugs and enforce coding standards.
-    - Configuration: `.eslintrc.js` at the monorepo root, with potential overrides in package-specific ESLint configs. Shared configurations might be in `packages/configs/eslint/`.
+  - Configuration: `.eslintrc.js` at the monorepo root, with potential overrides in package-specific ESLint configs. Shared configurations might be in `packages/configs/eslint/`.
 - **Stylelint:** A linter for CSS, SCSS, and CSS-in-JS (like `styled-components`). It helps prevent errors and enforce conventions in stylesheets.
-    - Configuration: `.stylelintrc` at the monorepo root.
+  - Configuration: `.stylelintrc` at the monorepo root.
 
 Run these tools locally before committing:
 
@@ -60,6 +60,7 @@ Beyond automated linting and formatting:
 5.  **Imports:**
     - Prefer direct imports to specific modules/files rather than importing through barrel files (`index.ts` re-exporting multiple modules). This can improve tree-shaking and reduce bundle sizes.
     - Organize imports: typically standard library/React imports first, then third-party, then local relative imports. ESLint rules often manage this.
+    - Prefer `import type ...` when only types are imported: also if runtime variables are imported, the use `import {type TestType, RuntimeModule} from 'test-module'`
 6.  **Object Properties:** Consider ordering object properties alphabetically for consistency, especially in large object literals or type definitions, if not managed by Prettier.
 7.  **File and Folder Structure:** Follow existing conventions within each package. For new components, generally co-locate related files (component, styles, tests, stories).
 
@@ -79,7 +80,7 @@ var legacyGlobal = window.someOldApi;
 
 // This specific regex is intentionally complex for performance reasons.
 // eslint-disable-next-line prefer-regex-literals
-const complexRegex = new RegExp('pattern', 'g');
+const complexRegex = new RegExp("pattern", "g");
 ```
 
 If disabling multiple rules, you can list them or provide separate explanations if needed:
@@ -110,5 +111,5 @@ Address any TypeScript errors before committing.
 
 While not strictly "code style," writing good tests is a core part of code quality.
 
-- Follow the guidelines in  [Practical Guide to Writing Tests](./writing-tests-guide.md).
+- Follow the guidelines in [Practical Guide to Writing Tests](./writing-tests-guide.md).
 - Ensure new code is adequately covered by tests.
