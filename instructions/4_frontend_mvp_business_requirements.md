@@ -19,13 +19,19 @@ The navigation through views is handled with the best practices of a SPA: the Us
 
 ### 1. Header
 
-The application will always show a header on top, which contains the title of the application: Freedom Label is the title.
-The header will also dynamically show the title of the current View.
+The application will always show a header on top, which shows dynamically the title of the current View.
 On the left side of the header there is an hamburger menu button. At the moment, the icon is disabled since this is not part of the MVP: a tooltip telling "Not available yet" will be shown when the User hover with the mouse on the icon.
+
+The Header will handle the main navigation of the application:
+
+- use Tanstack/Router to handle navigation
+- it shows dynamically the title of the current View
+- the hamburger icon on the left becomes the usual left-arrow icon when User navigates from Homepage View to the other Views: if the User clicks on the left arrow icon than it will navigate back to the Homepage View
+- considering that now the only view is the "Create Label" one, please setup a check on the "dirtyness" of the form of Create Label View: if the form has un-submitted/pending values, than the dirty state is also propagated to the navigation that will know and prevent the User to loose pending changes (message appear for the User asking to continue going back or not)
+
 On the right side of the header there is a "language-switch" button: when the User clicks on it, a dropdown appears with the available languages.
-In the MVP, only english and italian are the supported languages. Please use the best practices (as of 2025) to handle translations and localisation in a React app with typescript, and use the best modules and libraries available. Every text visible to the User will have its proper translations, including the tooltip messages and the labels of the form input fields.
-The language switch has to seamless, without page refresh: when the User clicks on the different language, then suddenly all the strings will be updated in the view with the new values.
-The header also includes a left-arrow button that is synchronised with the application navigation allowing to go back to the previews view: considering that now the only view is the "Create Label" one, considering checking the status of the form before allowing the User to leave the view and go back to the "Homepage" view.
+In the MVP, only english is the supported languages at the moment. Please use the best practices (as of 2025) to handle translations and localisation in a React app with typescript, and use the best modules and libraries available. Every text visible to the User will have its proper translations, including the tooltip messages and the labels of the form input fields.
+The language switch has to be seamless, without page refresh: when the User clicks on the different language, then suddenly all the strings will be updated in the view with the new values.
 The header is also showing the title of the current View where the User is at the moment.
 
 ### 2. Views
@@ -60,9 +66,14 @@ Three fields will be visible at the moment:
 
 - name (`name`): string, mandatory, min length 2, max length 30, debounced field
 - surname (`surname`): string, mandatory, min length 2, max length 30, debounced field
-- due date (`due_date`): mandatory, this field will save data as string "MM/YYYY", but it actually consists of two separated dropdown items, one for the month and one for the year, only future dates can be selected (i.e. if the year selected is the current one, the month listed will be only the future ones)
-  - month: mandatory, dropdown element that shows all the 12 months as integers from 1 to 12.
-  - year: mandatory, dropdown element that shows all the years from the current one to the next five
+- production date (`production_date`): mandatory, this field will save data as string "DD/MM/YYYY", but it actually consists of three separated dropdown items, one for the day, one for the month and one for the year, also current date can be selected, it is prefilled with the current day, check "Dropdown details" below
+- due date (`due_date`): mandatory, this field will save data as string "DD/MM/YYYY", but it actually consists of three separated dropdown items, one for the day, one for the month and one for the year, only future dates can be selected (i.e. if the year selected is the current one, the month listed will be only the future ones), check the "Dropdown details" below
+
+> Dropdown details:
+>
+> - day: mandatory, dropdown element that shows all the days of the month, as integers, default from 1 to 31, it automatically aligns to the relative days of the month when this is selected
+> - month: mandatory, dropdown element that shows all the 12 months as integers from 1 to 12
+> - year: mandatory, dropdown element that shows all the years from the current one to the next five
 
 ##### 2.2.2 lens-spec-section
 
