@@ -96,3 +96,32 @@ At end of the form there will be two buttons:
 
 - "save": form data will be stored in the browser local storage. Not available in the MVP.
 - "print": form data will be sent as body of POST request to the backend server, only validation of the data will be checked at the moment and the API request will be only mocked with mocked return value 200 OK from the server.
+
+### Style and UI
+
+Please handle all the style using pure CSS: unfortunately some style libraries are not supported in the Production environment (Raspberry Pi 2 model B), which is 32 bit.
+
+Please feel free to handle variables for theming if needed and possible.
+
+Main requirement for the style is to use a material ui style, with simple elements/component.
+
+The following two themes will be available: "Freedom Blue" and "Freedom Darker".
+At the moment, only the Developers can set the theme, but the following two will be anyway available. Here below the main color palettes for the two themes: use the colors where specified, create colors based on description where hex code is not defined
+
+Theme "Freedom Blue":
+
+- primary color: #005392
+- secondary color: #0180d1
+- accent color: #148b8d
+- background: white or light grey
+
+Theme "Freedom Darker" (this will be considered the "dark" theme option)
+
+- primary color: #005392
+- secondary color: #000a92
+- accent color: #009288
+- background: black or dark grey
+
+Style the main components in the page accordingly to the available themes: please make use of css variable and css best practices to properly handle the style following the themes. Please always consider that all the code must be runnable in 32-bit system.
+
+Also please handle theme management in React application following best practices in 2025.
