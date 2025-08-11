@@ -18,7 +18,7 @@ An Header will be also always visible on top of the application.
 The navigation through views is handled with the best practices of a SPA: the User navigation will be synchronised with the browser history.
 
 > Important note
-> The frontend application already has settings for linting (eslint), preffifying (prettier), .gitignore, docker (Dockerfile), typescript (tsconfig), vite. These settings (available in the root of the frontend package) are not meant to be changed, unless there is an explicit User Story to handle this.
+> The frontend application already has settings for linting (eslint), prettifying (prettier), .gitignore, docker (Dockerfile), typescript (tsconfig), vite. These settings (available in the root of the frontend package) are not meant to be changed, unless there is an explicit User Story to handle this.
 
 ### 1. Header
 
@@ -100,7 +100,13 @@ At end of the form there will be two buttons:
 - "save": form data will be stored in the browser local storage. Not available in the MVP.
 - "print": form data will be sent as body of POST request to the backend server, only validation of the data will be checked at the moment and the API request will be only mocked with mocked return value 200 OK from the server.
 
-### Style and UI
+### UI
+
+The application should be build as mobile-first. It will be mainly used in the Desktop browser, but UI should be compliant to mobile, tablet and desktop, in a responsive way.
+
+Please consider this important aspect when writing the User Stories and updating the code in the workspace.
+
+### Style
 
 Please handle all the style using pure CSS: unfortunately some style libraries are not supported in the Production environment (Raspberry Pi 2 model B), which is 32 bit.
 
@@ -128,3 +134,9 @@ Theme "Freedom Darker" (this will be considered the "dark" theme option)
 Style the main components in the page accordingly to the available themes: please make use of css variable and css best practices to properly handle the style following the themes. Please always consider that all the code must be runnable in 32-bit system.
 
 Also please handle theme management in React application following best practices in 2025.
+
+#### Icons
+
+All icons has to be stored in the repo and has to be in svg format
+
+### Documentation

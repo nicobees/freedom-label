@@ -31,21 +31,18 @@ Inside the markdown content, there will be also a block code with json object co
 - labels: array of strings, possible values are ["backend", "bug","devops","documentation","duplicate","enhancement","frontend"], more than one value can be selected
 - priority: string, possible values are ["Blocker", "Critical", "P0", "P1", "P2"] (sorted from most important to least important), one only value can be selected
 
-This is the markdown format of a User Story (between ```):
+This is the markdown format of a User Story (between """):
 
-````
+"""
+
 # 1 - Short title description that will be reported also as file name in snake case
 
 ```json
 {
   "priority": "P0",
-  "labels": [
-    "backend",
-    "devops",
-    "enhancement"
-  ]
+  "labels": ["backend", "devops", "enhancement"]
 }
-````
+```
 
 ### User Story title
 
@@ -63,3 +60,5 @@ Normal paragraph with usually 2-3 lines with the actual user-story-like title "A
 2. here specific technical instructions are added
 3. such as reference to specific folders, modules, files, libraries, coding approaches, best practices, ...
 4. ...
+
+"""
