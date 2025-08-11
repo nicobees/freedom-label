@@ -6,9 +6,6 @@
 !.vscode/extensions.json
 .idea/
 
-# Gemini
-.gemini/
-
 # Environments
 .env
 .env.*

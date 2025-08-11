@@ -140,3 +140,16 @@ Also please handle theme management in React application following best practice
 All icons has to be stored in the repo and has to be in svg format
 
 ### Documentation
+
+A comprehensive documentation is present in @docs/frontend with the main goal of having an overall overview and awareness about the application structure and content. Documentation is mainly technical and related to implementation of the code, reasons behind specific choices, points of improvements.
+
+The documentation has these main goals:
+
+- depicts the overall project structure: there will be a section (with specific subfolders) for all the most important sub parts of the application
+  - e.g. `components` section, `utilities` section
+- depicts the main project specs and related to the relative files/folders: typescript config, styling rules, UI and responsiveness, form handling, custom hooks, form validation, unit tests,
+- share common knowledge about the run time flows for the main features the application is exposing to the Users
+  - e.g. label creation consists of form validation, form submission
+- entry point for new developers joining the Team: for this reason documentation must be comprehensive, clear and easy to read as well
+- documentation will be gradually implemented as long as the features and the code will be added: every User Story implementation also completes with the update of the documentation in all the parts where this is needed
+- initially the documetation is empty: but still this can be created on the basis of business requirements instructions (@instructions/4_frontend_mvp_business_requirements.md), user stories instructions (@instructions/5_user_stories_instructions.md), development guidelines (@docs/development_guidelines)
