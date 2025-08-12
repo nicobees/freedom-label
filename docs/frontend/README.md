@@ -59,7 +59,7 @@ Highlights:
 
 Routes:
 
-- `/` – Home view, minimal landing content.
+- `/` – Home view implemented in `src/routes/HomePage/HomePage.tsx`. It shows two primary actions centered on the page: a "Create Label" link and a disabled "Label List" button with tooltip "Not available yet" (stacked vertically on small screens).
 - `/create` – Create Label view (form to be implemented in later stories).
 - `/list` – List Label view (disabled for MVP; route exists and shows a disabled message). The header link is disabled and shows a tooltip "Not available yet".
 - `*` – Not Found page.
@@ -72,6 +72,7 @@ Key files:
 Testing the routing:
 
 - `src/routes/index.test.tsx` asserts that each path renders the correct page using a memory router.
+- `src/routes/HomePage/HomePage.test.tsx` verifies the homepage actions render and navigation to Create works.
 
 ## Layout & UI
 
