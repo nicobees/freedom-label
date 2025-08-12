@@ -6,12 +6,12 @@ import {
   createRootRouteWithContext,
   createRoute,
   createRouter,
-  Link,
   Outlet,
   RouterProvider,
 } from '@tanstack/react-router';
 
 import Header from '../components/Header/Header.tsx';
+import HomePage from './HomePage/HomePage.tsx';
 
 export type RouterContext = {
   getIsHome?: () => boolean;
@@ -23,30 +23,6 @@ function CreateLabelPage() {
     <section>
       <h2 aria-hidden="true">Create Label</h2>
       <p>Form will be implemented in subsequent stories.</p>
-    </section>
-  );
-}
-
-function HomePage() {
-  return (
-    <section className="home-screen">
-      <div aria-label="Main actions" className="home-actions" role="group">
-        <Link
-          aria-label="Create Label"
-          className="btn btn-primary"
-          to="/create"
-        >
-          Create Label
-        </Link>
-        <span
-          aria-disabled="true"
-          className="btn btn-secondary disabled"
-          role="button"
-          title="Not available yet"
-        >
-          Label List (Disabled)
-        </span>
-      </div>
     </section>
   );
 }
