@@ -3,7 +3,7 @@ import type { PropsWithChildren } from 'react';
 import { createMemoryHistory, type RouterHistory } from '@tanstack/history';
 import {
   type AnyRouter,
-  createRootRoute,
+  createRootRouteWithContext,
   createRoute,
   createRouter,
   Link,
@@ -11,45 +11,19 @@ import {
   RouterProvider,
 } from '@tanstack/react-router';
 
+import Header from '../components/Header/Header.tsx';
+
+export type RouterContext = {
+  getIsHome?: () => boolean;
+  getTitle?: () => string;
+};
+
 function CreateLabelPage() {
   return (
     <section>
-      <h1>Create Label</h1>
+      <h2 aria-hidden="true">Create Label</h2>
       <p>Form will be implemented in subsequent stories.</p>
     </section>
-  );
-}
-
-function Header() {
-  return (
-    <header aria-label="Application header" className="app-header">
-      <nav aria-label="Main">
-        <ul className="nav-list">
-          <li>
-            <Link aria-label="Home link" className="nav-link" to="/">
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              aria-label="Create Label link"
-              className="nav-link"
-              to="/create"
-            ></Link>
-          </li>
-          <li>
-            {/* Disabled for MVP */}
-            <span
-              aria-disabled="true"
-              className="nav-link disabled"
-              title="Not available yet"
-            >
-              List Label
-            </span>
-          </li>
-        </ul>
-      </nav>
-    </header>
   );
 }
 
@@ -57,7 +31,6 @@ function HomePage() {
   return (
     <section className="home-screen">
       <div aria-label="Main actions" className="home-actions" role="group">
-        <h1 className="visually-hidden">Home</h1>
         <Link
           aria-label="Create Label"
           className="btn btn-primary"
@@ -92,7 +65,7 @@ function Layout({ children }: PropsWithChildren) {
 function ListLabelPageDisabled() {
   return (
     <section>
-      <h1>List Label</h1>
+      <h2 aria-hidden="true">List Label</h2>
       <p title="Not available yet">Not available yet</p>
     </section>
   );
@@ -101,13 +74,13 @@ function ListLabelPageDisabled() {
 function NotFoundPage() {
   return (
     <section>
-      <h1>Not Found</h1>
+      <h2>Not Found</h2>
       <p>The page you are looking for does not exist.</p>
     </section>
   );
 }
 
-const rootRoute = createRootRoute({
+const rootRoute = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <Layout>
       <Outlet />
@@ -116,22 +89,45 @@ const rootRoute = createRootRoute({
   notFoundComponent: NotFoundPage,
 });
 
+const Paths = {
+  create: '/create',
+  home: '/',
+  list: '/list',
+} as const;
+type Paths = (typeof Paths)[keyof typeof Paths];
+
 const homeRoute = createRoute({
+  beforeLoad: () => {
+    return {
+      getIsHome: () => true,
+      getTitle: () => 'Home',
+    };
+  },
   component: HomePage,
   getParentRoute: () => rootRoute,
-  path: '/',
+  path: Paths.home,
 });
 
 const createLabelRoute = createRoute({
+  beforeLoad: () => {
+    return {
+      getTitle: () => 'Create Label',
+    };
+  },
   component: CreateLabelPage,
   getParentRoute: () => rootRoute,
-  path: '/create',
+  path: Paths.create,
 });
 
 const listLabelRoute = createRoute({
+  beforeLoad: () => {
+    return {
+      getTitle: () => 'List Label',
+    };
+  },
   component: ListLabelPageDisabled,
   getParentRoute: () => rootRoute,
-  path: '/list',
+  path: Paths.list,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -140,9 +136,20 @@ const routeTree = rootRoute.addChildren([
   listLabelRoute,
 ]);
 
-export function createAppRouter(history?: RouterHistory): AnyRouter {
+export function createAppRouter(history?: RouterHistory) {
   return createRouter({ history, routeTree });
 }
+
+export const router = createAppRouter();
+
+// Register the router type globally for TanStack Router
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
+
+export { RouterProvider };
 
 // For tests convenience
 export function createMemoryAppRouter(
@@ -151,5 +158,3 @@ export function createMemoryAppRouter(
   const history = createMemoryHistory({ initialEntries });
   return createAppRouter(history);
 }
-
-export { RouterProvider };
