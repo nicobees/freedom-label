@@ -1,3 +1,7 @@
+---
+applyTo: "/packages/frontend/**"
+---
+
 # Frontend - User Stories instructions
 
 Please let's focus on the frontend application available at @packages/frontend: there are some specific business logic instructions in the

@@ -1,5 +1,5 @@
 ---
-applyTo: "packages/frontend/**"
+applyTo: "/packages/frontend/**"
 ---
 
 # Frontend Agent

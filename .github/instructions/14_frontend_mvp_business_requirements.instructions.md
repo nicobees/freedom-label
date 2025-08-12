@@ -1,3 +1,7 @@
+---
+applyTo: "/packages/frontend/**"
+---
+
 # Freedom Label frontend application
 
 ## Project overall description
