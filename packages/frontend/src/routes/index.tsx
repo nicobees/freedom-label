@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-router';
 
 import Header from '../components/Header/Header.tsx';
+import CreateLabelPage from './CreateLabelPage/CreateLabelPage.tsx';
 import HomePage from './HomePage/HomePage.tsx';
 
 export type RouterContext = {
@@ -18,14 +19,7 @@ export type RouterContext = {
   getTitle?: () => string;
 };
 
-function CreateLabelPage() {
-  return (
-    <section>
-      <h2 aria-hidden="true">Create Label</h2>
-      <p>Form will be implemented in subsequent stories.</p>
-    </section>
-  );
-}
+// CreateLabelPage moved to './CreateLabelPage/CreateLabelPage'
 
 function Layout({ children }: PropsWithChildren) {
   return (

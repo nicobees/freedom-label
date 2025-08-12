@@ -60,7 +60,7 @@ Highlights:
 Routes:
 
 - `/` – Home view implemented in `src/routes/HomePage/HomePage.tsx`. It shows two primary actions centered on the page: a "Create Label" link and a disabled "Label List" button with tooltip "Not available yet" (stacked vertically on small screens).
-- `/create` – Create Label view (form to be implemented in later stories).
+- `/create` – Create Label view implemented in `src/routes/CreateLabelPage/CreateLabelPage.tsx` with a TanStack Form scaffold: two sections (Anagraphic, Lens specs) and actions (Save disabled, Print).
 - `/list` – List Label view (disabled for MVP; route exists and shows a disabled message). The header link is disabled and shows a tooltip "Not available yet".
 - `*` – Not Found page.
 
@@ -73,6 +73,7 @@ Testing the routing:
 
 - `src/routes/index.test.tsx` asserts that each path renders the correct page using a memory router.
 - `src/routes/HomePage/HomePage.test.tsx` verifies the homepage actions render and navigation to Create works.
+- `src/routes/CreateLabelPage/CreateLabelPage.test.tsx` asserts form presence, the two sections, and the actions.
 
 ## Layout & UI
 
