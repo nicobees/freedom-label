@@ -1,3 +1,4 @@
+import AnagraphicSection from '../../components/CreateLabelForm/AnagraphicSection.tsx';
 import { useCreateLabelForm } from '../../hooks/useCreateLabelForm.ts';
 import './create-label.css';
 
@@ -18,66 +19,19 @@ export default function CreateLabelPage() {
         }}
       >
         {/* anagraphic-section */}
-        <fieldset
-          aria-labelledby="anagraphic-heading"
-          className="section"
-          role="group"
-        >
-          <legend id="anagraphic-heading">Anagraphic</legend>
-
-          <form.Field name="anagraphic.name">
-            {() => (
-              <div className="field">
-                <label>
-                  Name
-                  <input defaultValue="" name="anagraphic.name" />
-                </label>
-              </div>
-            )}
-          </form.Field>
-
-          <form.Field name="anagraphic.surname">
-            {() => (
-              <div className="field">
-                <label>
-                  Surname
-                  <input defaultValue="" name="anagraphic.surname" />
-                </label>
-              </div>
-            )}
-          </form.Field>
-
-          {/* Date placeholders; detailed dropdowns will come in date-focused stories */}
-          <form.Field name="anagraphic.production_date">
-            {() => (
-              <div className="field">
-                <label>
-                  Production date
-                  <input
-                    defaultValue=""
-                    name="anagraphic.production_date"
-                    placeholder="DD/MM/YYYY"
-                  />
-                </label>
-              </div>
-            )}
-          </form.Field>
-
-          <form.Field name="anagraphic.due_date">
-            {() => (
-              <div className="field">
-                <label>
-                  Due date
-                  <input
-                    defaultValue=""
-                    name="anagraphic.due_date"
-                    placeholder="DD/MM/YYYY"
-                  />
-                </label>
-              </div>
-            )}
-          </form.Field>
-        </fieldset>
+        <form.Field name="anagraphic">
+          {(field) => (
+            <AnagraphicSection
+              onChange={(next) => field.handleChange(next)}
+              value={{
+                due_date: field.state.value?.due_date ?? '',
+                name: field.state.value?.name ?? '',
+                production_date: field.state.value?.production_date ?? '',
+                surname: field.state.value?.surname ?? '',
+              }}
+            />
+          )}
+        </form.Field>
 
         {/* lens-spec-section */}
         <fieldset

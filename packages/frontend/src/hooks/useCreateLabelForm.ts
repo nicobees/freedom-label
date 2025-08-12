@@ -52,6 +52,8 @@ export function useCreateLabelForm() {
     onSubmit: async ({ value }) => {
       // Validate against Zod schema at submit time (integration for MVP scope)
       await createLabelSchema.parseAsync(value);
+
+      console.info('on submit: ', value);
     },
   });
 

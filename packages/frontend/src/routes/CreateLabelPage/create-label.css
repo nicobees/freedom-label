@@ -29,6 +29,12 @@
   gap: 6px;
 }
 
+.date-dropdown {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
 .field-row {
   display: flex;
   gap: 8px;
