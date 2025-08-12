@@ -1,0 +1,2 @@
+- labels: array of strings, possible values are ["backend", "bug","devops","documentation","duplicate","enhancement","frontend"], more than one value can be selected
+- priority: string, possible values are ["Blocker", "Critical", "P0", "P1", "P2"] (sorted from most important to least important), one only value can be selected

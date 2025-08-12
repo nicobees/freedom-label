@@ -17,6 +17,9 @@ An Header will be also always visible on top of the application.
 
 The navigation through views is handled with the best practices of a SPA: the User navigation will be synchronised with the browser history.
 
+> Important note
+> The frontend application already has settings for linting (eslint), prettifying (prettier), .gitignore, docker (Dockerfile), typescript (tsconfig), vite. These settings (available in the root of the frontend package) are not meant to be changed, unless there is an explicit User Story to handle this.
+
 ### 1. Header
 
 The application will always show a header on top, which shows dynamically the title of the current View.
@@ -96,3 +99,57 @@ At end of the form there will be two buttons:
 
 - "save": form data will be stored in the browser local storage. Not available in the MVP.
 - "print": form data will be sent as body of POST request to the backend server, only validation of the data will be checked at the moment and the API request will be only mocked with mocked return value 200 OK from the server.
+
+### UI
+
+The application should be build as mobile-first. It will be mainly used in the Desktop browser, but UI should be compliant to mobile, tablet and desktop, in a responsive way.
+
+Please consider this important aspect when writing the User Stories and updating the code in the workspace.
+
+### Style
+
+Please handle all the style using pure CSS: unfortunately some style libraries are not supported in the Production environment (Raspberry Pi 2 model B), which is 32 bit.
+
+Please feel free to handle variables for theming if needed and possible.
+
+Main requirement for the style is to use a material ui style, with simple elements/component.
+
+The following two themes will be available: "Freedom Blue" and "Freedom Darker".
+At the moment, only the Developers can set the theme, but the following two will be anyway available. Here below the main color palettes for the two themes: use the colors where specified, create colors based on description where hex code is not defined
+
+Theme "Freedom Blue":
+
+- primary color: #005392
+- secondary color: #0180d1
+- accent color: #148b8d
+- background: white or light grey
+
+Theme "Freedom Darker" (this will be considered the "dark" theme option)
+
+- primary color: #005392
+- secondary color: #000a92
+- accent color: #009288
+- background: black or dark grey
+
+Style the main components in the page accordingly to the available themes: please make use of css variable and css best practices to properly handle the style following the themes. Please always consider that all the code must be runnable in 32-bit system.
+
+Also please handle theme management in React application following best practices in 2025.
+
+#### Icons
+
+All icons has to be stored in the repo and has to be in svg format
+
+### Documentation
+
+A comprehensive documentation is present in @docs/frontend with the main goal of having an overall overview and awareness about the application structure and content. Documentation is mainly technical and related to implementation of the code, reasons behind specific choices, points of improvements.
+
+The documentation has these main goals:
+
+- depicts the overall project structure: there will be a section (with specific subfolders) for all the most important sub parts of the application
+  - e.g. `components` section, `utilities` section
+- depicts the main project specs and related to the relative files/folders: typescript config, styling rules, UI and responsiveness, form handling, custom hooks, form validation, unit tests,
+- share common knowledge about the run time flows for the main features the application is exposing to the Users
+  - e.g. label creation consists of form validation, form submission
+- entry point for new developers joining the Team: for this reason documentation must be comprehensive, clear and easy to read as well
+- documentation will be gradually implemented as long as the features and the code will be added: every User Story implementation also completes with the update of the documentation in all the parts where this is needed
+- initially the documetation is empty: but still this can be created on the basis of business requirements instructions (@instructions/4_frontend_mvp_business_requirements.md), user stories instructions (@instructions/5_user_stories_instructions.md), development guidelines (@docs/development_guidelines)
