@@ -1,26 +1,9 @@
 import { Link, useRouterState } from '@tanstack/react-router';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import './header.css';
 
-// Minimal icon set as inline SVGs for now; later can be moved to assets
-const MenuIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg aria-hidden="true" height="24" viewBox="0 0 24 24" width="24" {...props}>
-    <path
-      d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"
-      fill="currentColor"
-    />
-  </svg>
-);
-
-const BackIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg aria-hidden="true" height="24" viewBox="0 0 24 24" width="24" {...props}>
-    <path
-      d="M19 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H19v-2z"
-      fill="currentColor"
-    />
-  </svg>
-);
+// Pure CSS morphing icon is rendered with spans; see header.css (.morph-icon)
 
 const LanguageIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg aria-hidden="true" height="24" viewBox="0 0 24 24" width="24" {...props}>
@@ -33,7 +16,8 @@ const LanguageIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function Header() {
   const [langOpen, setLangOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const groupRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const matches = useRouterState({ select: (s) => s.matches });
   const titleProvider = [...matches].reverse().find((m) => m.context.getTitle);
@@ -44,48 +28,63 @@ export default function Header() {
     .find((m) => m.context.getIsHome);
   const isHome = !!isHomeProvider?.context?.getIsHome?.();
 
-  // Close dropdown on outside click
-  useEffect(() => {
-    const onDocClick = (e: MouseEvent) => {
-      const target = e.target as Node | null;
-      const inside = dropdownRef.current?.contains(target ?? document.body);
-      if (!inside && langOpen) setLangOpen(false);
-    };
-    document.addEventListener('mousedown', onDocClick);
-    return () => document.removeEventListener('mousedown', onDocClick);
-  }, [langOpen]);
-
   return (
     <header aria-label="Application header" className="fl-header">
       <div className="fl-header__left">
-        {isHome ? (
-          <button
-            aria-label="Menu"
-            className="icon-btn"
-            disabled
-            title="Not available yet"
-            type="button"
-          >
-            <MenuIcon />
-          </button>
-        ) : (
-          <Link aria-label="Back to Home" className="icon-btn back" to="/">
-            <BackIcon />
-          </Link>
-        )}
+        <div className="icon-shell">
+          <input
+            aria-hidden="true"
+            checked={!isHome}
+            className="icon-toggle"
+            readOnly
+            tabIndex={-1}
+            type="checkbox"
+          />
+          <span aria-hidden="true" className="icon-visual">
+            <span className="slice slice--top" />
+            <span className="slice slice--mid" />
+            <span className="slice slice--bot" />
+          </span>
+          {isHome ? (
+            <button
+              aria-label="Menu"
+              className="icon-btn"
+              disabled
+              title="Not available yet"
+              type="button"
+            />
+          ) : (
+            <Link aria-label="Back to Home" className="icon-btn back" to="/" />
+          )}
+        </div>
       </div>
 
       <h1 aria-live="polite" className="fl-header__title">
         {title}
       </h1>
 
-      <div className="fl-header__right" ref={dropdownRef}>
+      <div
+        className="fl-header__right"
+        onBlur={(e) => {
+          const next = (e.relatedTarget as Node | null) ?? null;
+          if (next && groupRef.current?.contains(next)) return;
+          setLangOpen(false);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            setLangOpen(false);
+            buttonRef.current?.focus();
+          }
+        }}
+        ref={groupRef}
+      >
         <button
           aria-expanded={langOpen}
           aria-haspopup="listbox"
           aria-label="Change language"
           className="icon-btn"
           onClick={() => setLangOpen((v) => !v)}
+          ref={buttonRef}
           type="button"
         >
           <LanguageIcon />
@@ -100,6 +99,10 @@ export default function Header() {
               <li
                 aria-selected="true"
                 className="lang-item"
+                onClick={() => setLangOpen(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') setLangOpen(false);
+                }}
                 role="option"
                 tabIndex={0}
               >
