@@ -37,6 +37,6 @@ test('should navigate to /create when clicking Create Label', async () => {
 
   // Assert
   expect(
-    await screen.findByText(/Form will be implemented/i),
+    await screen.findByRole('form', { name: /create label form/i }),
   ).toBeInTheDocument();
 });

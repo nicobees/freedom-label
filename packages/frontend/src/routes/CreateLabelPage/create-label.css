@@ -1,0 +1,69 @@
+/* Create Label layout */
+.create-label {
+  padding: 16px;
+}
+
+.create-form {
+  display: grid;
+  gap: 16px;
+}
+
+.section {
+  border: 1px solid var(--muted, #e5e7eb);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.lens-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.lens-col {
+  display: grid;
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.field.compact select {
+  height: 36px;
+}
+
+.field.grow {
+  flex: 1;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.actions button[aria-disabled='true'],
+.actions button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive: single column by default, two columns for lenses on wider screens */
+@media (min-width: 768px) {
+  .lens-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
