@@ -111,5 +111,5 @@ Address any TypeScript errors before committing.
 
 While not strictly "code style," writing good tests is a core part of code quality.
 
-- Follow the guidelines in [Practical Guide to Writing Tests](./writing-tests-guide.md).
+- Follow the guidelines in [Practical Guide to Writing Tests](./08_dg-writing-tests-guide.instructions.md).
 - Ensure new code is adequately covered by tests.
