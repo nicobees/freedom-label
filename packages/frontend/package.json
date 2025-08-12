@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest --run",
-    "type-check": "tsc --noEmit ."
+    "type-check": "tsc -b"
   },
   "dependencies": {
     "@tanstack/react-form": "^1.14.2",

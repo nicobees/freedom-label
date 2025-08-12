@@ -50,6 +50,13 @@ Entry points:
 
 The application uses TanStack Router v1 with a root layout and child routes. The router is created in `src/routes/index.tsx`.
 
+Highlights:
+
+- Route tree is built from a `rootRoute` created via `createRootRouteWithContext`.
+- A small `Paths` const centralizes path strings for Home, Create, and List.
+- We export `createAppRouter(history?)`, `router`, and `createMemoryAppRouter([...])` for tests.
+- Router type is registered via module augmentation inside `src/routes/index.tsx` (no separate `.d.ts`).
+
 Routes:
 
 - `/` – Home view, minimal landing content.
@@ -68,16 +75,12 @@ Testing the routing:
 
 ## Layout & UI
 
-- A sticky header (`<header.app-header>`) is always visible and contains navigation links.
+- A sticky Header component (`src/components/Header/Header.tsx`) is always visible.
+- It shows a dynamic title based on the current route (Home, Create Label, List Label, Not Found).
+- Left control: on Home it shows a disabled hamburger button with tooltip "Not available yet"; on other views it shows a back arrow link to Home with a small rotation hover/focus animation.
+- Right control: a language icon button toggles an accessible dropdown with a single option (English) for now. It does not refresh the page; i18n integration will come in a later story.
 - Main content is wrapped in `<main.app-main>`; layout is responsive and mobile-first.
-- Accessibility: semantic landmarks (header, nav[aria-label], main[role="main"]).
-
-Future header features per requirements:
-
-- Dynamic title based on current view.
-- Hamburger menu (disabled for MVP with tooltip).
-- Back navigation behavior when leaving non-home views.
-- Language switcher (i18n) without page reload.
+- Accessibility: semantic landmarks and live region on the header title via `aria-live="polite"`. Secondary section headings are `aria-hidden` to avoid duplicate accessible headings.
 
 ## Styling & themes
 
@@ -98,6 +101,7 @@ Future header features per requirements:
   - `vitest.setup.ts` – imports jest-dom matchers.
 - Example tests:
   - `src/routes/index.test.tsx` checks that each route renders the expected page/component.
+  - `src/components/Header/Header.test.tsx` checks dynamic title, disabled menu on Home, and back navigation from Create to Home.
 
 ### a11y testing helpers (for debugging)
 
