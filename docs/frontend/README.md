@@ -99,6 +99,23 @@ Future header features per requirements:
 - Example tests:
   - `src/routes/index.test.tsx` checks that each route renders the expected page/component.
 
+### a11y testing helpers (for debugging)
+
+When diagnosing selector issues in tests, you can temporarily use the accessibility helpers in `src/test-utils/a11y.ts`:
+
+- `debugRoles(container)` logs all available ARIA roles in the rendered output.
+- `assertHasRole(container, role)` ensures at least one element with a given role exists.
+- `assertRoleCount(container, role, count)` asserts the exact count for a role.
+
+Usage example (keep commented or remove before committing):
+
+```tsx
+// import { debugRoles, assertHasRole } from '@/test-utils/a11y';
+// const { container } = render(<MyComponent />);
+// debugRoles(container); // prints roles to the console
+// assertHasRole(container, 'button');
+```
+
 ## Next steps
 
 - Implement header behaviors (dynamic title, back arrow logic, language switch per MVP scope).

@@ -1,8 +1,8 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { test, expect } from 'vitest';
 import { RouterProvider } from '@tanstack/react-router';
-import { createMemoryAppRouter } from './index';
+import { render, screen } from '@testing-library/react';
+import { expect, test } from 'vitest';
+
+import { createMemoryAppRouter } from './index.tsx';
 
 // Setup helper to avoid repetition in Arrange phase
 const setup = (initialPath: string) => {

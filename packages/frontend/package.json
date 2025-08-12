@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "type-check": "tsc --noEmit ."
   },
   "dependencies": {
     "@tanstack/react-form": "^1.14.2",

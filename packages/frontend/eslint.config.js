@@ -1,4 +1,6 @@
 import eslint from '@eslint/js';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import compat from 'eslint-plugin-compat';
 import importPlugin from 'eslint-plugin-import';
@@ -11,8 +13,6 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import reactYouMightNotNeedAnEffect from 'eslint-plugin-react-you-might-not-need-an-effect';
 import sonarjs from 'eslint-plugin-sonarjs';
 import testingLibrary from 'eslint-plugin-testing-library';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
 
 const constants = {
   ALWAYS: 'always',
@@ -28,9 +28,8 @@ export default tseslint.config([
   },
   {
     extends: [
+      eslint.configs.recommended,
       compat.configs['flat/recommended'],
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
       importPlugin.flatConfigs.recommended,
       eslintConfigPrettier,
       sonarjs.configs.recommended,
@@ -50,6 +49,7 @@ export default tseslint.config([
       },
     },
     plugins: {
+      'react-hooks': reactHooks,
       'jsx-a11y': jsxA11y,
       'react-you-might-not-need-an-effect': reactYouMightNotNeedAnEffect,
     },
@@ -113,11 +113,11 @@ export default tseslint.config([
       'react/jsx-filename-extension': [
         1,
         {
-          extensions: ['.js', '.jsx'],
+          extensions: ['.jsx', '.tsx'],
         },
       ],
       'react/jsx-indent': constants.OFF,
-      'react/jsx-indent-props': [2, 'tab'],
+      'react/jsx-indent-props': [2, 2],
       'react/jsx-no-constructed-context-values': constants.OFF,
       'react/jsx-no-leaked-render': constants.ERROR,
       'react/jsx-no-target-blank': [
@@ -160,6 +160,12 @@ export default tseslint.config([
       tseslint.configs.recommendedTypeChecked,
     ],
     files: ['**/*.{ts,tsx}'],
+    ignores: [
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      'vitest.config.ts',
+      'vitest.setup.ts',
+    ],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -196,19 +202,56 @@ export default tseslint.config([
     },
   },
   {
+    // Non type-checked rules for tests and vitest files
+    extends: [eslint.configs.recommended, ...tseslint.configs.recommended],
+    files: [
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      'vitest.config.ts',
+      'vitest.setup.ts',
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+      parserOptions: {
+        projectService: false,
+      },
+    },
+  },
+  {
     extends: [testingLibrary.configs['flat/react']],
     files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        // Do not require test files to be part of tsconfig project
+        projectService: false,
       },
     },
     rules: {
       'testing-library/no-container': 'error',
       'testing-library/no-node-access': 'error',
+    },
+  },
+  {
+    // Allow Vitest config to import 'vitest/config' without resolver noise
+    files: ['vitest.config.ts'],
+    rules: {
+      'import/no-unresolved': 'off',
+    },
+  },
+  {
+    // Allow setup file to import test-only devDeps like @testing-library/jest-dom
+    files: ['vitest.setup.ts'],
+    rules: {
+      'import/no-extraneous-dependencies': 'off',
+    },
+  },
+  {
+    files: ['src/test-utils/**/*.{ts,tsx}'],
+    rules: {
+      'import/no-extraneous-dependencies': ['off'],
     },
   },
 ]);

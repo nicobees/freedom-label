@@ -1,11 +1,15 @@
-import { defineConfig, configDefaults } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  esbuild: {
+    jsx: 'automatic',
+    jsxImportSource: 'react',
+  },
   test: {
+    css: true,
     environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts'],
     exclude: [...configDefaults.exclude],
     globals: true,
-    css: true,
+    setupFiles: ['./vitest.setup.ts'],
   },
 });

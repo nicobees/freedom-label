@@ -8,15 +8,6 @@
 import { getRoles, logRoles } from '@testing-library/dom';
 import { expect } from 'vitest';
 
-/**
- * Logs available roles to the console and returns the roles map.
- * Prefer using this only while debugging.
- */
-export function debugRoles(container: HTMLElement) {
-  logRoles(container);
-  return getRoles(container);
-}
-
 /** Assert that at least one element with the given role exists. */
 export function assertHasRole(container: HTMLElement, role: string) {
   const roles = getRoles(container);
@@ -36,4 +27,13 @@ export function assertRoleCount(
     actual,
     `Expected ${count} element(s) with role="${role}", got ${actual}`,
   ).toBe(count);
+}
+
+/**
+ * Logs available roles to the console and returns the roles map.
+ * Prefer using this only while debugging.
+ */
+export function debugRoles(container: HTMLElement) {
+  logRoles(container);
+  return getRoles(container);
 }

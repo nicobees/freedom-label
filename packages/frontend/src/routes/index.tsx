@@ -1,39 +1,47 @@
+import type { PropsWithChildren } from 'react';
+
+import { createMemoryHistory, type RouterHistory } from '@tanstack/history';
 import {
-  Router,
-  RouterProvider,
+  type AnyRouter,
+  createRootRoute,
+  createRoute,
+  createRouter,
   Link,
   Outlet,
-  RootRoute,
-  Route,
-  type AnyRouter,
+  RouterProvider,
 } from '@tanstack/react-router';
-import { createMemoryHistory } from '@tanstack/history';
-import type { PropsWithChildren } from 'react';
+
+function CreateLabelPage() {
+  return (
+    <section>
+      <h1>Create Label</h1>
+      <p>Form will be implemented in subsequent stories.</p>
+    </section>
+  );
+}
 
 function Header() {
   return (
-    <header className="app-header" aria-label="Application header">
+    <header aria-label="Application header" className="app-header">
       <nav aria-label="Main">
         <ul className="nav-list">
           <li>
-            <Link to="/" className="nav-link" aria-label="Home link">
+            <Link aria-label="Home link" className="nav-link" to="/">
               Home
             </Link>
           </li>
           <li>
             <Link
-              to="/create"
-              className="nav-link"
               aria-label="Create Label link"
-            >
-              Create Label
-            </Link>
+              className="nav-link"
+              to="/create"
+            ></Link>
           </li>
           <li>
             {/* Disabled for MVP */}
             <span
-              className="nav-link disabled"
               aria-disabled="true"
+              className="nav-link disabled"
               title="Not available yet"
             >
               List Label
@@ -45,33 +53,22 @@ function Header() {
   );
 }
 
-function Layout({ children }: PropsWithChildren) {
-  return (
-    <div className="app-container">
-      <Header />
-      <main className="app-main" role="main">
-        {children}
-      </main>
-    </div>
-  );
-}
-
 function HomePage() {
   return (
     <section className="home-screen">
-      <div className="home-actions" role="group" aria-label="Main actions">
+      <div aria-label="Main actions" className="home-actions" role="group">
         <h1 className="visually-hidden">Home</h1>
         <Link
-          to="/create"
-          className="btn btn-primary"
           aria-label="Create Label"
+          className="btn btn-primary"
+          to="/create"
         >
           Create Label
         </Link>
         <span
+          aria-disabled="true"
           className="btn btn-secondary disabled"
           role="button"
-          aria-disabled="true"
           title="Not available yet"
         >
           Label List (Disabled)
@@ -81,12 +78,14 @@ function HomePage() {
   );
 }
 
-function CreateLabelPage() {
+function Layout({ children }: PropsWithChildren) {
   return (
-    <section>
-      <h1>Create Label</h1>
-      <p>Form will be implemented in subsequent stories.</p>
-    </section>
+    <div className="app-container">
+      <Header />
+      <main className="app-main" role="main">
+        {children}
+      </main>
+    </div>
   );
 }
 
@@ -108,7 +107,7 @@ function NotFoundPage() {
   );
 }
 
-const rootRoute = new RootRoute({
+const rootRoute = createRootRoute({
   component: () => (
     <Layout>
       <Outlet />
@@ -117,22 +116,22 @@ const rootRoute = new RootRoute({
   notFoundComponent: NotFoundPage,
 });
 
-const homeRoute = new Route({
+const homeRoute = createRoute({
+  component: HomePage,
   getParentRoute: () => rootRoute,
   path: '/',
-  component: HomePage,
 });
 
-const createLabelRoute = new Route({
+const createLabelRoute = createRoute({
+  component: CreateLabelPage,
   getParentRoute: () => rootRoute,
   path: '/create',
-  component: CreateLabelPage,
 });
 
-const listLabelRoute = new Route({
+const listLabelRoute = createRoute({
+  component: ListLabelPageDisabled,
   getParentRoute: () => rootRoute,
   path: '/list',
-  component: ListLabelPageDisabled,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -141,9 +140,8 @@ const routeTree = rootRoute.addChildren([
   listLabelRoute,
 ]);
 
-export function createAppRouter(history?: unknown): AnyRouter {
-  const R: any = Router;
-  return new R({ routeTree, history });
+export function createAppRouter(history?: RouterHistory): AnyRouter {
+  return createRouter({ history, routeTree });
 }
 
 // For tests convenience
