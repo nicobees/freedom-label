@@ -1,49 +1,27 @@
 import { useForm } from '@tanstack/react-form';
-import { z } from 'zod';
 
-// Minimal schema scaffold; fields will be enforced in dedicated stories
-const anagraphicSchema = z
-  .object({
-    due_date: z.string().optional(),
-    name: z.string().optional(),
-    production_date: z.string().optional(),
-    surname: z.string().optional(),
-  })
-  .optional();
+import { type LabelData, LabelDataSchema } from '../validation/schema';
 
-const lensSpecSchema = z
-  .object({
-    bc: z.string().optional(),
-    enabled: z.boolean().optional(),
-    pwr: z.string().optional(),
-    pwrSign: z.enum(['+', '-']).optional(),
-    sag: z.string().optional(),
-  })
-  .optional();
-
-export const createLabelSchema = z.object({
-  anagraphic: anagraphicSchema,
-  lenses: z
-    .object({
-      left: lensSpecSchema,
-      right: lensSpecSchema,
-    })
-    .optional(),
-});
-
-export type CreateLabelFormValues = z.infer<typeof createLabelSchema>;
-
-const defaultValues: CreateLabelFormValues = {
-  anagraphic: {
-    due_date: '',
+const defaultValues: LabelData = {
+  description: '',
+  due_date: '',
+  lens_specs: {
+    left: {
+      add: '',
+      ax: '',
+      bc: '',
+      cyl: '',
+      dia: '',
+      pwr: '',
+      sag: '',
+    },
+    right: { add: '', ax: '', bc: '', cyl: '', dia: '', pwr: '', sag: '' },
+  },
+  patient_info: {
     name: '',
-    production_date: '',
     surname: '',
   },
-  lenses: {
-    left: { bc: '', enabled: true, pwr: '', pwrSign: '+', sag: '' },
-    right: { bc: '', enabled: false, pwr: '', pwrSign: '+', sag: '' },
-  },
+  production_date: '',
 };
 
 export function useCreateLabelForm() {
@@ -51,9 +29,13 @@ export function useCreateLabelForm() {
     defaultValues,
     onSubmit: async ({ value }) => {
       // Validate against Zod schema at submit time (integration for MVP scope)
-      await createLabelSchema.parseAsync(value);
+      await LabelDataSchema.parseAsync(value);
 
       console.info('on submit: ', value);
+    },
+    // Debounce applies to field-level validators we attach in components
+    validators: {
+      onChangeAsyncDebounceMs: 200,
     },
   });
 

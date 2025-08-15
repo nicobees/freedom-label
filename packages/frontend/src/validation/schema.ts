@@ -1,14 +1,5 @@
 import { z } from 'zod';
 
-// Zod schema for PatientInfo
-const PatientInfoSchema = z.object({
-  name: z.string().min(2).max(30),
-  surname: z.string().min(2).max(30),
-});
-
-export type PatientInfo = z.infer<typeof PatientInfoSchema>;
-
-// Zod schema for LeftRightSpecs
 const LensSpecsSchema = z.object({
   add: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid ADD format'),
   ax: z.string().regex(/^\d{3}$/, 'Invalid AX format'),
@@ -21,7 +12,6 @@ const LensSpecsSchema = z.object({
 
 export type LeftRightSpecs = z.infer<typeof LensSpecsSchema>;
 
-// Zod schema for LensesSpecs
 const LensesSpecsSchema = z.object({
   left: LensSpecsSchema.optional(),
   right: LensSpecsSchema.optional(),
@@ -29,15 +19,45 @@ const LensesSpecsSchema = z.object({
 
 export type LensesSpecs = z.infer<typeof LensesSpecsSchema>;
 
-// Zod schema for the main LabelData
+const PatientInfoSchema = z.object({
+  name: z.string().min(2).max(30),
+  surname: z.string().min(2).max(30),
+});
+
+export type PatientInfo = z.infer<typeof PatientInfoSchema>;
+
+const dateStringRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+const dateStringValidationErrorMessage = 'Invalid date format (DD/MM/YYYY)';
+
 export const LabelDataSchema = z.object({
-  batch: z
-    .string()
-    .regex(/^\d{2}-\d{4}$/, 'Invalid batch format (e.g., 25-0001)'),
-  description: z.string().min(0).max(24),
-  due_date: z.string().regex(/^\d{2}\/\d{4}$/, 'Invalid date format (MM/YYYY)'),
+  description: z.string().min(2).max(24),
+  due_date: z.string().regex(dateStringRegex, dateStringValidationErrorMessage),
   lens_specs: LensesSpecsSchema,
   patient_info: PatientInfoSchema,
+  production_date: z
+    .string()
+    .regex(dateStringRegex, dateStringValidationErrorMessage),
 });
 
 export type LabelData = z.infer<typeof LabelDataSchema>;
+
+/**
+ * "patient_info": {
+        "name": "gabriele",
+        "surname": "cara"
+    },
+    "description": "Lente sclerale F2mid",
+    "batch": "25-0001",
+    "due_date": "04/2026",
+    "lens_specs": {
+        "left": {
+            "bc": "1.24",
+            "dia": "1.24",
+            "pwr": "+1.24",
+            "cyl": "+1.24",
+            "ax": "123",
+            "add": "+1.24",
+            "sag": "10.04"
+        }
+    }
+ */

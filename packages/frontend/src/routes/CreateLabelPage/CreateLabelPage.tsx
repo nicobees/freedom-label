@@ -1,4 +1,4 @@
-import AnagraphicSection from '../../components/CreateLabelForm/AnagraphicSection';
+import PatientInfoSection from '../../components/CreateLabelForm/AnagraphicSection';
 import { useCreateLabelForm } from '../../hooks/useCreateLabelForm';
 import './create-label.css';
 
@@ -19,7 +19,9 @@ export default function CreateLabelPage() {
         }}
       >
         {/* anagraphic-section */}
-        <form.Field name="anagraphic">
+        <PatientInfoSection />
+
+        {/* <form.Field name="patient_info">
           {(field) => (
             <AnagraphicSection
               onChange={(next) => field.handleChange(next)}
@@ -31,166 +33,12 @@ export default function CreateLabelPage() {
               }}
             />
           )}
-        </form.Field>
+        </form.Field> */}
 
         {/* lens-spec-section */}
-        <fieldset
-          aria-labelledby="lens-spec-heading"
-          className="section"
-          role="group"
-        >
-          <legend id="lens-spec-heading">Lens specs</legend>
-          <div className="lens-grid">
-            {/* Left lens */}
-            <div className="lens-col">
-              <div className="field-row">
-                <form.Field name="lenses.left.enabled">
-                  {() => (
-                    <label className="checkbox">
-                      <input defaultChecked type="checkbox" />
-                      <span>Left lens enabled</span>
-                    </label>
-                  )}
-                </form.Field>
-              </div>
-
-              <form.Field name="lenses.left.bc">
-                {() => (
-                  <div className="field">
-                    <label>
-                      BC
-                      <input
-                        defaultValue=""
-                        name="lenses.left.bc"
-                        placeholder="00.00"
-                      />
-                    </label>
-                  </div>
-                )}
-              </form.Field>
-
-              <div className="field-row">
-                <form.Field name="lenses.left.pwrSign">
-                  {() => (
-                    <div className="field compact">
-                      <label>Power</label>
-                      <select
-                        aria-label="Left power sign"
-                        defaultValue="+"
-                        name="lenses.left.pwrSign"
-                      >
-                        <option value="+">+</option>
-                        <option value="-">-</option>
-                      </select>
-                    </div>
-                  )}
-                </form.Field>
-
-                <form.Field name="lenses.left.pwr">
-                  {() => (
-                    <div className="field grow">
-                      <input
-                        aria-label="Left power value"
-                        defaultValue=""
-                        name="lenses.left.pwr"
-                        placeholder="00.00"
-                      />
-                    </div>
-                  )}
-                </form.Field>
-              </div>
-
-              <form.Field name="lenses.left.sag">
-                {() => (
-                  <div className="field">
-                    <label>
-                      Sag
-                      <input
-                        defaultValue=""
-                        name="lenses.left.sag"
-                        placeholder="00.00"
-                      />
-                    </label>
-                  </div>
-                )}
-              </form.Field>
-            </div>
-
-            {/* Right lens */}
-            <div className="lens-col">
-              <div className="field-row">
-                <form.Field name="lenses.right.enabled">
-                  {() => (
-                    <label className="checkbox">
-                      <input type="checkbox" />
-                      <span>Right lens enabled</span>
-                    </label>
-                  )}
-                </form.Field>
-              </div>
-
-              <form.Field name="lenses.right.bc">
-                {() => (
-                  <div className="field">
-                    <label>
-                      BC
-                      <input
-                        defaultValue=""
-                        name="lenses.right.bc"
-                        placeholder="00.00"
-                      />
-                    </label>
-                  </div>
-                )}
-              </form.Field>
-
-              <div className="field-row">
-                <form.Field name="lenses.right.pwrSign">
-                  {() => (
-                    <div className="field compact">
-                      <label>Power</label>
-                      <select
-                        aria-label="Right power sign"
-                        defaultValue="+"
-                        name="lenses.right.pwrSign"
-                      >
-                        <option value="+">+</option>
-                        <option value="-">-</option>
-                      </select>
-                    </div>
-                  )}
-                </form.Field>
-
-                <form.Field name="lenses.right.pwr">
-                  {() => (
-                    <div className="field grow">
-                      <input
-                        aria-label="Right power value"
-                        defaultValue=""
-                        name="lenses.right.pwr"
-                        placeholder="00.00"
-                      />
-                    </div>
-                  )}
-                </form.Field>
-              </div>
-
-              <form.Field name="lenses.right.sag">
-                {() => (
-                  <div className="field">
-                    <label>
-                      Sag
-                      <input
-                        defaultValue=""
-                        name="lenses.right.sag"
-                        placeholder="00.00"
-                      />
-                    </label>
-                  </div>
-                )}
-              </form.Field>
-            </div>
-          </div>
+        <fieldset className="section" role="group">
+          <legend>Lens specs</legend>
+          {/* TODO: Implement lens specifications fields per User Story #6 */}
         </fieldset>
 
         {/* Actions */}
