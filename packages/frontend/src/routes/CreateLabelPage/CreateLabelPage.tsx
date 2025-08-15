@@ -1,5 +1,5 @@
-import AnagraphicSection from '../../components/CreateLabelForm/AnagraphicSection.tsx';
-import { useCreateLabelForm } from '../../hooks/useCreateLabelForm.ts';
+import AnagraphicSection from '../../components/CreateLabelForm/AnagraphicSection';
+import { useCreateLabelForm } from '../../hooks/useCreateLabelForm';
 import './create-label.css';
 
 export default function CreateLabelPage() {

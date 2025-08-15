@@ -2,7 +2,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { render, screen } from '@testing-library/react';
 import { expect, test } from 'vitest';
 
-import { createMemoryAppRouter } from '../index.tsx';
+import { createMemoryAppRouter } from '../index';
 
 const setup = (initialEntries: string[] = ['/create']) => {
   const router = createMemoryAppRouter(initialEntries);

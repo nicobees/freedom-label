@@ -6,7 +6,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test, vi } from 'vitest';
 
-import DateDropdown from './DateDropdown.tsx';
+import DateDropdown from './DateDropdown';
 
 function setup(initialValue: { day: number; month: number; year: number }) {
   const onChange = vi.fn();

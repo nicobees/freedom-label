@@ -10,9 +10,9 @@ import {
   RouterProvider,
 } from '@tanstack/react-router';
 
-import Header from '../components/Header/Header.tsx';
-import CreateLabelPage from './CreateLabelPage/CreateLabelPage.tsx';
-import HomePage from './HomePage/HomePage.tsx';
+import Header from '../components/Header/Header';
+import CreateLabelPage from './CreateLabelPage/CreateLabelPage';
+import HomePage from './HomePage/HomePage';
 
 export type RouterContext = {
   getIsHome?: () => boolean;

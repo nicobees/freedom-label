@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test } from 'vitest';
 
-import { createMemoryAppRouter } from '../index.tsx';
+import { createMemoryAppRouter } from '../index';
 
 // Shared Arrange helper following the testing guide
 const setup = (initialEntries: string[] = ['/']) => {
