@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 export type DateDropdownProps = {
   endYear: number;
   futureOnly?: boolean;
-  idPrefix: string;
   label: string;
   onChange: (next: DateTriple) => void;
   startYear: number;
@@ -15,7 +14,6 @@ export type DateTriple = { day: number; month: number; year: number };
 export function DateDropdown({
   endYear,
   futureOnly,
-  idPrefix,
   label,
   onChange,
   startYear,
@@ -56,12 +54,8 @@ export function DateDropdown({
 
   return (
     <div aria-label={label} className="date-dropdown" role="group">
-      <label className="visually-hidden" htmlFor={`${idPrefix}-day`}>
-        {label} day
-      </label>
       <select
         aria-label={`${label} day`}
-        id={`${idPrefix}-day`}
         onChange={(e) => {
           const next = Number(e.target.value);
           setDay(next);
@@ -75,13 +69,8 @@ export function DateDropdown({
           </option>
         ))}
       </select>
-
-      <label className="visually-hidden" htmlFor={`${idPrefix}-month`}>
-        {label} month
-      </label>
       <select
         aria-label={`${label} month`}
-        id={`${idPrefix}-month`}
         onChange={(e) => {
           const next = Number(e.target.value);
           setMonth(next);
@@ -99,13 +88,8 @@ export function DateDropdown({
           </option>
         ))}
       </select>
-
-      <label className="visually-hidden" htmlFor={`${idPrefix}-year`}>
-        {label} year
-      </label>
       <select
         aria-label={`${label} year`}
-        id={`${idPrefix}-year`}
         onChange={(e) => {
           const next = Number(e.target.value);
           setYear(next);

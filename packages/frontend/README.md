@@ -47,4 +47,5 @@ docker push ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_FRONT
 
 - Anagraphic section: `src/components/CreateLabelForm/AnagraphicSection.tsx`
 - Date dropdowns: `src/components/CreateLabelForm/DateDropdown.tsx` (dynamic days, optional future-only)
+  - Each select is labeled via `aria-label` (e.g., "Production date day", "month", "year"), so consumers should not rely on element ids.
 - Tests: `src/components/CreateLabelForm/AnagraphicSection.test.tsx` verify 200ms debounced validation and date constraints.

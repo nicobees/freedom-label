@@ -72,29 +72,24 @@ export default function AnagraphicSection({
   const endYear = todayTriple.year + 5;
 
   return (
-    <fieldset
-      aria-labelledby="anagraphic-heading"
-      className="section"
-      role="group"
-    >
-      <legend id="anagraphic-heading">Anagraphic</legend>
-
+    <fieldset className="section" role="group">
+      <legend>Anagraphic</legend>
       <div className="field">
-        <label htmlFor="name">Name</label>
-        <input
-          aria-describedby={nameError ? 'name-error' : undefined}
-          aria-invalid={Boolean(nameError)}
-          defaultValue={value.name}
-          id="name"
-          name="anagraphic.name"
-          onChange={(e) => handleName(e.target.value)}
-          placeholder="John"
-        />
+        <label>
+          Name
+          <input
+            aria-invalid={Boolean(nameError)}
+            defaultValue={value.name}
+            name="anagraphic.name"
+            onChange={(e) => handleName(e.target.value)}
+            placeholder="John"
+          />
+        </label>
         {nameError ? (
           <div
+            aria-label="Name error"
             aria-live="polite"
             className="error"
-            id="name-error"
             role="status"
           >
             {nameError}
@@ -103,21 +98,21 @@ export default function AnagraphicSection({
       </div>
 
       <div className="field">
-        <label htmlFor="surname">Surname</label>
-        <input
-          aria-describedby={surnameError ? 'surname-error' : undefined}
-          aria-invalid={Boolean(surnameError)}
-          defaultValue={value.surname}
-          id="surname"
-          name="anagraphic.surname"
-          onChange={(e) => handleSurname(e.target.value)}
-          placeholder="Doe"
-        />
+        <label>
+          Surname
+          <input
+            aria-invalid={Boolean(surnameError)}
+            defaultValue={value.surname}
+            name="anagraphic.surname"
+            onChange={(e) => handleSurname(e.target.value)}
+            placeholder="Doe"
+          />
+        </label>
         {surnameError ? (
           <div
+            aria-label="Surname error"
             aria-live="polite"
             className="error"
-            id="surname-error"
             role="status"
           >
             {surnameError}
@@ -130,7 +125,6 @@ export default function AnagraphicSection({
         <DateDropdown
           endYear={endYear}
           futureOnly={false}
-          idPrefix="prod"
           label="Production date"
           onChange={(tr) => emit({ production_date: toDDMMYYYY(tr) })}
           startYear={startYear}
@@ -152,7 +146,6 @@ export default function AnagraphicSection({
         <DateDropdown
           endYear={endYear}
           futureOnly
-          idPrefix="due"
           label="Due date"
           onChange={(tr) => emit({ due_date: toDDMMYYYY(tr) })}
           startYear={startYear}
