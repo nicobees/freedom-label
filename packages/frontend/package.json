@@ -14,10 +14,10 @@
     "type-check": "tsc -b"
   },
   "dependencies": {
-    "@tanstack/react-form": "^1.14.2",
-    "@tanstack/zod-form-adapter": "^0.42.1",
     "@tanstack/history": "^1.81.8",
+    "@tanstack/react-form": "^1.14.2",
     "@tanstack/react-router": "^1.81.8",
+    "@tanstack/zod-form-adapter": "^0.42.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "zod": "^3.25.76"
@@ -33,6 +33,7 @@
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-compat": "^6.0.2",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -51,6 +52,6 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.0",
     "vite": "^7.0.4",
-    "vitest": "^2.1.5"
+    "vitest": "^3.2.4"
   }
 }

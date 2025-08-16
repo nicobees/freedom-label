@@ -39,6 +39,14 @@ export default tseslint.config([
       reactCompiler.configs.recommended,
       reactYouMightNotNeedAnEffect.configs.recommended,
     ],
+    settings: {
+      // Use node resolver; TypeScript takes care of module resolution via tsc/vite.
+      'import/resolver': {
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
+      },
+    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -69,6 +77,8 @@ export default tseslint.config([
           ],
         },
       ],
+      // Do not enforce file extensions in import paths; let bundler/TS resolve
+      'import/extensions': constants.OFF,
       'import/order': constants.OFF,
       'import/prefer-default-export': constants.OFF,
       'jsx-a11y/alt-text': constants.OFF,
@@ -175,6 +185,12 @@ export default tseslint.config([
       },
     },
     rules: {
+      // Let TypeScript handle unresolved imports; avoids false-positives with extension-less TS imports
+      'import/no-unresolved': constants.OFF,
+      'import/named': constants.OFF,
+      'import/namespace': constants.OFF,
+      'import/default': constants.OFF,
+      'import/extensions': constants.OFF,
       '@typescript-eslint/await-thenable': constants.ERROR,
       '@typescript-eslint/consistent-type-imports': constants.ERROR,
       '@typescript-eslint/naming-convention': [

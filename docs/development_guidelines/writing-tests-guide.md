@@ -15,7 +15,12 @@ Our testing approach for UI components emphasizes:
 - **Jest:** Test runner, assertion library, mocking framework.
 - **React Testing Library (RTL):** Utilities for testing React components in a user-focused way.
 - **`@testing-library/user-event`:** Companion to RTL for simulating user interactions more realistically than `fireEvent`.
-- **`@testing-library/jest-dom`:** Custom Jest matchers for asserting DOM states (e.g., `toBeInTheDocument()`, `toHaveAttribute()`).
+- **`@testing-library/jest-dom`:** Custom matchers for asserting DOM states (e.g., `toBeInTheDocument()`, `toHaveAttribute()`).
+  - Note for Vitest users: import the Vitest adapter in the global test setup file and include its types in tsconfig.
+    - Runtime setup (e.g., `vitest.setup.ts`):
+      - `import '@testing-library/jest-dom/vitest'`
+    - TypeScript config (`tsconfig.json` / `tsconfig.app.json` / `tsconfig.node.json` types):
+      - `"types": ["vitest/globals", "@testing-library/jest-dom/vitest"]`
 
 ## Best Practices for Writing Tests
 
@@ -28,15 +33,15 @@ Structure your tests clearly:
 - **Assert:** Verify that the outcome is as expected.
 
 ```typescript
-test('should display welcome message after login', async () => {
+test("should display welcome message after login", async () => {
   // Arrange
   const mockLogin = jest.fn();
   render(<LoginComponent onLogin={mockLogin} />);
-  await userEvent.type(screen.getByLabelText('Username'), 'testuser');
-  await userEvent.type(screen.getByLabelText('Password'), 'password');
+  await userEvent.type(screen.getByLabelText("Username"), "testuser");
+  await userEvent.type(screen.getByLabelText("Password"), "password");
 
   // Act
-  await userEvent.click(screen.getByRole('button', { name: /log in/i }));
+  await userEvent.click(screen.getByRole("button", { name: /log in/i }));
   mockLogin(); // Simulate successful login callback if needed for UI update
 
   // Assert
@@ -72,22 +77,22 @@ Prioritize queries that reflect how users find elements:
 
 - `screen.debug()`: Prints the current DOM structure to the console.
 - `getRoles(container)` and `logRoles(container)` (from `@testing-library/dom`): List all ARIA roles available in the rendered output, which helps in choosing `getByRole` queries.
-    ```typescript
-    import { getRoles } from '@testing-library/dom';
-    // Inside a test:
-    const { container } = render(<MyComponent />);
-    console.log(getRoles(container));
-    ```
+  ```typescript
+  import { getRoles } from "@testing-library/dom";
+  // Inside a test:
+  const { container } = render(<MyComponent />);
+  console.log(getRoles(container));
+  ```
 
 ### 4. Simulating User Interactions
 
 - **Prefer `@testing-library/user-event` over `fireEvent`**. `user-event` simulates full user interactions (e.g., `type` includes focus, keydown, keypress, keyup events), while `fireEvent` only dispatches a single event.
 
 ```typescript
-import userEvent from '@testing-library/user-event';
+import userEvent from "@testing-library/user-event";
 
 // Good: Simulates a user typing
-await userEvent.type(screen.getByRole('textbox'), 'Hello world!');
+await userEvent.type(screen.getByRole("textbox"), "Hello world!");
 
 // Less ideal for typing, but okay for simple events:
 // fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Hello world!' } });
@@ -96,11 +101,11 @@ await userEvent.type(screen.getByRole('textbox'), 'Hello world!');
 ### 5. Using Matchers
 
 - Utilize the custom matchers from `@testing-library/jest-dom` for more expressive and readable assertions related to DOM attributes and states.
-    ```typescript
-    expect(screen.getByRole('button')).toBeDisabled();
-    expect(screen.getByText('Error!')).toBeVisible();
-    expect(screen.getByLabelText('Email')).toHaveValue('test@example.com');
-    ```
+  ```typescript
+  expect(screen.getByRole("button")).toBeDisabled();
+  expect(screen.getByText("Error!")).toBeVisible();
+  expect(screen.getByLabelText("Email")).toHaveValue("test@example.com");
+  ```
 
 ### 6. Test Structure and Naming
 
@@ -115,19 +120,21 @@ For repetitive setup logic within a test file, create a global `setup` function 
 
 ```typescript
 const setup = (propsOverride = {}) => {
-  const defaultProps = { /* ... your default props ... */ };
+  const defaultProps = {
+    /* ... your default props ... */
+  };
   const props = { ...defaultProps, ...propsOverride };
   return render(<MyComponent {...props} />);
 };
 
-test('should render with default title', () => {
+test("should render with default title", () => {
   setup(); // Uses default props
-  expect(screen.getByRole('heading')).toHaveTextContent('Default Title');
+  expect(screen.getByRole("heading")).toHaveTextContent("Default Title");
 });
 
-test('should render with provided title', () => {
-  setup({ title: 'Custom Title' });
-  expect(screen.getByRole('heading')).toHaveTextContent('Custom Title');
+test("should render with provided title", () => {
+  setup({ title: "Custom Title" });
+  expect(screen.getByRole("heading")).toHaveTextContent("Custom Title");
 });
 ```
 
@@ -136,7 +143,7 @@ test('should render with provided title', () => {
 ### Debugging Tests
 
 - `screen.debug(element?, maxLength?, options?)`: Prints the DOM. `screen.debug(undefined, Infinity)` prints the entire DOM.
-    - Set `DEBUG_PRINT_LIMIT=Infinity` as an environment variable before running tests for unlimited debug output.
+  - Set `DEBUG_PRINT_LIMIT=Infinity` as an environment variable before running tests for unlimited debug output.
 - `screen.logTestingPlaygroundURL()`: Prints a URL to [testing-playground.com](https://testing-playground.com/) with the current DOM, helping you find the best queries.
 - Temporarily use `screen.getByRole('nonExistentRole')`. The error message will list all available roles and their corresponding DOM nodes, which is very helpful for debugging `getByRole` queries.
 
@@ -170,8 +177,8 @@ The `.vscode/custom-test-react.code-snippets` file in the monorepo allows defini
 Recommended VS Code extensions for an improved testing workflow:
 
 - **Jest Runner (`firsttris.vscode-jest-runner`):**
-    - Adds "Run" and "Debug" CodeLens links directly above `test` and `describe` blocks in your test files.
-    - Provides command palette shortcuts for running tests (e.g., "Jest: Run File").
+  - Adds "Run" and "Debug" CodeLens links directly above `test` and `describe` blocks in your test files.
+  - Provides command palette shortcuts for running tests (e.g., "Jest: Run File").
 - **ES7+ React/Redux/React-Native snippets (`dsznajder.es7-react-js-snippets`):** Includes many useful snippets for React and testing, and can be extended with custom snippets.
 - **ESLint (`dbaeumer.vscode-eslint`):** Integrates ESLint into the editor, highlighting issues related to testing best practices if ESLint testing plugins (like `eslint-plugin-testing-library`) are configured.
 

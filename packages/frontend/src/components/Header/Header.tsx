@@ -1,7 +1,8 @@
-import { Link, useRouterState } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { useRef, useState } from 'react';
 
 import './header.css';
+import { useRouter } from '../../hooks/useRouter';
 
 // Pure CSS morphing icon is rendered with spans; see header.css (.morph-icon)
 
@@ -19,14 +20,7 @@ export default function Header() {
   const groupRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const matches = useRouterState({ select: (s) => s.matches });
-  const titleProvider = [...matches].reverse().find((m) => m.context.getTitle);
-  const title = titleProvider?.context?.getTitle?.() ?? 'Freedom Label';
-
-  const isHomeProvider = [...matches]
-    .reverse()
-    .find((m) => m.context.getIsHome);
-  const isHome = !!isHomeProvider?.context?.getIsHome?.();
+  const { isHome, title } = useRouter();
 
   return (
     <header aria-label="Application header" className="fl-header">

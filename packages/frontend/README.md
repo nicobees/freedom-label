@@ -42,3 +42,10 @@ docker-compose -f docker-compose.yml up -d frontend
 docker build . -t ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_FRONTEND:f-0.0.1
 
 docker push ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_FRONTEND:f-0.0.1
+
+## Create Label form notes
+
+- Anagraphic section: `src/components/CreateLabelForm/AnagraphicSection.tsx`
+- Date dropdowns: `src/components/CreateLabelForm/DateDropdown.tsx` (dynamic days, optional future-only)
+  - Each select is labeled via `aria-label` (e.g., "Production date day", "month", "year"), so consumers should not rely on element ids.
+- Tests: `src/components/CreateLabelForm/AnagraphicSection.test.tsx` verify 200ms debounced validation and date constraints.

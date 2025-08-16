@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test } from 'vitest';
 
-import { createMemoryAppRouter } from '../index.tsx';
+import { createMemoryAppRouter } from '../index';
 
 // Shared Arrange helper following the testing guide
 const setup = (initialEntries: string[] = ['/']) => {
@@ -37,6 +37,6 @@ test('should navigate to /create when clicking Create Label', async () => {
 
   // Assert
   expect(
-    await screen.findByRole('form', { name: /create label form/i }),
+    await screen.findByRole('heading', { level: 1, name: /create label/i }),
   ).toBeInTheDocument();
 });

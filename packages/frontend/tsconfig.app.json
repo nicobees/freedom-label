@@ -23,6 +23,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"],
+  "include": ["src", "vitest.config.ts"],
   "exclude": ["src/**/*.test.tsx", "src/**/*.spec.tsx"]
 }
