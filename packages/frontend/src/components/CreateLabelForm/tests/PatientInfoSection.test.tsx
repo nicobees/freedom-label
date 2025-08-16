@@ -1,13 +1,15 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test, vi } from 'vitest';
 
-import PatientInfoSection from './AnagraphicSection.tsx';
+import { renderWithForm } from '../../../test-utils/form';
+import { PatientInfoSection } from '../PatientInfoSection';
 
 function setup() {
   const onChange = vi.fn();
 
-  render(<PatientInfoSection />);
+  renderWithForm(PatientInfoSection);
+
   return { onChange };
 }
 
