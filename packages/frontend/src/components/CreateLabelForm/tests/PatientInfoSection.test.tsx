@@ -13,7 +13,7 @@ function setup() {
   return { onChange };
 }
 
-test('should debounce and validate name and surname', async () => {
+test('should validate name and surname', async () => {
   // Arrange
   setup();
   const name = screen.getByLabelText('Name');

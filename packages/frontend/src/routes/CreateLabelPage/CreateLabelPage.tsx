@@ -1,16 +1,17 @@
 import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
 import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfoSection';
 import { useCreateLabelForm } from '../../hooks/useCreateLabelForm';
+import { useRouter } from '../../hooks/useRouter';
 import './create-label.css';
 
 export default function CreateLabelPage() {
   const form = useCreateLabelForm();
 
+  const { title } = useRouter();
+
   return (
     <section className="create-label">
-      <h2 aria-hidden="true">Create Label</h2>
-
-      <div aria-label="Create Label Form" className="create-form">
+      <form aria-label={`${title} Form`} className="create-form">
         <PatientInfoSection form={form} />
 
         <ManufacturingSection form={form} />
@@ -20,6 +21,7 @@ export default function CreateLabelPage() {
           <div className="actions">
             <button
               aria-disabled="true"
+              disabled
               title="Not available yet"
               type="button"
             >
@@ -34,7 +36,7 @@ export default function CreateLabelPage() {
           <legend>Lens specs</legend>
           {/* TODO: Implement lens specifications fields per User Story #6 */}
         </fieldset>
-      </div>
+      </form>
     </section>
   );
 }

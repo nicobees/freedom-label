@@ -19,7 +19,7 @@ export type RouterContext = {
   getTitle?: () => string;
 };
 
-// CreateLabelPage moved to './CreateLabelPage/CreateLabelPage'
+export const APPLICATION_NAME = 'Freedom Label';
 
 function Layout({ children }: PropsWithChildren) {
   return (
@@ -106,7 +106,7 @@ const routeTree = rootRoute.addChildren([
   listLabelRoute,
 ]);
 
-export function createAppRouter(history?: RouterHistory) {
+function createAppRouter(history?: RouterHistory) {
   return createRouter({ history, routeTree });
 }
 

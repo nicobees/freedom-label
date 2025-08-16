@@ -1,5 +1,6 @@
 import { RouterProvider } from '@tanstack/react-router';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { expect, test } from 'vitest';
 
 import { createMemoryAppRouter } from '../index';
@@ -21,9 +22,11 @@ test('should render Create Label form with anagraphic and lens sections', async 
   expect(
     await screen.findByRole('form', { name: /create label form/i }),
   ).toBeInTheDocument();
+
   expect(
-    screen.getByRole('group', { name: /anagraphic/i }),
+    await screen.findByRole('group', { name: /patient info/i }),
   ).toBeInTheDocument();
+
   expect(
     screen.getByRole('group', { name: /lens specs/i }),
   ).toBeInTheDocument();
@@ -35,9 +38,28 @@ test('should render Save (disabled) and Print buttons', async () => {
 
   // Assert
   const save = await screen.findByRole('button', { name: /save/i });
-  expect(save).toHaveAttribute('aria-disabled', 'true');
+  expect(save).toBeDisabled();
   expect(save).toHaveAttribute('title', 'Not available yet');
+
   expect(
     await screen.findByRole('button', { name: /print/i }),
   ).toBeInTheDocument();
+});
+
+test('should update Print button disable state based on the form validity', async () => {
+  // Arrange
+  const user = userEvent.setup();
+  setup(['/create']);
+
+  const print = await screen.findByRole('button', { name: /print/i });
+  expect(print).toBeDisabled();
+
+  const name = screen.getByRole('textbox', { name: 'Name' });
+  const surname = screen.getByRole('textbox', { name: 'Surname' });
+  await user.clear(name);
+  await user.type(name, 'John');
+  await user.clear(surname);
+  await user.type(surname, 'Doe');
+
+  expect(print).toBeEnabled();
 });

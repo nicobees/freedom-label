@@ -6,13 +6,14 @@ export const PrintButton = ({ label }: { label: string }) => {
   return (
     <form.Subscribe
       selector={(state) => ({
+        isPristine: state.isPristine,
         isSubmitting: state.isSubmitting,
-        isValid: state.isValid,
+        isTouched: state.isTouched,
       })}
     >
-      {({ isSubmitting, isValid }) => (
+      {({ isPristine, isSubmitting, isTouched }) => (
         <button
-          disabled={isSubmitting || !isValid}
+          disabled={isSubmitting || isPristine || !isTouched}
           onClick={() => {
             void form.handleSubmit();
           }}
