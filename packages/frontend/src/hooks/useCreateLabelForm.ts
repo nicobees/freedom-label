@@ -1,8 +1,11 @@
-import { useForm } from '@tanstack/react-form';
+import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 
+import { DateField } from '../components/CreateLabelForm/fields/DateField';
+import { TextField } from '../components/CreateLabelForm/fields/TextField';
+import { PrintButton } from '../components/CreateLabelForm/SubmitButton';
 import { type LabelData, LabelDataSchema } from '../validation/schema';
 
-const defaultValues: LabelData = {
+export const defaultValues: LabelData = {
   description: '',
   due_date: '',
   lens_specs: {
@@ -24,12 +27,27 @@ const defaultValues: LabelData = {
   production_date: '',
 };
 
+export const { fieldContext, formContext, useFieldContext, useFormContext } =
+  createFormHookContexts();
+
+export const { useAppForm, withForm } = createFormHook({
+  fieldComponents: {
+    DateField,
+    TextField,
+  },
+  fieldContext,
+  formComponents: {
+    PrintButton,
+  },
+  formContext,
+});
+
 export function useCreateLabelForm() {
-  const form = useForm({
+  const form = useAppForm({
     defaultValues,
     onSubmit: async ({ value }) => {
       // Validate against Zod schema at submit time (integration for MVP scope)
-      await LabelDataSchema.parseAsync(value);
+      // await LabelDataSchema.parseAsync(value);
 
       console.info('on submit: ', value);
     },

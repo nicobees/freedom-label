@@ -1,3 +1,4 @@
+import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
 import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfoSection';
 import { useCreateLabelForm } from '../../hooks/useCreateLabelForm';
 import './create-label.css';
@@ -11,6 +12,8 @@ export default function CreateLabelPage() {
 
       <div aria-label="Create Label Form" className="create-form">
         <PatientInfoSection form={form} />
+
+        <ManufacturingSection form={form} />
 
         {/* Actions */}
         <form.AppForm>

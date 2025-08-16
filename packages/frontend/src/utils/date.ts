@@ -1,5 +1,19 @@
 export type DateTriple = { day: number; month: number; year: number };
 
+export function daysInMonth(month: number, year: number): number {
+  return new Date(year, month, 0).getDate();
+}
+
+export function formatDateToFullDateString({
+  day,
+  month,
+  year,
+}: DateTriple): string {
+  const dd = String(day).padStart(2, '0');
+  const mm = String(month).padStart(2, '0');
+  return `${dd}/${mm}/${year}`;
+}
+
 export function fromDate(d: Date): DateTriple {
   return { day: d.getDate(), month: d.getMonth() + 1, year: d.getFullYear() };
 }
@@ -20,12 +34,6 @@ export function parseDDMMYYYY(value: string): DateTriple | null {
   const month = Number(m[2]);
   const year = Number(m[3]);
   return { day, month, year };
-}
-
-export function toDDMMYYYY({ day, month, year }: DateTriple): string {
-  const dd = String(day).padStart(2, '0');
-  const mm = String(month).padStart(2, '0');
-  return `${dd}/${mm}/${year}`;
 }
 
 export function tripleToDate({ day, month, year }: DateTriple): Date {
