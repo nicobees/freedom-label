@@ -1,0 +1,119 @@
+import { getRoles, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { expect, test } from 'vitest';
+
+import { renderWithForm } from '../../../test-utils/form';
+import { LensSpecSection } from '../LensSpecSection';
+
+function setup() {
+  renderWithForm(LensSpecSection);
+}
+
+test('renders Lens specs section with left and right columns', async () => {
+  setup();
+
+  expect(
+    screen.getByRole('group', { name: /lens specs/i }),
+  ).toBeInTheDocument();
+
+  // Two BC inputs (left/right)
+  const bcInputs = screen.getAllByRole('textbox', { name: /bc/i });
+  expect(bcInputs.length).toBe(2);
+
+  // Two PWR number inputs (left/right)
+  const pwrInputs = screen.getAllByRole('textbox', { name: /pwr/i });
+  expect(pwrInputs.length).toBe(2);
+
+  // Two sign selects for PWR
+  const signSelects = screen.getAllByRole('combobox', { name: /pwr sign/i });
+  expect(signSelects.length).toBe(2);
+});
+
+test('validates PWR format on change', async () => {
+  setup();
+
+  const [leftPwrInput] = screen.getAllByRole('textbox', { name: /pwr/i });
+
+  // Type invalid value (requires two decimals)
+  await userEvent.type(leftPwrInput, '1.2');
+
+  const err = await screen.findByRole('status', { name: /pwr error/i });
+  expect(err).toHaveTextContent(/invalid pwr format/i);
+
+  // Fix it
+  await userEvent.clear(leftPwrInput);
+  await userEvent.type(leftPwrInput, '1.25');
+
+  await waitFor(() => {
+    expect(screen.queryByRole('status', { name: /pwr error/i })).toBeNull();
+  });
+});
+
+test('copy left → right duplicates values', async () => {
+  setup();
+
+  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: /bc/i });
+  const [leftPwr, rightPwr] = screen.getAllByRole('textbox', { name: /pwr/i });
+  const [leftPwrSign, rightPwrSign] = screen.getAllByRole('combobox', {
+    name: /pwr sign/i,
+  });
+  const [leftSag, rightSag] = screen.getAllByRole('textbox', { name: /sag/i });
+
+  // Fill LEFT values
+  await userEvent.type(leftBc, '8.60');
+  await userEvent.selectOptions(leftPwrSign, '+');
+  await userEvent.type(leftPwr, '1.25');
+  await userEvent.type(leftSag, '10.00');
+
+  // Click copy
+  const copyBtn = screen.getByRole('button', { name: /copy left → right/i });
+  await userEvent.click(copyBtn);
+
+  // Assert RIGHT mirrored
+  expect(rightBc).toHaveValue('8.60');
+  expect(rightPwrSign).toHaveValue('+');
+  expect(rightPwr).toHaveValue('1.25');
+  expect(rightSag).toHaveValue('10.00');
+});
+
+test('copy right to left duplicates values', async () => {
+  setup();
+
+  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: /bc/i });
+  const [leftPwr, rightPwr] = screen.getAllByRole('textbox', { name: /pwr/i });
+  const [leftPwrSign, rightPwrSign] = screen.getAllByRole('combobox', {
+    name: /pwr sign/i,
+  });
+  const [leftSag, rightSag] = screen.getAllByRole('textbox', { name: /sag/i });
+
+  // Fill RIGHT values
+  await userEvent.type(rightBc, '8.70');
+  await userEvent.selectOptions(rightPwrSign, '-');
+  await userEvent.type(rightPwr, '2.00');
+  await userEvent.type(rightSag, '11.50');
+
+  // Click copy
+  const copyBtn = screen.getByRole('button', { name: /copy right → left/i });
+  await userEvent.click(copyBtn);
+
+  // Assert LEFT mirrored
+  expect(leftBc).toHaveValue('8.70');
+  expect(leftPwrSign).toHaveValue('-');
+  expect(leftPwr).toHaveValue('2.00');
+  expect(leftSag).toHaveValue('11.50');
+});
+
+test('a11y roles snapshot for lens specs', () => {
+  const { container } = renderWithForm(LensSpecSection);
+  const roles = getRoles(container);
+  // Basic presence checks instead of giant snapshots
+  expect(Object.keys(roles)).toEqual(
+    expect.arrayContaining([
+      'group',
+      'checkbox',
+      'textbox',
+      'combobox',
+      'button',
+    ]),
+  );
+});

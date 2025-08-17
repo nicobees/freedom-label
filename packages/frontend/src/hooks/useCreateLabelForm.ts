@@ -1,9 +1,11 @@
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 
+import type { LabelData } from '../validation/schema';
+
 import { DateField } from '../components/CreateLabelForm/fields/DateField';
+import { FloatNumberField } from '../components/CreateLabelForm/fields/FloatNumberField';
 import { TextField } from '../components/CreateLabelForm/fields/TextField';
 import { PrintButton } from '../components/CreateLabelForm/SubmitButton';
-import { type LabelData, LabelDataSchema } from '../validation/schema';
 
 export const defaultValues: LabelData = {
   description: '',
@@ -33,6 +35,7 @@ export const { fieldContext, formContext, useFieldContext, useFormContext } =
 export const { useAppForm, withForm } = createFormHook({
   fieldComponents: {
     DateField,
+    FloatNumberField,
     TextField,
   },
   fieldContext,
@@ -45,7 +48,7 @@ export const { useAppForm, withForm } = createFormHook({
 export function useCreateLabelForm() {
   const form = useAppForm({
     defaultValues,
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       // Validate against Zod schema at submit time (integration for MVP scope)
       // await LabelDataSchema.parseAsync(value);
 

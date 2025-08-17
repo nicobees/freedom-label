@@ -1,3 +1,4 @@
+import { LensSpecSection } from '../../components/CreateLabelForm/LensSpecSection';
 import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
 import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfoSection';
 import { useCreateLabelForm } from '../../hooks/useCreateLabelForm';
@@ -31,11 +32,7 @@ export default function CreateLabelPage() {
           </div>
         </form.AppForm>
 
-        {/* lens-spec-section */}
-        <fieldset className="section" role="group">
-          <legend>Lens specs</legend>
-          {/* TODO: Implement lens specifications fields per User Story #6 */}
-        </fieldset>
+        <LensSpecSection form={form} />
       </form>
     </section>
   );

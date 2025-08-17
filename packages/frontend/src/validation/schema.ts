@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const LensSpecsSchema = z.object({
+export const LensSpecsSchema = z.object({
   add: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid ADD format'),
   ax: z.string().regex(/^\d{3}$/, 'Invalid AX format'),
   bc: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid BC format'),
