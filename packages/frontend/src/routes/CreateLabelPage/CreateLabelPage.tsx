@@ -1,3 +1,4 @@
+import { defaultValuesFilled } from '../../components/CreateLabelForm/defaultValues';
 import { LensSpecSection } from '../../components/CreateLabelForm/LensSpecSection';
 import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
 import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfoSection';
@@ -12,13 +13,11 @@ export default function CreateLabelPage() {
 
   return (
     <section className="create-label">
-      <form aria-label={`${title} Form`} className="create-form">
-        <PatientInfoSection form={form} />
-
-        <ManufacturingSection form={form} />
-
-        {/* Actions */}
+      <form aria-label={`${title} Form`} className="create-form" role="form">
         <form.AppForm>
+          <PatientInfoSection form={form} />
+          <ManufacturingSection form={form} />
+          <LensSpecSection form={form} />
           <div className="actions">
             <button
               aria-disabled="true"
@@ -29,10 +28,14 @@ export default function CreateLabelPage() {
               Save
             </button>
             <form.PrintButton label="Print" />
+            <button
+              onClick={() => form.reset(defaultValuesFilled)}
+              type="button"
+            >
+              Fill form (temp)
+            </button>
           </div>
         </form.AppForm>
-
-        <LensSpecSection form={form} />
       </form>
     </section>
   );

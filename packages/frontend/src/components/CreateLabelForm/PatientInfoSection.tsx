@@ -1,7 +1,7 @@
 import { formOptions } from '@tanstack/react-form';
 
-import { defaultValues, withForm } from '../../hooks/useCreateLabelForm';
-import { LabelDataSchema } from '../../validation/schema';
+import { withForm } from '../../hooks/useCreateLabelForm';
+import { defaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
   defaultValues,
@@ -15,21 +15,16 @@ export const PatientInfoSection = withForm({
         <legend>Patient Info</legend>
 
         <div className="field">
-          <form.AppField
-            name="patient_info.name"
-            validators={{
-              onChange: LabelDataSchema.shape.patient_info.shape.name,
-            }}
-          >
+          <form.AppField name="patient_info.name">
             {(field) => <field.TextField label="Name" />}
           </form.AppField>
         </div>
         <div className="field">
           <form.AppField
             name="patient_info.surname"
-            validators={{
-              onChange: LabelDataSchema.shape.patient_info.shape.surname,
-            }}
+            // validators={{
+            //   onChange: LabelDataSchema.shape.patient_info.shape.surname,
+            // }}
           >
             {(field) => <field.TextField label="Surname" />}
           </form.AppField>

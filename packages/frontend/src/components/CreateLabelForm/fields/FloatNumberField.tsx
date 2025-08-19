@@ -1,39 +1,49 @@
 /* eslint-disable react-compiler/react-compiler */
 import { useMemo } from 'react';
 
-import { useFieldContext } from '../../../hooks/useCreateLabelForm';
+import {
+  useFieldContext,
+  useFormContext,
+} from '../../../hooks/useCreateLabelForm';
 import { formatValidationError } from '../utils';
 
 type Props = {
   disabled?: boolean;
+  displayValue?: string;
   label: string;
   withSign?: boolean;
 };
 
 export function FloatNumberField({
   disabled = false,
+  displayValue,
   label,
   withSign = false,
 }: Props) {
   const field = useFieldContext<string>();
+  const form = useFormContext();
 
   const isValid = field.state.meta.isValid;
+  const isTouched = field.state.meta.isTouched;
+  const isSubmitted = form.state.isSubmitted;
   const errors = field.state.meta.errors;
 
   // Split value into number and sign parts (no local state; field is the source of truth)
   const { number, sign } = useMemo(() => {
-    const v = field.state.value ?? '';
+    const v = displayValue ?? field.state.value ?? '';
     if (!withSign) return { number: v, sign: '' };
     if (v.startsWith('+') || v.startsWith('-')) {
       return { number: v.slice(1), sign: v[0] };
     }
     return { number: v, sign: '' };
-  }, [field.state.value, withSign]);
+  }, [displayValue, field.state.value, withSign]);
 
   const emit = (next: { number: string; sign: string }) => {
     const value = withSign ? `${next.sign}${next.number}` : next.number;
     field.handleChange(value);
   };
+
+  const showError = !isValid && (isTouched || isSubmitted);
 
   return (
     <>
@@ -76,7 +86,7 @@ export function FloatNumberField({
           />
         </div>
       </label>
-      {!isValid && errors?.length > 0 && (
+      {showError && errors?.length > 0 ? (
         <div
           aria-label={`${label} error`}
           aria-live="polite"
@@ -88,7 +98,7 @@ export function FloatNumberField({
             <span key={i}>{formatValidationError(e)}</span>
           ))}
         </div>
-      )}
+      ) : null}
     </>
   );
 }

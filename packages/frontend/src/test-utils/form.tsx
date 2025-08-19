@@ -3,9 +3,7 @@ import type { FC } from 'react';
 import { render } from '@testing-library/react';
 
 import { PrintButton } from '../components/CreateLabelForm/SubmitButton';
-import { useCreateLabelForm } from '../hooks/useCreateLabelForm';
-
-type FormType = ReturnType<typeof useCreateLabelForm>;
+import { type FormType, useCreateLabelForm } from '../hooks/useCreateLabelForm';
 
 // Placeholder for future enhancement: if components require a form Provider,
 // wire it here. For now, components under test create their own form instance.

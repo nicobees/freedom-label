@@ -1,7 +1,7 @@
 import { formOptions } from '@tanstack/react-form';
 
-import { defaultValues, withForm } from '../../hooks/useCreateLabelForm';
-import { LabelDataSchema } from '../../validation/schema';
+import { withForm } from '../../hooks/useCreateLabelForm';
+import { defaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
   defaultValues,
@@ -15,21 +15,16 @@ export const ManufacturingSection = withForm({
         <legend>Manufacturing Info</legend>
 
         <div className="field">
-          <form.AppField
-            name="description"
-            validators={{
-              onChange: LabelDataSchema.shape.description,
-            }}
-          >
+          <form.AppField name="description">
             {(field) => <field.TextField label="Description" />}
           </form.AppField>
         </div>
         <div className="field">
           <form.AppField
             name="production_date"
-            validators={{
-              onChange: LabelDataSchema.shape.production_date,
-            }}
+            // validators={{
+            //   onChange: LabelDataSchema.shape.production_date,
+            // }}
           >
             {(field) => <field.DateField label="Production Date" />}
           </form.AppField>
@@ -37,9 +32,9 @@ export const ManufacturingSection = withForm({
         <div className="field">
           <form.AppField
             name="due_date"
-            validators={{
-              onChange: LabelDataSchema.shape.due_date,
-            }}
+            // validators={{
+            //   onChange: LabelDataSchema.shape.due_date,
+            // }}
           >
             {(field) => <field.DateField label="Due Date" />}
           </form.AppField>

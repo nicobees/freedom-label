@@ -4,9 +4,11 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ],
-  "types": [
-    "vitest/globals",
-    "vitest/jsdom",
-    "@testing-library/jest-dom/vitest"
-  ]
+  "compilerOptions": {
+    "types": [
+      "vitest/globals",
+      "vitest/jsdom",
+      "@testing-library/jest-dom/vitest"
+    ]
+  }
 }
