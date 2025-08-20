@@ -1,8 +1,9 @@
+# syntax=docker/dockerfile:1.6
 # ================================
 # Build Stage - React/TypeScript
 # ================================
-# Using arm32v7/node for Raspberry Pi 2 (32-bit ARMv7) compatibility
-FROM arm32v7/node:22-alpine AS build
+# Debian-based Node for broader prebuilt coverage; buildx will pull the right arch
+FROM node:22-bookworm-slim AS build
 
 # Set working directory
 WORKDIR /app
@@ -10,8 +11,8 @@ WORKDIR /app
 # Copy package files first for better layer caching
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --omit=dev
+# Install dependencies (cached via BuildKit)
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 # Copy source code and build
 COPY . .
@@ -20,8 +21,8 @@ RUN npm run build
 # ================================
 # Production Stage - Nginx
 # ================================
-# Using arm32v7/nginx for Raspberry Pi 2 (32-bit ARMv7) compatibility
-FROM arm32v7/nginx:alpine AS production
+# Multi-arch Nginx; buildx will select linux/arm/v7 at build time
+FROM nginx:alpine AS production
 
 # Copy built React assets from build stage
 # The --chown flag ensures files are owned by the nginx user (uid 101)

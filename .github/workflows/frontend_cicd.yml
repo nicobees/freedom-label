@@ -104,61 +104,74 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
+        # env:
+        #   BUILDKIT_PROGRESS: plain
         with:
           context: packages/frontend
           file: packages/frontend/Dockerfile
           push: true
           tags: ghcr.io/${{ vars.USERNAME }}/${{ vars.REPOSITORY_NAME }}/${{ vars.IMAGE_FRONTEND }}:${{ env.VERSION }}
+          platforms: linux/arm/v7
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-  release:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    needs: [verify, test]
-    steps:
-      - uses: actions/checkout@v4
+  # release:
+  #   if: github.event_name == 'workflow_dispatch'
+  #   runs-on: ubuntu-latest
+  #   needs: [verify, test]
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Checkout code (main)
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
+  #     - name: Checkout code (main)
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ref: main
+  #         fetch-depth: 0
 
-      - name: Validate branch is main
-        run: |
-          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          if [ "$CURRENT_BRANCH" != "main" ]; then
-            echo "Release can only be triggered on main branch. Current: $CURRENT_BRANCH"
-            exit 1
-          fi
+  #     - name: Validate branch is main
+  #       run: |
+  #         CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  #         if [ "$CURRENT_BRANCH" != "main" ]; then
+  #           echo "Release can only be triggered on main branch. Current: $CURRENT_BRANCH"
+  #           exit 1
+  #         fi
 
-      - name: Validate input tag exists and is on main
-        run: |
-          TAG="${{ github.event.inputs.tag }}"
-          if [ -z "$TAG" ]; then
-            echo "No tag provided."
-            exit 1
-          fi
-          if ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
-            echo "Tag '$TAG' does not exist."
-            exit 1
-          fi
-          TAG_COMMIT=$(git rev-list -n 1 "refs/tags/$TAG")
-          if ! git merge-base --is-ancestor "$TAG_COMMIT" origin/main; then
-            echo "Tag '$TAG' is not reachable from main."
-            exit 1
-          fi
+  #     - name: Validate input tag exists and is on main
+  #       run: |
+  #         TAG="${{ github.event.inputs.tag }}"
+  #         if [ -z "$TAG" ]; then
+  #           echo "No tag provided."
+  #           exit 1
+  #         fi
+  #         if ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+  #           echo "Tag '$TAG' does not exist."
+  #           exit 1
+  #         fi
+  #         TAG_COMMIT=$(git rev-list -n 1 "refs/tags/$TAG")
+  #         if ! git merge-base --is-ancestor "$TAG_COMMIT" origin/main; then
+  #           echo "Tag '$TAG' is not reachable from main."
+  #           exit 1
+  #         fi
 
-      # - name: Connect to Raspberry Pi and update application
-      #   uses: apple-oss-distributions/raspberry-pi-connect-action@v1
-      #   with:
-      #     host: ${{ secrets.RPI_HOST }}
-      #     username: ${{ secrets.RPI_USERNAME }}
-      #     password: ${{ secrets.RPI_PASSWORD }}
-      #     script: |
-      #       set -euo pipefail
-      #       cd ${{ secrets.APP_PATH }}
-      #       export VERSION=${{ github.event.inputs.tag }}
-      #       docker compose -f docker-compose.prod.yml pull
-      #       docker compose -f docker-compose.prod.yml up -d
+  #     # - name: Connect to Raspberry Pi and update application
+  #     #   uses: apple-oss-distributions/raspberry-pi-connect-action@v1
+  #     #   with:
+  #     #     host: ${{ secrets.RPI_HOST }}
+  #     #     username: ${{ secrets.RPI_USERNAME }}
+  #     #     password: ${{ secrets.RPI_PASSWORD }}
+  #     #     script: |
+  #     #       set -euo pipefail
+  #     #       cd ${{ secrets.APP_PATH }}
+  #     #       export VERSION=${{ github.event.inputs.tag }}
+  #     #       docker compose -f docker-compose.prod.yml pull
+  #     #       docker compose -f docker-compose.prod.yml up -d

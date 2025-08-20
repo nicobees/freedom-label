@@ -111,6 +111,7 @@ jobs:
           context: packages/backend
           push: true
           tags: ghcr.io/${{ vars.USERNAME }}/${{ vars.REPOSITORY_NAME }}/${{ vars.IMAGE_BACKEND }}:${{ env.VERSION }}
+          platforms: linux/arm/v7
 
   release:
     if: github.event_name == 'workflow_dispatch'

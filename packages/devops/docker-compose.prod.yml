@@ -13,5 +13,13 @@ services:
     volumes:
       - pdf_output_data:/freedom-label-app/app/services/pdf_output
 
+  frontend:
+    image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_FRONTEND}:${VERSION}
+    ports:
+      - "80:8080"
+    depends_on: [backend]
+    security_opt:
+      - no-new-privileges:true
+
 volumes:
   pdf_output_data:
