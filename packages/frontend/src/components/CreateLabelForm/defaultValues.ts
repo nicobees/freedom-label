@@ -1,6 +1,7 @@
 import type { LabelData } from '../../validation/schema';
 
 export const defaultValues: LabelData = {
+  batch: '',
   description: '',
   due_date: '',
   lens_specs: {
@@ -29,7 +30,7 @@ export const defaultValues: LabelData = {
 };
 
 export const defaultValuesFilled: LabelData = {
-  // batch: '25-0001',
+  batch: '25-0001',
   description: 'Lente sclerale F2mid',
   due_date: '20/04/2026',
   lens_specs: {
@@ -47,6 +48,7 @@ export const defaultValuesFilled: LabelData = {
     },
     right: {
       data: null,
+
       enabled: false,
     },
   },

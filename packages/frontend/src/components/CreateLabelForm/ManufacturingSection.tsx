@@ -22,6 +22,11 @@ export const ManufacturingSection = withForm({
           </form.AppField>
         </div>
         <div className="field">
+          <form.AppField name="batch">
+            {(field) => <field.TextField label="Batch" />}
+          </form.AppField>
+        </div>
+        <div className="field">
           <form.AppField
             name="production_date"
             // validators={{

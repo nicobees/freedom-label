@@ -43,8 +43,10 @@ export type PatientInfo = z.infer<typeof PatientInfoSchema>;
 
 const dateStringRegex = /^\d{2}\/\d{2}\/\d{4}$/;
 const dateStringValidationErrorMessage = 'Invalid date format (DD/MM/YYYY)';
+const batchRegex = /^\d{2}-\d{4}$/;
 
 export const LabelDataSchemaBase = z.object({
+  batch: z.string().regex(batchRegex),
   description: z.string().min(2).max(24),
   due_date: z.string().regex(dateStringRegex, dateStringValidationErrorMessage),
   lens_specs: LensesSpecsSchema,
@@ -54,19 +56,8 @@ export const LabelDataSchemaBase = z.object({
     .regex(dateStringRegex, dateStringValidationErrorMessage),
 });
 
-export const LabelDataSchema = z
-  .object({
-    description: z.string().min(2).max(24),
-    due_date: z
-      .string()
-      .regex(dateStringRegex, dateStringValidationErrorMessage),
-    lens_specs: LensesSpecsSchema,
-    patient_info: PatientInfoSchema,
-    production_date: z
-      .string()
-      .regex(dateStringRegex, dateStringValidationErrorMessage),
-  })
-  .superRefine((data, ctx) => {
+export const LabelDataSchema = LabelDataSchemaBase.extend({}).superRefine(
+  (data, ctx) => {
     // check lens_specs enabled
     const { lens_specs } = data;
 
@@ -111,7 +102,8 @@ export const LabelDataSchema = z
         path: [`lens_specs.${LensSide.Right}.enabled`],
       });
     }
-  });
+  },
+);
 
 export type LabelData = z.infer<typeof LabelDataSchema>;
 
