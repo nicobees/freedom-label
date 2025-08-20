@@ -1,0 +1,37 @@
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { expect, test } from 'vitest';
+
+import { renderWithForm } from '../../../test-utils/form';
+import { LensSide } from '../../../validation/schema';
+import { LensSpecColumn } from '../LensSpecColumn';
+
+function setupLeftColumn() {
+  return renderWithForm(({ form }) => (
+    <LensSpecColumn form={form} side={LensSide.Left} />
+  ));
+}
+
+test('checkbox toggles only when clicking the checkbox, not the text label', async () => {
+  setupLeftColumn();
+
+  const checkbox = screen.getByRole('checkbox', {
+    name: /left lens enabled/i,
+  });
+  const labelText = screen.getByText(/left lens/i);
+
+  // Initially checked (from default values)
+  expect(checkbox).toBeChecked();
+
+  // Click the checkbox to uncheck
+  await userEvent.click(checkbox);
+  expect(checkbox).not.toBeChecked();
+
+  // Clicking the text should NOT toggle
+  await userEvent.click(labelText);
+  expect(checkbox).not.toBeChecked();
+
+  // Clicking the checkbox toggles back on
+  await userEvent.click(checkbox);
+  expect(checkbox).toBeChecked();
+});

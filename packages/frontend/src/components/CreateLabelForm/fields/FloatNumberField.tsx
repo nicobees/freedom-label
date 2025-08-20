@@ -45,11 +45,13 @@ export function FloatNumberField({
 
   const showError = !isValid && (isTouched || isSubmitted);
 
+  const role = withSign ? 'group' : undefined;
+
   return (
     <>
       <label>
         {label}
-        <div aria-label={label} className="float-field" role="group">
+        <div aria-label={label} className="float-field" role={role}>
           {withSign ? (
             <select
               aria-label={`${label} sign`}

@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test } from 'vitest';
 
-import { createMemoryAppRouter } from '../index';
+import { createMemoryAppRouter } from '../../index';
 
 const setup = (initialEntries: string[] = ['/create']) => {
   const router = createMemoryAppRouter(initialEntries);
@@ -27,9 +27,7 @@ test('should render Create Label form with anagraphic and lens sections', async 
     await screen.findByRole('group', { name: /patient info/i }),
   ).toBeInTheDocument();
 
-  expect(
-    screen.getByRole('group', { name: /lens specs/i }),
-  ).toBeInTheDocument();
+  expect(screen.getByRole('group', { name: 'Lens specs' })).toBeInTheDocument();
 });
 
 test('should render Save (disabled) and Print buttons', async () => {
@@ -54,12 +52,10 @@ test('should update Print button disable state based on the form validity', asyn
   const print = await screen.findByRole('button', { name: /print/i });
   expect(print).toBeDisabled();
 
-  const name = screen.getByRole('textbox', { name: 'Name' });
-  const surname = screen.getByRole('textbox', { name: 'Surname' });
-  await user.clear(name);
-  await user.type(name, 'John');
-  await user.clear(surname);
-  await user.type(surname, 'Doe');
+  const fillFormTempButton = screen.getByRole('button', {
+    name: 'Fill form (temp)',
+  });
+  await user.click(fillFormTempButton);
 
   expect(print).toBeEnabled();
 });

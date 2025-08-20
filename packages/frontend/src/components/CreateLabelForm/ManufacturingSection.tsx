@@ -10,9 +10,11 @@ const formOptionsObject = formOptions({
 export const ManufacturingSection = withForm({
   ...formOptionsObject,
   render: ({ form }) => {
+    const label = 'Manufacturing Info';
+
     return (
-      <fieldset className="section" role="group">
-        <legend>Manufacturing Info</legend>
+      <fieldset aria-label={label} className="section" role="group">
+        <legend>{label}</legend>
 
         <div className="field">
           <form.AppField name="description">

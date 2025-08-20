@@ -46,12 +46,17 @@ const LensSpecCopyData = withForm({
       await form.validate('change');
     };
 
-    const buttonLabel = `Copy ${typedSide} ${arrowButtonMapping[typedSide]} ${oppositeSide}`;
+    const label = `Copy ${typedSide} ${arrowButtonMapping[typedSide]} ${oppositeSide}`;
+    const ariaLabel = `Copy lens specs ${typedSide} to ${oppositeSide} `;
 
     return (
       <div className="copy-actions">
-        <button onClick={() => void onClickHandler()} type="button">
-          {buttonLabel}
+        <button
+          aria-label={ariaLabel}
+          onClick={() => void onClickHandler()}
+          type="button"
+        >
+          {label}
         </button>
       </div>
     );
@@ -70,8 +75,10 @@ const LensSpecColumnGridData = withForm({
 
     const activeCheckboxFieldName = `${lensSpecSideName}.enabled` as const;
 
+    const groupLabel = `${typedSide} Lens Specs Data`;
+
     return (
-      <fieldset>
+      <fieldset aria-label={groupLabel} role="group">
         <form.AppField name={`${lensSpecSideDataName}.bc` as const}>
           {(field) => (
             <field.FloatNumberField
@@ -157,8 +164,10 @@ export const LensSpecColumn = withForm({
     const typedSide = side as LensSide;
     const base = `lens_specs.${typedSide}` as const;
 
+    const groupLabel = `${typedSide} Lens Specs`;
+
     return (
-      <div className="lens-col">
+      <fieldset aria-label={groupLabel} className="lens-col" role="group">
         <form.AppField name={`${base}.enabled` as const}>
           {(field) => <field.CheckboxField label={`${typedSide} lens`} />}
         </form.AppField>
@@ -171,7 +180,7 @@ export const LensSpecColumn = withForm({
           form={form as unknown as FormType}
           side={typedSide}
         />
-      </div>
+      </fieldset>
     );
   },
 });

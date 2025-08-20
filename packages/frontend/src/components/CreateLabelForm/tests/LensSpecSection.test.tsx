@@ -12,9 +12,7 @@ function setup() {
 test('renders Lens specs section with left and right columns', async () => {
   setup();
 
-  expect(
-    screen.getByRole('group', { name: /lens specs/i }),
-  ).toBeInTheDocument();
+  expect(screen.getByRole('group', { name: 'Lens specs' })).toBeInTheDocument();
 
   // Two BC inputs (left/right)
   const bcInputs = screen.getAllByRole('textbox', { name: /bc/i });
@@ -66,7 +64,9 @@ test('copy left → right duplicates values', async () => {
   await userEvent.type(leftSag, '10.00');
 
   // Click copy
-  const copyBtn = screen.getByRole('button', { name: /copy left → right/i });
+  const copyBtn = screen.getByRole('button', {
+    name: /copy lens specs left to right/i,
+  });
   await userEvent.click(copyBtn);
 
   // Assert RIGHT mirrored
@@ -93,7 +93,9 @@ test('copy right to left duplicates values', async () => {
   await userEvent.type(rightSag, '11.50');
 
   // Click copy
-  const copyBtn = screen.getByRole('button', { name: /copy right → left/i });
+  const copyBtn = screen.getByRole('button', {
+    name: /copy lens specs right to left/i,
+  });
   await userEvent.click(copyBtn);
 
   // Assert LEFT mirrored
@@ -116,4 +118,59 @@ test('a11y roles snapshot for lens specs', () => {
       'button',
     ]),
   );
+});
+
+test('disable toggle keeps values visible and re-enable preserves them', async () => {
+  setup();
+
+  const leftToggle = screen.getByRole('checkbox', {
+    name: /left lens enabled/i,
+  });
+
+  const [leftBc] = screen.getAllByRole('textbox', { name: /bc/i });
+  const [leftPwr] = screen.getAllByRole('textbox', { name: /pwr/i });
+  const [leftPwrSign] = screen.getAllByRole('combobox', { name: /pwr sign/i });
+  const [leftSag] = screen.getAllByRole('textbox', { name: /sag/i });
+
+  // Fill LEFT values
+  await userEvent.type(leftBc, '8.88');
+  await userEvent.selectOptions(leftPwrSign, '+');
+  await userEvent.type(leftPwr, '3.25');
+  await userEvent.type(leftSag, '12.34');
+
+  // Disable LEFT
+  await userEvent.click(leftToggle);
+
+  // Re-query to avoid stale element references
+  const [leftBcAfter] = screen.getAllByRole('textbox', { name: /bc/i });
+  const [leftPwrAfter] = screen.getAllByRole('textbox', { name: /pwr/i });
+  const [leftPwrSignAfter] = screen.getAllByRole('combobox', {
+    name: /pwr sign/i,
+  });
+  const [leftSagAfter] = screen.getAllByRole('textbox', { name: /sag/i });
+
+  // Values should remain visible in the fields after disabling
+  expect(leftBcAfter).toHaveValue('8.88');
+  expect(leftPwrSignAfter).toHaveValue('+');
+  expect(leftPwrAfter).toHaveValue('3.25');
+  expect(leftSagAfter).toHaveValue('12.34');
+
+  // Re-enable LEFT (re-query to avoid stale reference)
+  const leftToggleAgain = screen.getByRole('checkbox', {
+    name: /left lens enabled/i,
+  });
+  await userEvent.click(leftToggleAgain);
+
+  const [leftBcEnabled] = screen.getAllByRole('textbox', { name: /bc/i });
+  const [leftPwrEnabled] = screen.getAllByRole('textbox', { name: /pwr/i });
+  const [leftPwrSignEnabled] = screen.getAllByRole('combobox', {
+    name: /pwr sign/i,
+  });
+  const [leftSagEnabled] = screen.getAllByRole('textbox', { name: /sag/i });
+
+  // Values remain intact after re-enable
+  expect(leftBcEnabled).toHaveValue('8.88');
+  expect(leftPwrSignEnabled).toHaveValue('+');
+  expect(leftPwrEnabled).toHaveValue('3.25');
+  expect(leftSagEnabled).toHaveValue('12.34');
 });

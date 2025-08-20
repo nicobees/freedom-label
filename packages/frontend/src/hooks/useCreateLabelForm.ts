@@ -47,7 +47,7 @@ export function useCreateLabelForm() {
 
       const dataToSend = LabelDataSubmitSchema.safeParse(results.data);
 
-      console.info('on submit: ', value);
+      console.info('on submit data to send: ', dataToSend);
     },
     onSubmitInvalid: ({ formApi, value }) => {
       console.info('on submit (invalid): ', value);

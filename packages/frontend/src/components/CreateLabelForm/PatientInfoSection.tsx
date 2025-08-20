@@ -10,9 +10,11 @@ const formOptionsObject = formOptions({
 export const PatientInfoSection = withForm({
   ...formOptionsObject,
   render: ({ form }) => {
+    const label = 'Patient Info';
+
     return (
-      <fieldset className="section" role="group">
-        <legend>Patient Info</legend>
+      <fieldset aria-label={label} className="section" role="group">
+        <legend>{label}</legend>
 
         <div className="field">
           <form.AppField name="patient_info.name">
