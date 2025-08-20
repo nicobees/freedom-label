@@ -1,16 +1,16 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { expect, test, vi } from 'vitest';
+import { expect, test } from 'vitest';
 
 import { renderWithFormAndButtons } from '../../../test-utils/form';
 import { PatientInfoSection } from '../PatientInfoSection';
 
-test('should be disabled initially (pristine and untouched)', () => {
+test('should be disabled initially (pristine and untouched)', async () => {
   // Arrange
   renderWithFormAndButtons(PatientInfoSection);
 
   // Assert
-  const btn = screen.getByRole('button', { name: /print/i });
+  const btn = await screen.findByRole('button', { name: /print/i });
   expect(btn).toBeDisabled();
 });
 

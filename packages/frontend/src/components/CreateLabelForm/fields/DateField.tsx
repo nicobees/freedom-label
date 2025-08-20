@@ -1,6 +1,9 @@
 import { useMemo } from 'react';
 
-import { useFieldContext } from '../../../hooks/useCreateLabelForm';
+import {
+  useFieldContext,
+  useFormContext,
+} from '../../../hooks/useCreateLabelForm';
 import {
   daysInMonth,
   formatDateToFullDateString,
@@ -17,9 +20,14 @@ function getYearRange() {
 
 export const DateField = ({ label }: { label: string }) => {
   const field = useFieldContext<string>();
+  const form = useFormContext();
 
   const isValid = field.state.meta.isValid;
+  const isTouched = field.state.meta.isTouched;
+  const isSubmitted = form.state.isSubmitted;
   const errors = field.state.meta.errors;
+
+  const showError = !isValid && (isTouched || isSubmitted);
 
   const todayTriple = useMemo(() => fromDate(new Date()), []);
   const triple = useMemo(() => {
@@ -95,7 +103,7 @@ export const DateField = ({ label }: { label: string }) => {
           </select>
         </div>
       </label>
-      {!isValid && errors?.length > 0 && (
+      {showError && errors?.length > 0 ? (
         <div
           aria-label={`${label} error`}
           aria-live="polite"
@@ -106,7 +114,7 @@ export const DateField = ({ label }: { label: string }) => {
             <span key={i}>{formatValidationError(e)}</span>
           ))}
         </div>
-      )}
+      ) : null}
     </>
   );
 };

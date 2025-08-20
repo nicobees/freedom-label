@@ -7,16 +7,12 @@ import { expect, test } from 'vitest';
 import type { useCreateLabelForm } from '../../../hooks/useCreateLabelForm';
 
 import { renderWithForm } from '../../../test-utils/form';
-import { LabelDataSchema } from '../../../validation/schema';
 
 const ProductionDateSetup: FC<{
   form: ReturnType<typeof useCreateLabelForm>;
 }> = ({ form }) => (
   <form.AppForm>
-    <form.AppField
-      name="production_date"
-      validators={{ onChange: LabelDataSchema.shape.production_date }}
-    >
+    <form.AppField name="production_date">
       {(field) => <field.DateField label="Production Date" />}
     </form.AppField>
   </form.AppForm>

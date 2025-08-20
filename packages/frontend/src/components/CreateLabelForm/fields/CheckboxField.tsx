@@ -4,8 +4,8 @@ import {
 } from '../../../hooks/useCreateLabelForm';
 import { formatValidationError } from '../utils';
 
-export function TextField({ label }: { label: string }) {
-  const field = useFieldContext<string>();
+export function CheckboxField({ label }: { label: string }) {
+  const field = useFieldContext<boolean>();
   const form = useFormContext();
 
   const isValid = field.state.meta.isValid;
@@ -16,18 +16,16 @@ export function TextField({ label }: { label: string }) {
   const showError = !isValid && (isTouched || isSubmitted);
 
   return (
-    <>
-      <label>
-        {label}
-        <input
-          aria-invalid={!isValid}
-          onChange={(e) => {
-            field.handleChange(e.target.value);
-          }}
-          placeholder={label}
-          value={field.state.value}
-        />
-      </label>
+    <div className="checkbox-field">
+      <span>{label}</span>
+      <input
+        aria-label={`${label} enabled`}
+        checked={!!field.state.value}
+        onChange={(e) => {
+          field.handleChange(e.target.checked);
+        }}
+        type="checkbox"
+      />
       {showError && errors?.length > 0 ? (
         <div
           aria-label={`${label} error`}
@@ -40,6 +38,6 @@ export function TextField({ label }: { label: string }) {
           ))}
         </div>
       ) : null}
-    </>
+    </div>
   );
 }

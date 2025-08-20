@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const LensSpecsSchema = z.object({
+export const LensSpecsDataSchema = z.object({
   add: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid ADD format'),
   ax: z.string().regex(/^\d{3}$/, 'Invalid AX format'),
   bc: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid BC format'),
@@ -10,14 +10,29 @@ const LensSpecsSchema = z.object({
   sag: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid SAG format'),
 });
 
-export type LeftRightSpecs = z.infer<typeof LensSpecsSchema>;
+// type LensSpecsData = z.infer<typeof LensSpecsDataSchema>;
+
+export const LensSide = {
+  Left: 'left',
+  Right: 'right',
+} as const;
+export type LensSide = (typeof LensSide)[keyof typeof LensSide];
+
+const LensSpecsGridSchema = z.object({
+  data: z.optional(LensSpecsDataSchema).nullable(),
+  enabled: z.boolean(),
+});
+
+type LensSpecsGrid = z.infer<typeof LensSpecsGridSchema>;
 
 const LensesSpecsSchema = z.object({
-  left: LensSpecsSchema.optional(),
-  right: LensSpecsSchema.optional(),
+  [LensSide.Left]: LensSpecsGridSchema,
+  [LensSide.Right]: LensSpecsGridSchema,
 });
 
 export type LensesSpecs = z.infer<typeof LensesSpecsSchema>;
+
+export type LensesSpecsKeys = keyof LensesSpecs;
 
 const PatientInfoSchema = z.object({
   name: z.string().min(2).max(30),
@@ -28,8 +43,10 @@ export type PatientInfo = z.infer<typeof PatientInfoSchema>;
 
 const dateStringRegex = /^\d{2}\/\d{2}\/\d{4}$/;
 const dateStringValidationErrorMessage = 'Invalid date format (DD/MM/YYYY)';
+const batchRegex = /^\d{2}-\d{4}$/;
 
-export const LabelDataSchema = z.object({
+export const LabelDataSchemaBase = z.object({
+  batch: z.string().regex(batchRegex),
   description: z.string().min(2).max(24),
   due_date: z.string().regex(dateStringRegex, dateStringValidationErrorMessage),
   lens_specs: LensesSpecsSchema,
@@ -39,8 +56,84 @@ export const LabelDataSchema = z.object({
     .regex(dateStringRegex, dateStringValidationErrorMessage),
 });
 
+export const LabelDataSchema = LabelDataSchemaBase.extend({}).superRefine(
+  (data, ctx) => {
+    // check lens_specs enabled
+    const { lens_specs } = data;
+
+    const { left, right } = lens_specs;
+
+    const leftEnabled = left?.enabled ?? false;
+    const leftData = left?.data;
+    const rightEnabled = right?.enabled ?? false;
+    const rightData = right?.data;
+
+    if (!leftEnabled && !rightEnabled) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Provide at least one LensSpec side',
+        path: [`lens_specs.${LensSide.Left}.enabled`],
+      });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Provide at least one LensSpec side',
+        path: [`lens_specs.${LensSide.Right}.enabled`],
+      });
+
+      return;
+    }
+
+    // check lens_specs data properly filled
+    const leftResults = LensSpecsDataSchema.safeParse(leftData);
+    const rightResults = LensSpecsDataSchema.safeParse(rightData);
+
+    if (leftEnabled && !leftResults.success) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Properly fill all data',
+        path: [`lens_specs.${LensSide.Left}.enabled`],
+      });
+    }
+
+    if (rightEnabled && !rightResults.success) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Properly fill all data',
+        path: [`lens_specs.${LensSide.Right}.enabled`],
+      });
+    }
+  },
+);
+
 export type LabelData = z.infer<typeof LabelDataSchema>;
 
+const LensSpecDataTransform = (value: LensSpecsGrid) => {
+  const { data, enabled } = value;
+
+  if (!enabled) return null;
+
+  return { ...data };
+};
+
+const LensSpecsGridSubmitSchema = z
+  .object({
+    data: z.optional(LensSpecsDataSchema).nullable(),
+    enabled: z.boolean(),
+  })
+  .transform(LensSpecDataTransform);
+
+const LensesSpecsSubmitSchema = z.object({
+  [LensSide.Left]: LensSpecsGridSubmitSchema,
+  [LensSide.Right]: LensSpecsGridSubmitSchema,
+});
+
+export const LabelDataSubmitSchema = LabelDataSchemaBase.extend({
+  lens_specs: LensesSpecsSubmitSchema,
+});
+
+export type LabelDataSubmit = z.infer<typeof LabelDataSubmitSchema>;
+
+// TODO: remove the commented code
 /**
  * "patient_info": {
         "name": "gabriele",

@@ -1,38 +1,21 @@
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 
+import { defaultValues } from '../components/CreateLabelForm/defaultValues';
+import { CheckboxField } from '../components/CreateLabelForm/fields/CheckboxField';
 import { DateField } from '../components/CreateLabelForm/fields/DateField';
+import { FloatNumberField } from '../components/CreateLabelForm/fields/FloatNumberField';
 import { TextField } from '../components/CreateLabelForm/fields/TextField';
 import { PrintButton } from '../components/CreateLabelForm/SubmitButton';
-import { type LabelData, LabelDataSchema } from '../validation/schema';
-
-export const defaultValues: LabelData = {
-  description: '',
-  due_date: '',
-  lens_specs: {
-    left: {
-      add: '',
-      ax: '',
-      bc: '',
-      cyl: '',
-      dia: '',
-      pwr: '',
-      sag: '',
-    },
-    right: { add: '', ax: '', bc: '', cyl: '', dia: '', pwr: '', sag: '' },
-  },
-  patient_info: {
-    name: '',
-    surname: '',
-  },
-  production_date: '',
-};
+import { LabelDataSchema, LabelDataSubmitSchema } from '../validation/schema';
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts();
 
 export const { useAppForm, withForm } = createFormHook({
   fieldComponents: {
+    CheckboxField,
     DateField,
+    FloatNumberField,
     TextField,
   },
   fieldContext,
@@ -42,18 +25,39 @@ export const { useAppForm, withForm } = createFormHook({
   formContext,
 });
 
+const FORM_DEBOUNCE_MS = 200;
+
+export type FormType = ReturnType<typeof useCreateLabelForm>;
+
 export function useCreateLabelForm() {
   const form = useAppForm({
     defaultValues,
-    onSubmit: async ({ value }) => {
-      // Validate against Zod schema at submit time (integration for MVP scope)
-      // await LabelDataSchema.parseAsync(value);
+    onSubmit: ({ value }) => {
+      const results = LabelDataSchema.safeParse(value);
 
-      console.info('on submit: ', value);
+      if (!results.success) {
+        const errorMessage = results.error.errors
+          .map((err) => err.message)
+          .join(', ');
+        console.error('Form validation failed:', errorMessage);
+
+        return;
+      }
+      // console.info('on submit data parsed: ', results.data);
+
+      const dataToSend = LabelDataSubmitSchema.safeParse(results.data);
+
+      console.info('on submit data to send: ', dataToSend);
     },
-    // Debounce applies to field-level validators we attach in components
+    onSubmitInvalid: ({ formApi, value }) => {
+      console.info('on submit (invalid): ', value);
+
+      console.error(formApi.getAllErrors());
+    },
     validators: {
-      onChangeAsyncDebounceMs: 200,
+      onChange: LabelDataSchema,
+      onChangeAsyncDebounceMs: FORM_DEBOUNCE_MS,
+      onMount: LabelDataSchema,
     },
   });
 
