@@ -12,6 +12,8 @@ This documentation provides a technical overview of the frontend application in 
 - Routing
 - Layout & UI
 - Styling & themes
+- Create Label Form (architecture)
+  - Validation
 - Testing
 - Next steps
 
@@ -23,8 +25,8 @@ Key libraries:
 
 - React 19
 - TanStack Router v1
-- TanStack Form (to be used in form user stories)
-- Zod (validation; to be integrated with the form)
+- TanStack React Form v1 (Create Label form)
+- Zod (validation integrated with the form and submit transforms)
 - Testing Library + Vitest
 
 ## Project structure
@@ -60,14 +62,9 @@ Highlights:
 Routes:
 
 - `/` – Home view implemented in `src/routes/HomePage/HomePage.tsx`. It shows two primary actions centered on the page: a "Create Label" link and a disabled "Label List" button with tooltip "Not available yet" (stacked vertically on small screens).
-- `/create` – Create Label view implemented in `src/routes/CreateLabelPage/CreateLabelPage.tsx` with a TanStack Form scaffold: two sections (Anagraphic, Lens specs) and actions (Save disabled, Print).
+- `/create` – Create Label view implemented in `src/routes/CreateLabelPage/CreateLabelPage.tsx` with a TanStack Form: two sections (Patient Info, Lens specs) and actions (Save disabled, Print). The page renders a single `AppForm` instance that wraps sections and actions.
 - `/list` – List Label view (disabled for MVP; route exists and shows a disabled message). The header link is disabled and shows a tooltip "Not available yet".
 - `*` – Not Found page.
-
-Key files:
-
-- `src/routes/index.tsx` – route tree, header, layout, and simple pages.
-- `src/main.tsx` – mounts the router using `<RouterProvider />` and imports global CSS.
 
 Testing the routing:
 
@@ -94,6 +91,44 @@ Testing the routing:
   - Freedom Blue (light) and Freedom Darker (dark). Theme implementation will be added in a dedicated story; variables should be extended there.
 - Icons must be stored as SVGs within the repo (e.g., `src/assets`).
 
+## Create Label Form (architecture)
+
+Location: `src/components/CreateLabelForm`
+
+Main pieces:
+
+- `LensSpecSection.tsx` – Renders the two-column Lens Specs UI inside the form.
+- `LensSpecColumn.tsx` – Column component bound to one side (left or right); includes an Enable toggle and a copy action to mirror values across sides.
+- `ManufacturingSection.tsx` – Description and date fields using shared field components.
+- `PatientInfoSection.tsx` – Name and Surname fields.
+- `fields/` – Reusable field components:
+  - `TextField.tsx`, `DateField.tsx`
+  - `FloatNumberField.tsx` – numeric input with optional sign select (`withSign`), used by PWR/CYL/ADD; supports controlled value and disabled state when needed.
+  - `CheckboxField.tsx` – only the box toggles (text is non-clickable) to avoid accidental changes.
+- `SubmitButton.tsx` – `PrintButton` subscribes to form state and enables only when not submitting, not pristine, and touched.
+- `defaultValues.ts` – Form default values used by sections and tests.
+
+Form hook and contexts:
+
+- `src/hooks/useCreateLabelForm.ts` creates the form with TanStack React Form v1 (`createFormHook`), exports `withForm` HOC and field components, and wires validators (Zod) with sensible debounce.
+- Test wrappers use a single `AppForm` instance to provide context in tests (see Testing section).
+
+Lens Specs UX:
+
+- Each side has an Enable toggle and a grid of fields (BC, DIA, PWR±, CYL±, AX, ADD±, SAG).
+- Copy actions: "Copy left → right" and "Copy right ← left" mirror values across sides.
+- When a side is disabled, its values are preserved for display and can be re-enabled later without losing them.
+
+### Validation
+
+File: `src/validation/schema.ts`
+
+- `LensSide` is a const object export (not a TS enum) for compatibility with the current TS config (`erasableSyntaxOnly`). Use `type LensSide = typeof LensSide[keyof typeof LensSide]`.
+- Lens Specs are modeled as a grid per side: `{ enabled: boolean, data?: LensSpecsData | null }` for both `left` and `right`.
+- `LabelDataSchema` is used for on-change/on-mount validation during editing.
+- `LabelDataSubmitSchema` transforms each side to `null` when disabled and enforces "at least one side" via `superRefine` at submit time.
+- Note: Avoid accessing `.shape` on a Zod schema after `superRefine` (it becomes a `ZodEffects`). Use explicit validators (e.g., `z.boolean()` for the enable toggle) and perform transforms at submit.
+
 ## Testing
 
 - Test runner: Vitest (jsdom environment).
@@ -101,9 +136,10 @@ Testing the routing:
 - Config files:
   - `vitest.config.ts` – test environment and setup.
   - `vitest.setup.ts` – imports jest-dom matchers.
-- Example tests:
-  - `src/routes/index.test.tsx` checks that each route renders the expected page/component.
-  - `src/components/Header/Header.test.tsx` checks dynamic title, disabled menu on Home, and back navigation from Create to Home.
+
+Utilities and wrappers:
+
+- `src/test-utils/form.tsx` provides `renderWithForm` and `renderWithFormAndButtons` which wrap components in a real `AppForm` context (and include the `PrintButton` when needed). Use these for form-bound components to avoid context errors.
 
 ### a11y testing helpers (for debugging)
 
@@ -125,6 +161,6 @@ Usage example (keep commented or remove before committing):
 ## Next steps
 
 - Implement header behaviors (dynamic title, back arrow logic, language switch per MVP scope).
-- Implement the Create Label form with TanStack Form and Zod, including debounced inputs and undo/redo history.
+- Extend the Create Label form: add undo/redo history in a dedicated story.
 - Introduce theme management with CSS variables for “Freedom Blue” and “Freedom Darker.”
 - Add E2E tests when relevant.
