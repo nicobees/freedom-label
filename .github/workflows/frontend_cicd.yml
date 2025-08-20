@@ -48,13 +48,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node + deps (cached)
-        uses: ./.github/actions/setup-npm-typescript
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          working-directory: ${{ env.WORKDIR }}
-          download-node-modules-artifact: "true"
-          artifact-name: frontend-node_modules
+      # - name: Setup Node + deps (cached)
+      #   uses: ./.github/actions/setup-npm-typescript
+      #   with:
+      #     node-version: ${{ env.NODE_VERSION }}
+      #     working-directory: ${{ env.WORKDIR }}
+      #     download-node-modules-artifact: "true"
+      #     artifact-name: frontend-node_modules
+
+      - name: Install dependencies
+        run: npm ci
+
+      # - name: Rebuild node_modules binaries
+      #   run: npm rebuild
+
+      # - name: Debug node_modules/.bin
+      #   run: |
+      #     echo $PATH
+      #     ls -l ./node_modules/.bin
+      #     which vitest || true
 
       - name: Test
         run: npm run test --silent
