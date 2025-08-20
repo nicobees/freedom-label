@@ -102,6 +102,10 @@ Choose one of the following commands to shutdown:
 
 - push image in Container Registry: `docker push ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_BACKEND:$VERSION`
 
+- verify image in container registry: `docker buildx imagetools inspect ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_BACKEND:$VERSION`
+
+- verify image architecture in container registry: `docker buildx imagetools inspect --format='{{.Architecture}}' ghcr.io/$GITHUB_USERNAME/$GITHUB_REPOSITORY_NAME/$GITHUB_IMAGE_BACKEND:$VERSION`
+
 - access image files: `docker exec -it [container name] sh`
 
 - access files inside volume (named volume): `docker volume inspect [volume name] --format '{{ .Mountpoint }}'`
