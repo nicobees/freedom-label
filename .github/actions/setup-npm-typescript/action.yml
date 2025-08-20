@@ -1,0 +1,60 @@
+name: setup-npm-typescript
+description: "Setup Node, restore npm cache, install deps, optionally upload node_modules artifact."
+inputs:
+  working-directory:
+    description: "Working directory"
+    required: true
+    default: "."
+  node-version:
+    description: "Node.js version"
+    required: false
+    default: "22"
+  upload-node-modules-artifact:
+    description: "Upload node_modules as artifact for reuse in dependent jobs within the same workflow run"
+    required: false
+    default: "false"
+  artifact-name:
+    description: "Artifact name for node_modules"
+    required: false
+    default: "frontend-node_modules"
+  download-node-modules-artifact:
+    description: "Attempt to download an existing node_modules artifact before installing"
+    required: false
+    default: "false"
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+    - name: Download node_modules artifact (optional)
+      if: ${{ inputs.download-node-modules-artifact == 'true' }}
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ inputs.working-directory }}/node_modules
+      continue-on-error: true
+
+    - name: Install dependencies (skip if restored)
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ -d node_modules ] && [ -f package-lock.json ]; then
+          echo "node_modules restored from artifact, skipping npm ci"
+        else
+          echo "Installing dependencies via npm ci"
+          npm ci
+        fi
+
+    - name: Upload node_modules artifact (optional)
+      if: ${{ inputs.upload-node-modules-artifact == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ inputs.working-directory }}/node_modules
+        if-no-files-found: error
+        retention-days: 1

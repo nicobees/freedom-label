@@ -1,4 +1,4 @@
-name: Backend CI/CD
+name: Frontend CI/CD
 
 on:
   push:
@@ -13,8 +13,8 @@ on:
         required: true
 
 env:
-  PYTHON_VERSION: "3.12"
-  WORKDIR: ./packages/backend
+  WORKDIR: ./packages/frontend
+  NODE_VERSION: "22"
 
 jobs:
   verify:
@@ -25,27 +25,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: setup-python-poetry-deps
-        uses: ./.github/actions/setup-python-poetry
+      - name: Setup Node + deps (cached)
+        uses: ./.github/actions/setup-npm-typescript
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          node-version: ${{ env.NODE_VERSION }}
           working-directory: ${{ env.WORKDIR }}
-          with-groups: "dev,test"
+          upload-node-modules-artifact: "true"
+          artifact-name: frontend-node_modules
 
       - name: Lint
-        run: poetry run ruff check .
+        run: npm run lint --silent
 
       - name: Type check
-        run: poetry run mypy .
-
-      # Optional: upload venv as artifact for immediate reuse (same run)
-      # - name: Upload venv artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: backend-venv
-      #     path: ${{ env.WORKDIR }}/.venv
-      #     if-no-files-found: ignore
-      #     retention-days: 1
+        run: npm run type-check --silent
 
   test:
     runs-on: ubuntu-latest
@@ -54,23 +46,18 @@ jobs:
       run:
         working-directory: ${{ env.WORKDIR }}
     steps:
-      # Optional: download venv artifact if you used the above upload
-      # - name: Download venv artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: backend-venv
-      #     path: ${{ env.WORKDIR }}/.venv
       - uses: actions/checkout@v4
 
-      - name: Setup (Python + Poetry + deps)
-        uses: ./.github/actions/setup-python-poetry
+      - name: Setup Node + deps (cached)
+        uses: ./.github/actions/setup-npm-typescript
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          node-version: ${{ env.NODE_VERSION }}
           working-directory: ${{ env.WORKDIR }}
-          with-groups: "dev,test"
+          download-node-modules-artifact: "true"
+          artifact-name: frontend-node_modules
 
-      # - name: Test
-      #   run: poetry run pytest -q
+      - name: Test
+        run: npm run test --silent
 
   build:
     if: startsWith(github.ref, 'refs/tags/')
@@ -108,9 +95,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: packages/backend
+          context: packages/frontend
+          file: packages/frontend/Dockerfile
           push: true
-          tags: ghcr.io/${{ vars.USERNAME }}/${{ vars.REPOSITORY_NAME }}/${{ vars.IMAGE_BACKEND }}:${{ env.VERSION }}
+          tags: ghcr.io/${{ vars.USERNAME }}/${{ vars.REPOSITORY_NAME }}/${{ vars.IMAGE_FRONTEND }}:${{ env.VERSION }}
 
   release:
     if: github.event_name == 'workflow_dispatch'
