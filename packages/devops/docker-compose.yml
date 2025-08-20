@@ -1,7 +1,7 @@
 services:
   backend:
-    build: ../backend
-    # image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_BACKEND}:${VERSION}
+    # build: ../backend
+    image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_BACKEND}:${VERSION}
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -14,20 +14,21 @@ services:
     volumes:
       - pdf_output_data:/freedom-label-app/app/services/pdf_output
 
-  # frontend:
-  #   build: ./frontend
-  #   image: frontend:f-0.0.1
-  #   # image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_FRONTEND}:f-0.0.1
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on: [backend]
-  #   # These security options are recommended but not strictly required for MVP
-  #   # --security-opt no-new-privileges prevents privilege escalation
-  #   security_opt:
-  #     - no-new-privileges:true
-  #   # This prevents the container from gaining additional capabilities
-  #   # cap_drop:
-  #   #   - ALL
+  frontend:
+    # build: ./frontend
+    # image: frontend:f-0.0.1
+    image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_FRONTEND}:${VERSION}
+
+    ports:
+      - "8080:8080"
+    depends_on: [backend]
+    # These security options are recommended but not strictly required for MVP
+    # --security-opt no-new-privileges prevents privilege escalation
+    security_opt:
+      - no-new-privileges:true
+    # This prevents the container from gaining additional capabilities
+    # cap_drop:
+    #   - ALL
 
 volumes:
   pdf_output_data:
