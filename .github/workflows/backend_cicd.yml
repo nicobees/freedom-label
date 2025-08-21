@@ -5,7 +5,9 @@ on:
     branches:
       - "**"
     tags:
-      - "v*.*.*"
+      - "b*.*.*"
+    paths:
+      - "packages/backend/**"
   workflow_dispatch:
     inputs:
       tag:
