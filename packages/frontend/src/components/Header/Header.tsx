@@ -102,6 +102,18 @@ export default function Header() {
               >
                 English
               </li>
+              <li
+                aria-selected="true"
+                className="lang-item"
+                onClick={() => setLangOpen(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') setLangOpen(false);
+                }}
+                role="option"
+                tabIndex={0}
+              >
+                Italian
+              </li>
             </ul>
           </div>
         ) : null}
