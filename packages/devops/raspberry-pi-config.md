@@ -111,3 +111,94 @@ Choose one of the following commands to shutdown:
 - access files inside volume (named volume): `docker volume inspect [volume name] --format '{{ .Mountpoint }}'`
 
 - copy from volume files: `sudo cp -a "$(docker volume inspect [volume name] --format '{{ .Mountpoint }}')" [path on host]`
+
+## Auto restart service
+
+Create service file at this path `/etc/systemd/system/freedom-label.service`
+
+```
+[Unit]
+Description=Freedom Label Web App (backend + frontend) via Docker Compose
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/freedom-label/freedom-label
+# Compose file and env file are in the working directory
+Environment=COMPOSE_FILE=docker-compose.prod.yml
+EnvironmentFile=/home/freedom-label/freedom-label/.env
+
+# Start and stop commands (Compose V2; if using V1, replace "docker compose" with "docker-compose")
+ExecStart=/usr/bin/docker compose -p freedom-label up -d
+ExecStop=/usr/bin/docker compose -p freedom-label down
+
+# Keep the unit active after ExecStart completes so systemctl status shows it as active
+RemainAfterExit=yes
+# No start timeout; let Compose return immediately
+TimeoutStartSec=0
+
+# Optional hardening (uncomment if desired and tested)
+# RestrictNamespaces=true
+# PrivateTmp=true
+# ProtectSystem=full
+# ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start the service
+
+```
+sudo systemctl daemon-reload
+sudo systemctl enable freedom-label.service
+sudo systemctl start freedom-label.service
+```
+
+Verify commands in case of errors
+
+```
+systemctl status freedom-label.service
+
+journalctl -xeu freedom-label.service
+```
+
+Useful commands
+
+```
+Check service status:
+
+sudo systemctl status freedom-label
+
+View Compose-managed containers:
+
+docker compose -p freedom-label ps
+
+Tail logs (all services):
+
+docker compose -p freedom-label logs -f
+
+Restart the stack:
+
+sudo systemctl restart freedom-label
+```
+
+Verify restart behaviour
+
+```
+Crash recovery test:
+
+docker kill <backend_container_id>
+
+Docker will restart it automatically due to restart: unless-stopped.
+
+Boot recovery test:
+
+sudo reboot
+
+After boot: docker ps should show both containers up.
+
+systemctl status myapp should show the unit succeeded.
+```

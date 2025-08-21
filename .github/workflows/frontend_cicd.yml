@@ -5,7 +5,9 @@ on:
     branches:
       - "**"
     tags:
-      - "v*.*.*"
+      - "f*.*.*"
+    paths:
+      - "packages/frontend/**"
   workflow_dispatch:
     inputs:
       tag:
