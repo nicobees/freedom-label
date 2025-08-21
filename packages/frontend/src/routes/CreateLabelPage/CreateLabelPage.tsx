@@ -7,13 +7,27 @@ import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfo
 import { useCreateLabelForm } from '../../hooks/useCreateLabelForm';
 import { useRouter } from '../../hooks/useRouter';
 import './create-label.css';
+import { useCreatePrintMutation } from '../../services/api';
 
 export default function CreateLabelPage() {
   const { title } = useRouter();
 
-  const onSubmitHandler = (data: LabelDataSubmit) => {
-    console.log('on submit handler data to send:', data);
+  const onCreatePrintLabel = (error?: string, data?: LabelDataSubmit) => {
+    if (error) {
+      console.error('Mutation failed:', error);
+    } else {
+      console.log('Mutation successful:', data);
+    }
   };
+
+  const { mutate: createPrintLabel } = useCreatePrintMutation({
+    onMutationHandler: onCreatePrintLabel,
+  });
+
+  const onSubmitHandler = (data: LabelDataSubmit) => {
+    createPrintLabel(data);
+  };
+
   const form = useCreateLabelForm(onSubmitHandler);
 
   return (

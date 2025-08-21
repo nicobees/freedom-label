@@ -7,7 +7,7 @@ import {
   isFutureOrToday,
   parseDDMMYYYY,
   tripleToDate,
-} from './date';
+} from '../date';
 
 test('daysInMonth should return correct number of days including leap years', () => {
   expect(daysInMonth(2, 2024)).toBe(29);

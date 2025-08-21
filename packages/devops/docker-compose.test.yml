@@ -1,6 +1,7 @@
 services:
   backend:
-    image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_BACKEND}:${VERSION}
+    build: ../backend
+    # image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_BACKEND}:${VERSION}
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -12,6 +13,18 @@ services:
       retries: 3
     volumes:
       - pdf_output_data:/freedom-label-app/app/services/pdf_output
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.local
+    # image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_FRONTEND}:${VERSION}
+    restart: unless-stopped
+    ports:
+      - "80:8080"
+    depends_on: [backend]
+    security_opt:
+      - no-new-privileges:true
 
 volumes:
   pdf_output_data:
