@@ -1,3 +1,5 @@
+import type { LabelDataSubmit } from '../../validation/schema';
+
 import { defaultValuesFilled } from '../../components/CreateLabelForm/defaultValues';
 import { LensSpecSection } from '../../components/CreateLabelForm/LensSpecSection';
 import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
@@ -7,9 +9,12 @@ import { useRouter } from '../../hooks/useRouter';
 import './create-label.css';
 
 export default function CreateLabelPage() {
-  const form = useCreateLabelForm();
-
   const { title } = useRouter();
+
+  const onSubmitHandler = (data: LabelDataSubmit) => {
+    console.log('on submit handler data to send:', data);
+  };
+  const form = useCreateLabelForm(onSubmitHandler);
 
   return (
     <section className="create-label">

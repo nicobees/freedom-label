@@ -6,7 +6,11 @@ import { DateField } from '../components/CreateLabelForm/fields/DateField';
 import { FloatNumberField } from '../components/CreateLabelForm/fields/FloatNumberField';
 import { TextField } from '../components/CreateLabelForm/fields/TextField';
 import { PrintButton } from '../components/CreateLabelForm/SubmitButton';
-import { LabelDataSchema, LabelDataSubmitSchema } from '../validation/schema';
+import {
+  LabelDataSchema,
+  type LabelDataSubmit,
+  LabelDataSubmitSchema,
+} from '../validation/schema';
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts();
@@ -29,7 +33,7 @@ const FORM_DEBOUNCE_MS = 200;
 
 export type FormType = ReturnType<typeof useCreateLabelForm>;
 
-export function useCreateLabelForm() {
+export function useCreateLabelForm(onSubmit?: (data: LabelDataSubmit) => void) {
   const form = useAppForm({
     defaultValues,
     onSubmit: ({ value }) => {
@@ -43,11 +47,19 @@ export function useCreateLabelForm() {
 
         return;
       }
-      // console.info('on submit data parsed: ', results.data);
 
       const dataToSend = LabelDataSubmitSchema.safeParse(results.data);
 
-      console.info('on submit data to send: ', dataToSend);
+      if (!dataToSend.success) {
+        const errorMessage = dataToSend.error.errors
+          .map((err) => err.message)
+          .join(', ');
+        console.error('Error in parsing data to submit:', errorMessage);
+
+        return;
+      }
+
+      onSubmit?.(dataToSend.data);
     },
     onSubmitInvalid: ({ formApi, value }) => {
       console.info('on submit (invalid): ', value);
