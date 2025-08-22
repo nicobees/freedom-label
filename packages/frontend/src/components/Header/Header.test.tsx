@@ -1,13 +1,14 @@
 import { RouterProvider } from '@tanstack/react-router';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test } from 'vitest';
 
 import { createMemoryAppRouter } from '../../routes/index.tsx';
+import { withReactQuery } from '../../test-utils/react-query';
 
 const setup = (path: string = '/') => {
   const router = createMemoryAppRouter([path]);
-  render(<RouterProvider router={router} />);
+  withReactQuery(<RouterProvider router={router} />);
   return { router };
 };
 

@@ -1,13 +1,14 @@
 import { RouterProvider } from '@tanstack/react-router';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { expect, test } from 'vitest';
 
+import { withReactQuery } from '../test-utils/react-query';
 import { createMemoryAppRouter } from './index';
 
 // Setup helper to avoid repetition in Arrange phase
 const setup = (initialPath: string) => {
   const router = createMemoryAppRouter([initialPath]);
-  const utils = render(<RouterProvider router={router} />);
+  const utils = withReactQuery(<RouterProvider router={router} />);
   return { router, ...utils };
 };
 
