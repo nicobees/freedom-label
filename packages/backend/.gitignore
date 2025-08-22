@@ -9,3 +9,5 @@ __pycache__/
 
 app/services/pdf_output/*
 !app/services/pdf_output/.gitkeep
+
+app/services/create/img/*.png
