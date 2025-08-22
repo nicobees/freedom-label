@@ -13,6 +13,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import reactYouMightNotNeedAnEffect from 'eslint-plugin-react-you-might-not-need-an-effect';
 import sonarjs from 'eslint-plugin-sonarjs';
 import testingLibrary from 'eslint-plugin-testing-library';
+import pluginQuery from '@tanstack/eslint-plugin-query';
 
 const constants = {
   ALWAYS: 'always',
@@ -38,10 +39,15 @@ export default tseslint.config([
       react.configs.flat['jsx-runtime'],
       reactCompiler.configs.recommended,
       reactYouMightNotNeedAnEffect.configs.recommended,
+      pluginQuery.configs['flat/recommended'],
     ],
     settings: {
       // Use node resolver; TypeScript takes care of module resolution via tsc/vite.
       'import/resolver': {
+        typescript: {
+          // Let the resolver pick up tsconfig in this package
+          project: true,
+        },
         node: {
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
@@ -67,6 +73,8 @@ export default tseslint.config([
       'import/no-extraneous-dependencies': [
         constants.ERROR,
         {
+          // Ensure the plugin checks dependencies against this package.json
+          packageDir: [import.meta.dirname],
           devDependencies: [
             '**/*.test.{js,jsx,ts,tsx}',
             '**/*.config.js',
@@ -255,6 +263,7 @@ export default tseslint.config([
     files: ['vitest.config.ts'],
     rules: {
       'import/no-unresolved': 'off',
+      'import/no-extraneous-dependencies': 'off',
     },
   },
   {

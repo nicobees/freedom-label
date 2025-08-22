@@ -1,3 +1,5 @@
+import type { LabelDataSubmit } from '../../validation/schema';
+
 import { defaultValuesFilled } from '../../components/CreateLabelForm/defaultValues';
 import { LensSpecSection } from '../../components/CreateLabelForm/LensSpecSection';
 import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
@@ -5,11 +7,28 @@ import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfo
 import { useCreateLabelForm } from '../../hooks/useCreateLabelForm';
 import { useRouter } from '../../hooks/useRouter';
 import './create-label.css';
+import { useCreatePrintMutation } from '../../services/api';
 
 export default function CreateLabelPage() {
-  const form = useCreateLabelForm();
-
   const { title } = useRouter();
+
+  const onCreatePrintLabel = (error?: string, data?: LabelDataSubmit) => {
+    if (error) {
+      console.error('Mutation failed:', error);
+    } else {
+      console.log('Mutation successful:', data);
+    }
+  };
+
+  const { mutate: createPrintLabel } = useCreatePrintMutation({
+    onMutationHandler: onCreatePrintLabel,
+  });
+
+  const onSubmitHandler = (data: LabelDataSubmit) => {
+    createPrintLabel(data);
+  };
+
+  const form = useCreateLabelForm(onSubmitHandler);
 
   return (
     <section className="create-label">
