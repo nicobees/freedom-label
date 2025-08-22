@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 from app.models import LensDataSpecs, TableData
@@ -261,12 +262,76 @@ class SingleLensTemplate(LabelTemplate[None]):
             new_y="NEXT",
         )
 
-        # Expiration date
+        lot_number_lower_margin = 1
+
+        # Production date
+        production_date_initial_x = self.pdf.get_x()
+        production_date_initial_y = self.pdf.get_y() + lot_number_lower_margin
+        self.pdf.set_xy(production_date_initial_x, production_date_initial_y)
+
+        current_dir = Path(__file__).parent
+        img_dir = current_dir / "img"
+
+        img_width = 2.5
+        img_height = 2.5
+        self.pdf.image(img_dir / "factory.svg", w=img_width, h=img_height, type="SVG")
+        self.pdf.c_margin = 0
+        self.pdf.set_xy(
+            production_date_initial_x + img_width,
+            production_date_initial_y,
+        )
+
         self.pdf.set_font("openSansCondensedRegular", "", 6)
         self.pdf.cell(
-            w=9,
+            w=7.5,
             h=2.2,
-            text="Scadenza: ",
+            text="(prod. il)",
+            align="L",
+            border=self.show_borders,
+            new_x="RIGHT",
+            new_y="LAST",
+        )
+
+        self.pdf.set_font("openSansRegular", "", 8)
+        self.pdf.cell(
+            w=14,
+            h=2.5,
+            text=self.label_data.production_date,
+            align="L",
+            border=self.show_borders,
+            new_x="LMARGIN",
+            new_y="NEXT",
+        )
+
+        production_date_lower_margin = 1
+
+        # Expiration date
+        expiration_date_initial_x = self.pdf.get_x()
+        expiration_date_initial_y = self.pdf.get_y() + production_date_lower_margin
+        self.pdf.set_xy(expiration_date_initial_x, expiration_date_initial_y)
+
+        current_dir = Path(__file__).parent
+        img_dir = current_dir / "img"
+
+        expiration_date_img_width = 2.5
+        expiration_date_img_height = 2.5
+        self.pdf.image(
+            img_dir / "hourglass.svg",
+            w=expiration_date_img_width,
+            h=expiration_date_img_height,
+            type="SVG",
+        )
+        self.pdf.c_margin = 0
+        self.pdf.set_xy(
+            expiration_date_initial_x + expiration_date_img_width,
+            expiration_date_initial_y,
+        )
+
+        self.pdf.set_font("openSansCondensedRegular", "", 6)
+        self.pdf.cell(
+            w=7.5,
+            h=2.2,
+            text="(scade il)",
             align="L",
             border=self.show_borders,
             new_x="RIGHT",
@@ -392,7 +457,7 @@ class SingleLensTemplate(LabelTemplate[None]):
         self.add_production_info()
 
         production_info_y_lower = self.pdf.get_y()
-        lower_margin = 4
+        lower_margin = 2
         self.pdf.set_y(
             production_info_y_lower + lower_margin,
         )
