@@ -294,7 +294,7 @@ class SingleLensTemplate(LabelTemplate[None]):
 
         self.pdf.set_font("openSansRegular", "", 8)
         self.pdf.cell(
-            w=14,
+            w=15,
             h=2.5,
             text=self.label_data.production_date,
             align="L",
@@ -340,7 +340,7 @@ class SingleLensTemplate(LabelTemplate[None]):
 
         self.pdf.set_font("openSansBold", "", 8)
         self.pdf.cell(
-            w=14,
+            w=15,
             h=2.5,
             text=self.label_data.due_date,
             align="L",
@@ -804,7 +804,7 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
             _top_margin (float | None, optional): The top margin. Defaults to None.
 
         """
-        additional_top_margin = 2
+        additional_top_margin = 1
         additional_left_margin = 1
 
         current_left_margin = (
@@ -842,27 +842,73 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
             new_y="NEXT",
         )
 
+        # Production date
         if current_left_margin is not None:
             self.pdf.set_xy(
                 current_left_margin,
                 self.pdf.get_y() + additional_top_margin,
             )
 
-        # Expiration date
-        self.pdf.set_font("openSansCondensedRegular", "", 6)
+        production_date_initial_x = self.pdf.get_x()
+        production_date_initial_y = self.pdf.get_y()
+
+        current_dir = Path(__file__).parent
+        img_dir = current_dir / "img"
+
+        production_img_width = 2.5
+        production_img_height = 2.5
+        self.pdf.image(
+            img_dir / "factory.svg",
+            w=production_img_width,
+            h=production_img_height,
+            type="SVG",
+        )
+        self.pdf.c_margin = 0
+        self.pdf.set_xy(
+            production_date_initial_x + production_img_width,
+            production_date_initial_y,
+        )
+
+        self.pdf.set_font("openSansRegular", "", 8)
         self.pdf.cell(
-            w=7.5,
-            h=2.2,
-            text="Scadenza: ",
+            w=15,
+            h=2.5,
+            text=self.label_data.production_date,
             align="L",
             border=self.show_borders,
-            new_x="RIGHT",
-            new_y="LAST",
+            new_x="START",
+            new_y="NEXT",
+        )
+
+        # Expiration date
+        if current_left_margin is not None:
+            self.pdf.set_xy(
+                current_left_margin,
+                self.pdf.get_y() + additional_top_margin,
+            )
+
+        expiration_date_initial_x = self.pdf.get_x()
+        expiration_date_initial_y = self.pdf.get_y()
+
+        current_dir = Path(__file__).parent
+
+        expiration_img_width = 2.5
+        expiration_img_height = 2.5
+        self.pdf.image(
+            img_dir / "hourglass.svg",
+            w=expiration_img_width,
+            h=expiration_img_height,
+            type="SVG",
+        )
+        self.pdf.c_margin = 0
+        self.pdf.set_xy(
+            expiration_date_initial_x + expiration_img_width,
+            expiration_date_initial_y,
         )
 
         self.pdf.set_font("openSansBold", "", 8)
         self.pdf.cell(
-            w=11.5,
+            w=15,
             h=2.5,
             text=self.label_data.due_date,
             align="L",
