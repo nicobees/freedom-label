@@ -31,7 +31,7 @@ def print_label_pdf(
         custom_error_message = f"File not found{path_error_message}."
         raise FileNotFoundError(custom_error_message)
     # print("Inside printing method")  # noqa: ERA001
-    return True
+
     command = "lpr"
     printer_name = "-P SN_420B"
     layout_options = "-o PageSize=Custom.50x30mm -o orientation-requested=3"
