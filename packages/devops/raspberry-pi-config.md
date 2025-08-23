@@ -202,3 +202,36 @@ After boot: docker ps should show both containers up.
 
 systemctl status myapp should show the unit succeeded.
 ```
+
+### Remote access
+
+Raspberry Pi Connect service is used: https://www.raspberrypi.com/documentation/services/connect.html
+
+Follow official documentation to install the service
+
+Commands to start and stop the rpi-connect service:
+
+```
+rpi-connect on
+
+rpi-connect off
+```
+
+## Release process
+
+The two scripts in the [scripts folder](./scripts/) are meant to be used to run the release process, and they are manually triggered in the production environment (Raspberry Pi).
+
+Access to the production environment via ssh to run the scripts.
+
+- `pull-image.sh`: it pulls latest images specified in the input parameters, for both backend and frontend applications
+- `deploy.sh`: it updates the `.env` files with the proper version of the two images of the two applications, and the restart the systemd `freedom-label.service` so that the new images will be used by docker compose
+
+Please use run the two scripts with param `--help` to check how to run the two scripts
+
+Example on how to run the scripts (version for backend "b0.0.4", version for frontend "f0.0.6"):
+
+```
+./pull-images.sh --b "0.0.4" --f "0.0.6"
+
+./deploy.sh --b "0.0.4" --f "0.0.6"
+```

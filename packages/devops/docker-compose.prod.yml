@@ -1,6 +1,6 @@
 services:
   backend:
-    image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_BACKEND}:${VERSION}
+    image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_BACKEND}:${VERSION_BACKEND}
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -14,13 +14,14 @@ services:
       - pdf_output_data:/freedom-label-app/app/services/pdf_output
 
   frontend:
-    image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_FRONTEND}:${VERSION}
+    image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_FRONTEND}:${VERSION_FRONTEND}
     restart: unless-stopped
     ports:
       - "80:8080"
     depends_on:
-      backend:
-        condition: service_healthy
+      [backend]
+      # backend:
+      #   condition: service_healthy
     security_opt:
       - no-new-privileges:true
 
