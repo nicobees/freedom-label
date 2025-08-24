@@ -8,6 +8,59 @@
     display: grid;
     gap: var(--space-3);
   }
+  /* Patient Info specific responsive layout */
+  .patient-info-fields {
+    grid-template-columns: 1fr; /* mobile/tablet default */
+  }
+  /* ≥ desktop breakpoint (min-width: var(--bp-desktop) = 1024px) */
+  @media (min-width: 1024px) {
+    .patient-info-fields {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  /* Manufacturing section layout */
+  .manufacturing-fields {
+    grid-template-columns: 1fr; /* mobile/tablet */
+  }
+  /* ≥ desktop breakpoint (min-width: var(--bp-desktop) = 1024px) */
+  @media (min-width: 1024px) {
+    .manufacturing-fields {
+      grid-template-columns: 3fr 1fr; /* description wider than batch */
+      grid-auto-rows: auto;
+    }
+
+    .manufacturing-fields > .description-field {
+      grid-column: 1 / 2;
+    }
+    .manufacturing-fields > .batch-field {
+      grid-column: 2 / 3;
+    }
+  }
+
+  /* Date field compact selects */
+  .date-field .date-dropdown {
+    display: inline-flex;
+    gap: var(--space-2);
+  }
+  .date-field .date-dropdown select {
+    width: auto;
+    min-width: 4.25ch; /* fits 2-digit day/month */
+    padding-inline: 6px;
+  }
+
+  /* < desktop breakpoint (max-width: calc(var(--bp-desktop)) = 1024px) */
+  @media (max-width: 1024px) {
+    .date-field .date-dropdown select {
+      flex: 1 1 auto;
+    }
+  }
+  /* < desktop breakpoint (max-width: calc(var(--bp-tablet)) = 768px) */
+  @media (max-width: 768px) {
+    .date-field .date-dropdown select {
+      flex: 100%;
+    }
+  }
+
   .field__label {
     display: block;
     font-size: var(--font-size-sm);

@@ -51,7 +51,7 @@ export const DateField = ({ label }: { label: string }) => {
   };
 
   return (
-    <div className={`field ${showError ? 'is-error' : ''}`}>
+    <div className={`field date-field ${showError ? 'is-error' : ''}`}>
       <label className="field__label">
         {label}
         <div aria-label={label} className="date-dropdown" role="group">

@@ -1,3 +1,5 @@
+import { getItemFromLocalStorage } from './localStorage';
+
 /* Theme toggle helper */
 export type AppTheme = 'dark' | 'light';
 
@@ -9,8 +11,9 @@ export function applyTheme(theme: AppTheme) {
 }
 
 export function getStoredTheme(): AppTheme | null {
-  const v = localStorage.getItem(THEME_KEY);
-  if (v === 'light' || v === 'dark') return v;
+  const theme = getItemFromLocalStorage<AppTheme>(THEME_KEY);
+
+  if (theme === 'light' || theme === 'dark') return theme;
 
   return null;
 }
@@ -18,7 +21,9 @@ export function getStoredTheme(): AppTheme | null {
 export function initTheme() {
   const stored = getStoredTheme();
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const initial: AppTheme = stored ?? (prefersDark ? 'dark' : 'light');
+  const defaultTheme = prefersDark ? 'dark' : 'light';
+  const initial: AppTheme = stored ?? defaultTheme;
+
   applyTheme(initial);
 }
 

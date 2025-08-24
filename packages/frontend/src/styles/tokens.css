@@ -33,6 +33,9 @@
     /* Layout */
     --layout-max-width: 1200px; /* full shell max */
     --layout-content-width: 960px; /* primary content column */
+    /* Breakpoints (content-first approach) */
+    --bp-tablet: 768px;
+    --bp-desktop: 1024px;
 
     /* Component defaults (theme-independent fallbacks) */
     --color-button-filled-bg: var(--color-primary);

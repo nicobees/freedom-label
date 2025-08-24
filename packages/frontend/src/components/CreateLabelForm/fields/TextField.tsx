@@ -4,7 +4,13 @@ import {
 } from '../../../hooks/useCreateLabelForm';
 import { formatValidationError } from '../utils';
 
-export function TextField({ label }: { label: string }) {
+export function TextField({
+  className,
+  label,
+}: {
+  className?: string;
+  label: string;
+}) {
   const field = useFieldContext<string>();
   const form = useFormContext();
 
@@ -16,7 +22,7 @@ export function TextField({ label }: { label: string }) {
   const showError = !isValid && (isTouched || isSubmitted);
 
   return (
-    <div className={`field ${showError ? 'is-error' : ''}`}>
+    <div className={`field ${showError ? 'is-error' : ''} ${className}`}>
       <label className="field__label">
         {label}
         <input
