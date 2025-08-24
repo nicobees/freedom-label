@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-router';
 
 import Header from '../components/Header/Header';
+import { useLabelLocalStorage } from '../hooks/useLabelLocalStorage';
 import CreateLabelPage from './CreateLabelPage/CreateLabelPage';
 import HomePage from './HomePage/HomePage';
 
@@ -33,10 +34,24 @@ function Layout({ children }: PropsWithChildren) {
 }
 
 function ListLabelPageDisabled() {
+  const { getLabels } = useLabelLocalStorage();
+
+  const labelsData = getLabels();
+
   return (
     <section>
       <h2 aria-hidden="true">List Label</h2>
       <p title="Not available yet">Not available yet</p>
+
+      <ol>
+        {labelsData.map((label) => {
+          const { hash, payload, timestamp } = label;
+
+          const formattedData = new Date(timestamp).toISOString();
+          const dataToShow = `${payload.patient_info.name} ${payload.patient_info.surname} - ${payload.description} (${formattedData})`;
+          return <li key={hash}>{dataToShow}</li>;
+        })}
+      </ol>
     </section>
   );
 }

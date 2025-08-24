@@ -13,14 +13,16 @@ export default function HomePage() {
         >
           Create Label
         </Link>
-        <span
+        <Link
           aria-disabled="true"
           className="btn btn--outline is-disabled"
+          disabled
           role="button"
           title="Not available yet"
+          to="/list"
         >
           Label List (Disabled)
-        </span>
+        </Link>
       </div>
     </section>
   );

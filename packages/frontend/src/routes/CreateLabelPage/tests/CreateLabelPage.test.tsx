@@ -60,3 +60,30 @@ test('should update Print button disable state based on the form validity', asyn
 
   expect(print).toBeEnabled();
 });
+
+test('should store printed label data into localStorage when Print clicked after filling form', async () => {
+  // Arrange
+  localStorage.clear();
+  const user = userEvent.setup();
+  setup(['/create']);
+
+  const print = await screen.findByRole('button', { name: /print/i });
+  const fillFormTempButton = screen.getByRole('button', {
+    name: 'Fill form (temp)',
+  });
+
+  // Act
+  await user.click(fillFormTempButton); // fills form & enables print
+  expect(print).toBeEnabled();
+  await user.click(print);
+
+  // Assert
+  // The hook uses key 'freedom-label:printed-labels:v1' storing a Map serialized
+  const raw = localStorage.getItem('freedom-label:printed-labels:v1');
+  expect(raw).toBeTruthy();
+  // Basic structural checks without depending on full data shape
+  expect(raw).toContain('"dataType":"Map"');
+  // Parse and ensure at least one entry exists
+  const parsed = JSON.parse(raw!);
+  expect(parsed.value?.length).toBeGreaterThan(0);
+});
