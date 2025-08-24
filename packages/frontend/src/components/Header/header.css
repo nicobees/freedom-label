@@ -11,9 +11,10 @@
   align-items: center;
   height: var(--header-height);
   padding: 0 8px;
-  background: var(--bg, #ffffff);
-  color: var(--fg, #111111);
-  border-bottom: 1px solid var(--muted, #e5e7eb);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-accent) 40%, transparent);
 }
 
 .fl-header__left,
@@ -107,7 +108,7 @@
   border: none;
   border-radius: 20px;
   background: transparent;
-  color: var(--fg, #111111);
+  color: inherit;
   cursor: pointer;
 }
 
@@ -192,12 +193,12 @@
   position: absolute;
   top: calc(var(--header-height) - 4px);
   right: 8px;
-  background: var(--bg, #ffffff);
-  color: var(--fg, #111111);
-  border: 1px solid var(--muted, #e5e7eb);
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  border: 1px solid var(--color-outline);
   border-radius: 8px;
   padding: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--elevation-1);
 }
 
 .lang-list {

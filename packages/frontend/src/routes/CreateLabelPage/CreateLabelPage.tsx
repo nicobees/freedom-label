@@ -40,6 +40,7 @@ export default function CreateLabelPage() {
           <div className="actions">
             <button
               aria-disabled="true"
+              className="btn btn--outline"
               disabled
               title="Not available yet"
               type="button"
@@ -48,6 +49,7 @@ export default function CreateLabelPage() {
             </button>
             <form.PrintButton label="Print" />
             <button
+              className="btn btn--text"
               onClick={() => form.reset(defaultValuesFilled)}
               type="button"
             >

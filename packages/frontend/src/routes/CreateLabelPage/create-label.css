@@ -1,11 +1,14 @@
 /* Create Label layout */
 .create-label {
   padding: 16px;
+  margin-inline: auto;
+  width: 100%;
 }
 
 .create-form {
   display: grid;
-  gap: 16px;
+  gap: 12px; /* reduced vertical spacing between main sections */
+  width: 100%;
 }
 
 .section {
@@ -17,23 +20,23 @@
 .lens-specs,
 .lens-grid {
   display: grid;
-  gap: 16px;
+  gap: 12px; /* reduced vertical gap inside lens spec fieldset */
 }
 
 .lens-col {
   display: grid;
-  gap: 12px;
+  gap: 8px; /* tighter spacing between checkbox and data grid */
 }
 
-.field {
-  display: grid;
-  gap: 6px;
+/* Fine-tune only the gap after the first child (checkbox) */
+.lens-col > :first-child {
+  margin-block-end: 2px; /* minimal separation before lens-grid */
 }
 
 .date-dropdown {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 .field-row {
@@ -44,10 +47,6 @@
 
 .field.compact select {
   height: 36px;
-}
-
-.field.grow {
-  flex: 1;
 }
 
 .checkbox {
@@ -68,10 +67,45 @@
   cursor: not-allowed;
 }
 
-/* Responsive: single column by default, two columns for lenses on wider screens */
-@media (min-width: 768px) {
-  .lens-specs,
-  .lens-grid {
+/* Responsive: lens columns stack for mobile & tablet; side-by-side only at desktop */
+/* ≥ desktop breakpoint (min-width: var(--bp-desktop) = 1024px) */
+@media (min-width: 1024px) {
+  .lens-specs {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* Lens grid: always single-column list of fields */
+.lens-grid {
+  grid-template-columns: 1fr; /* enforce vertical stacking of BC, DIA, etc. */
+}
+
+/* Float number field internal layout: sign select + input inline */
+.float-field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(
+    --space-3,
+    12px
+  ); /* slightly larger gap between sign select and input */
+}
+.float-field select {
+  width: auto;
+  min-width: 2.25ch; /* just sign */
+  padding-inline: 4px;
+}
+.float-field input {
+  flex: 0 0 auto;
+  width: 7ch; /* fixed width to fit values like "+12.34" */
+  min-width: 7ch;
+}
+
+/* Tighten vertical spacing between individual numeric fields */
+.lens-grid .field {
+  margin-block-end: 4px; /* smaller than global field spacing */
+}
+
+/* Increase space between label text and its inner float-field container */
+.field .float-field {
+  margin-top: 4px; /* visual separation from label */
 }

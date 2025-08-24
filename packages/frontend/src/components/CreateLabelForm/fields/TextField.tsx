@@ -4,7 +4,13 @@ import {
 } from '../../../hooks/useCreateLabelForm';
 import { formatValidationError } from '../utils';
 
-export function TextField({ label }: { label: string }) {
+export function TextField({
+  className,
+  label,
+}: {
+  className?: string;
+  label: string;
+}) {
   const field = useFieldContext<string>();
   const form = useFormContext();
 
@@ -16,11 +22,12 @@ export function TextField({ label }: { label: string }) {
   const showError = !isValid && (isTouched || isSubmitted);
 
   return (
-    <>
-      <label>
+    <div className={`field ${showError ? 'is-error' : ''} ${className}`}>
+      <label className="field__label">
         {label}
         <input
           aria-invalid={!isValid}
+          className="field__input"
           onChange={(e) => {
             field.handleChange(e.target.value);
           }}
@@ -32,7 +39,7 @@ export function TextField({ label }: { label: string }) {
         <div
           aria-label={`${label} error`}
           aria-live="polite"
-          className="error"
+          className="field__assist"
           role="status"
         >
           {errors.map((e, i) => (
@@ -40,6 +47,6 @@ export function TextField({ label }: { label: string }) {
           ))}
         </div>
       ) : null}
-    </>
+    </div>
   );
 }

@@ -16,7 +16,7 @@ test('checkbox toggles only when clicking the checkbox, not the text label', asy
   setupLeftColumn();
 
   const checkbox = screen.getByRole('checkbox', {
-    name: /left lens enabled/i,
+    name: /left lens/i,
   });
   const labelText = screen.getByText(/left lens/i);
 
@@ -27,7 +27,7 @@ test('checkbox toggles only when clicking the checkbox, not the text label', asy
   await userEvent.click(checkbox);
   expect(checkbox).not.toBeChecked();
 
-  // Clicking the text should NOT toggle
+  // Clicking the text currently should NOT toggle (label not bound via htmlFor)
   await userEvent.click(labelText);
   expect(checkbox).not.toBeChecked();
 
