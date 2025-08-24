@@ -23,7 +23,7 @@ test('should render actions and show Label List as disabled with tooltip', async
     await screen.findByRole('link', { name: /create label/i }),
   ).toBeInTheDocument();
 
-  const disabled = screen.getByRole('button', { name: /label list/i });
+  const disabled = screen.getByRole('link', { name: /label list/i });
   expect(disabled).toHaveAttribute('aria-disabled', 'true');
   expect(disabled).toHaveAttribute('title', 'Not available yet');
 });

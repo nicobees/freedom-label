@@ -5,14 +5,19 @@ import { LensSpecSection } from '../../components/CreateLabelForm/LensSpecSectio
 import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
 import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfoSection';
 import { useCreateLabelForm } from '../../hooks/useCreateLabelForm';
-import { useRouter } from '../../hooks/useRouter';
+import { useLabelLocalStorage } from '../../hooks/useLabelLocalStorage';
 import './create-label.css';
+import { useRouter } from '../../hooks/useRouter';
 import { useCreatePrintMutation } from '../../services/api';
 
 export default function CreateLabelPage() {
   const { title } = useRouter();
+  const { saveLabel } = useLabelLocalStorage();
 
-  const onCreatePrintLabel = (error?: string, data?: LabelDataSubmit) => {
+  const onCreatePrintLabelResponse = (
+    error?: string,
+    data?: LabelDataSubmit,
+  ) => {
     if (error) {
       console.error('Mutation failed:', error);
     } else {
@@ -21,11 +26,13 @@ export default function CreateLabelPage() {
   };
 
   const { mutate: createPrintLabel } = useCreatePrintMutation({
-    onMutationHandler: onCreatePrintLabel,
+    onMutationHandler: onCreatePrintLabelResponse,
   });
 
   const onSubmitHandler = (data: LabelDataSubmit) => {
     createPrintLabel(data);
+
+    saveLabel(data);
   };
 
   const form = useCreateLabelForm(onSubmitHandler);

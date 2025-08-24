@@ -8,7 +8,7 @@ import './styles/global.css';
 import { queryClient } from './services/queryClient';
 import { initTheme } from './utils/theme';
 
-// Initialize theme ASAP before first paint
+// Initialize theme
 initTheme();
 
 createRoot(document.getElementById('root')!).render(

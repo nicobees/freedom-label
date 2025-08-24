@@ -16,6 +16,9 @@ This documentation provides a technical overview of the frontend application in 
   - Validation
 - Testing
 - Next steps
+- Persistence (Printed Labels)
+- Testing (updated)
+- Maintenance & future enhancements
 
 ## Overview
 
@@ -158,9 +161,78 @@ Usage example (keep commented or remove before committing):
 // assertHasRole(container, 'button');
 ```
 
+## Persistence (Printed Labels)
+
+Printed label submissions are persisted locally to allow future retrieval (e.g. a forthcoming Label List or re-print feature) without requiring an immediate backend dependency.
+
+Implementation details:
+
+- Hook: `src/hooks/useLabelLocalStorage.ts`
+  - Storage key: `freedom-label:printed-labels:v1`.
+  - Structure stored: a `Map<string, { hash: string; payload: LabelDataSubmit; timestamp: number }>`.
+  - Hashing: Uses a deterministic `djb2` hash (`src/utils/hash.ts`) of the JSON-stringified label payload to deduplicate entries.
+  - On first import, ensures an empty Map is initialized if the key is missing.
+  - `saveLabel(labelData)` computes the hash, checks Map existence, and inserts only if new.
+  - `getLabels()` returns an array of stored objects (values of the Map).
+- Serialization helpers: `jsonStringify` / `jsonParse` in `src/utils/jsonHandler.ts` transparently serialize Maps via a `{ dataType: 'Map', value: [ [k,v], ...] }` wrapper and revive them on parse.
+- Consumer flow (Print): `CreateLabelPage` passes a validated `LabelDataSubmit` object to `saveLabel` inside the `onSubmitHandler` invoked by the form's `PrintButton` (which triggers `form.handleSubmit()`).
+
+Why a Map?
+
+- O(1) duplicate detection via hash key.
+- Natural iteration while keeping insertion order (helpful for future chronological listing).
+- Simple migration path: a future version key (e.g., `:v2`) could represent a different stored shape; current parser fails gracefully if JSON shape is unexpected.
+
+Error tolerance:
+
+- If JSON parsing throws a `SyntaxError`, `getItemFromLocalStorage` returns the raw string, protecting against corrupted entries while avoiding a hard crash.
+
+### Example (conceptual)
+
+```
+freedom-label:printed-labels:v1 => {
+  dataType: 'Map',
+  value: [
+    [ '12345678', { hash: '12345678', payload: { ...LabelDataSubmit }, timestamp: 1735123456789 } ],
+    [ 'abcd9012', { hash: 'abcd9012', payload: { ... }, timestamp: 1735123499999 } ]
+  ]
+}
+```
+
+## Testing (updated)
+
+New tests were added to cover persistence logic:
+
+- `src/utils/tests/localStorage.test.ts`
+  - Verifies presence checks, primitive round-trip, Map serialization + revival, null handling, and malformed JSON fallback.
+- `src/routes/CreateLabelPage/tests/CreateLabelPage.test.tsx`
+  - Adds a test that fills the form (using the temporary fill button) and clicks Print, asserting that the storage key is populated with a serialized Map containing at least one entry.
+
+All tests follow the documented guidelines: flat `test()` blocks, AAA pattern, minimal mocking.
+
+Running the full suite:
+
+```
+npx vitest run
+```
+
+## Maintenance & future enhancements
+
+Potential improvements to persistence and related UX:
+
+- Introduce a central `storageVersion` constant and migration utility to evolve the stored shape safely.
+- Add a `removeLabel(hash)` API and pruning strategy (e.g. keep last N or TTL-based cleanup) to control unbounded growth.
+- Provide a derived selector (e.g. `getLatestLabels(limit)`) for efficient listing once the Label List page is implemented.
+- Encrypt or obfuscate sensitive patient data at rest if regulatory requirements arise (currently stored in plain text JSON).
+- Add a bulk export/import feature (e.g., JSON file download/upload) for portability.
+- Mock the network mutation in tests to silence console warnings (`Failed to parse URL from /api/label/create-print`) and assert mutation invocation explicitly.
+- Add an integration test scenario verifying that two sequential identical prints do not duplicate the Map entry (hash dedupe) and that distinct payloads do.
+
 ## Next steps
 
 - Implement header behaviors (dynamic title, back arrow logic, language switch per MVP scope).
 - Extend the Create Label form: add undo/redo history in a dedicated story.
 - Introduce theme management with CSS variables for “Freedom Blue” and “Freedom Darker.”
 - Add E2E tests when relevant.
+- Implement Label List view consuming `getLabels()` (with sorting and basic filtering).
+- Add undo/redo persistence snapshot history (separate from print history) if required by future stories.
