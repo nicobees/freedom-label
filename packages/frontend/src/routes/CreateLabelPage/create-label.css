@@ -28,11 +28,6 @@
   gap: 12px;
 }
 
-.field {
-  display: grid;
-  gap: 6px;
-}
-
 .date-dropdown {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -47,10 +42,6 @@
 
 .field.compact select {
   height: 36px;
-}
-
-.field.grow {
-  flex: 1;
 }
 
 .checkbox {

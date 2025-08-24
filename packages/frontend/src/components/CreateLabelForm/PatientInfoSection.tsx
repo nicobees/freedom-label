@@ -17,12 +17,10 @@ export const PatientInfoSection = withForm({
         <div aria-level={2} className="card__title" role="heading">
           {label}
         </div>
-        <div className="card__section">
+        <div className="card__section field-group">
           <form.AppField name="patient_info.name">
             {(field) => <field.TextField label="Name" />}
           </form.AppField>
-        </div>
-        <div className="card__section">
           <form.AppField
             name="patient_info.surname"
             // validators={{

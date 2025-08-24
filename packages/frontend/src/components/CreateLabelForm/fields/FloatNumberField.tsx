@@ -48,7 +48,7 @@ export function FloatNumberField({
   const role = withSign ? 'group' : undefined;
 
   return (
-    <div className={`field ${showError ? 'is-error' : ''}`}>
+    <div className={`field ${showError ? 'is-error' : ''} field-group`}>
       <label className="field__label">
         {label}
         <div aria-label={label} className="float-field" role={role}>

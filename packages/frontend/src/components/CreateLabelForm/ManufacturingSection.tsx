@@ -17,17 +17,13 @@ export const ManufacturingSection = withForm({
         <div aria-level={2} className="card__title" role="heading">
           {label}
         </div>
-        <div className="card__section">
+        <div className="card__section field-group">
           <form.AppField name="description">
             {(field) => <field.TextField label="Description" />}
           </form.AppField>
-        </div>
-        <div className="card__section">
           <form.AppField name="batch">
             {(field) => <field.TextField label="Batch" />}
           </form.AppField>
-        </div>
-        <div className="card__section">
           <form.AppField
             name="production_date"
             // validators={{
@@ -36,8 +32,6 @@ export const ManufacturingSection = withForm({
           >
             {(field) => <field.DateField label="Production Date" />}
           </form.AppField>
-        </div>
-        <div className="card__section">
           <form.AppField
             name="due_date"
             // validators={{

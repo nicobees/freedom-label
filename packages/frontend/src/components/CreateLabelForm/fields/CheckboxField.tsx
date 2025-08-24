@@ -17,15 +17,16 @@ export function CheckboxField({ label }: { label: string }) {
 
   return (
     <div className={`field field--checkbox ${showError ? 'is-error' : ''}`}>
-      <label className="field__label">
-        <input
-          checked={field.state.value}
-          className="field__input field__input--checkbox"
-          onChange={(e) => field.handleChange(e.target.checked)}
-          type="checkbox"
-        />
+      <input
+        aria-label={label}
+        checked={field.state.value}
+        className="field__input field__input--checkbox"
+        onChange={(e) => field.handleChange(e.target.checked)}
+        type="checkbox"
+      />
+      <span aria-hidden="true" className="field__label">
         {label}
-      </label>
+      </span>
       {showError && errors?.length > 0 ? (
         <div
           aria-label={`${label} error`}

@@ -124,7 +124,7 @@ test('disable toggle keeps values visible and re-enable preserves them', async (
   setup();
 
   const leftToggle = screen.getByRole('checkbox', {
-    name: /left lens enabled/i,
+    name: /left lens/i,
   });
 
   const [leftBc] = screen.getAllByRole('textbox', { name: /bc/i });
@@ -157,7 +157,7 @@ test('disable toggle keeps values visible and re-enable preserves them', async (
 
   // Re-enable LEFT (re-query to avoid stale reference)
   const leftToggleAgain = screen.getByRole('checkbox', {
-    name: /left lens enabled/i,
+    name: /left lens/i,
   });
   await userEvent.click(leftToggleAgain);
 
