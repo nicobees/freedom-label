@@ -53,6 +53,7 @@ const LensSpecCopyData = withForm({
       <div className="copy-actions">
         <button
           aria-label={ariaLabel}
+          className="btn btn--filled"
           onClick={() => void onClickHandler()}
           type="button"
         >
@@ -78,7 +79,7 @@ const LensSpecColumnGridData = withForm({
     const groupLabel = `${typedSide} Lens Specs Data`;
 
     return (
-      <fieldset aria-label={groupLabel} role="group">
+      <fieldset aria-label={groupLabel} className="lens-grid" role="group">
         <form.AppField name={`${lensSpecSideDataName}.bc` as const}>
           {(field) => (
             <field.FloatNumberField

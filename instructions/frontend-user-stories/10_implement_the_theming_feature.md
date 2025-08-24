@@ -3,10 +3,7 @@
 ```json
 {
   "priority": "P2",
-  "labels": [
-    "frontend",
-    "enhancement"
-  ]
+  "labels": ["frontend", "enhancement"]
 }
 ```
 

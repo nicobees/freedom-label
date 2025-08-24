@@ -13,15 +13,16 @@ export const PatientInfoSection = withForm({
     const label = 'Patient Info';
 
     return (
-      <fieldset aria-label={label} className="section" role="group">
-        <legend>{label}</legend>
-
-        <div className="field">
+      <div aria-label={label} className="card" role="group">
+        <div aria-level={2} className="card__title" role="heading">
+          {label}
+        </div>
+        <div className="card__section">
           <form.AppField name="patient_info.name">
             {(field) => <field.TextField label="Name" />}
           </form.AppField>
         </div>
-        <div className="field">
+        <div className="card__section">
           <form.AppField
             name="patient_info.surname"
             // validators={{
@@ -31,7 +32,7 @@ export const PatientInfoSection = withForm({
             {(field) => <field.TextField label="Surname" />}
           </form.AppField>
         </div>
-      </fieldset>
+      </div>
     );
   },
 });

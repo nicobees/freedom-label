@@ -16,21 +16,21 @@ export function CheckboxField({ label }: { label: string }) {
   const showError = !isValid && (isTouched || isSubmitted);
 
   return (
-    <div className="checkbox-field">
-      <span>{label}</span>
-      <input
-        aria-label={`${label} enabled`}
-        checked={!!field.state.value}
-        onChange={(e) => {
-          field.handleChange(e.target.checked);
-        }}
-        type="checkbox"
-      />
+    <div className={`field field--checkbox ${showError ? 'is-error' : ''}`}>
+      <label className="field__label">
+        <input
+          checked={field.state.value}
+          className="field__input field__input--checkbox"
+          onChange={(e) => field.handleChange(e.target.checked)}
+          type="checkbox"
+        />
+        {label}
+      </label>
       {showError && errors?.length > 0 ? (
         <div
           aria-label={`${label} error`}
           aria-live="polite"
-          className="error"
+          className="field__assist"
           role="status"
         >
           {errors.map((e, i) => (

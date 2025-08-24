@@ -1,11 +1,14 @@
 /* Create Label layout */
 .create-label {
   padding: 16px;
+  margin-inline: auto;
+  width: 100%;
 }
 
 .create-form {
   display: grid;
   gap: 16px;
+  width: 100%;
 }
 
 .section {

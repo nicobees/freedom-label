@@ -13,20 +13,21 @@ export const ManufacturingSection = withForm({
     const label = 'Manufacturing Info';
 
     return (
-      <fieldset aria-label={label} className="section" role="group">
-        <legend>{label}</legend>
-
-        <div className="field">
+      <div aria-label={label} className="card" role="group">
+        <div aria-level={2} className="card__title" role="heading">
+          {label}
+        </div>
+        <div className="card__section">
           <form.AppField name="description">
             {(field) => <field.TextField label="Description" />}
           </form.AppField>
         </div>
-        <div className="field">
+        <div className="card__section">
           <form.AppField name="batch">
             {(field) => <field.TextField label="Batch" />}
           </form.AppField>
         </div>
-        <div className="field">
+        <div className="card__section">
           <form.AppField
             name="production_date"
             // validators={{
@@ -36,7 +37,7 @@ export const ManufacturingSection = withForm({
             {(field) => <field.DateField label="Production Date" />}
           </form.AppField>
         </div>
-        <div className="field">
+        <div className="card__section">
           <form.AppField
             name="due_date"
             // validators={{
@@ -46,7 +47,7 @@ export const ManufacturingSection = withForm({
             {(field) => <field.DateField label="Due Date" />}
           </form.AppField>
         </div>
-      </fieldset>
+      </div>
     );
   },
 });
