@@ -1,12 +1,12 @@
 @layer components {
   .field {
     /* neutral base; layout handled by parent grouping containers */
-    margin-block-end: var(--space-3);
+    margin-block-end: var(--space-2); /* compact vertical spacing */
     display: block;
   }
   .field-group {
     display: grid;
-    gap: var(--space-3);
+    gap: var(--space-2); /* compact gap */
   }
   /* Patient Info specific responsive layout */
   .patient-info-fields {
@@ -34,6 +34,14 @@
     }
     .manufacturing-fields > .batch-field {
       grid-column: 2 / 3;
+    }
+  }
+
+  /* ≥ desktop breakpoint (min-width: var(--bp-desktop) = 1024px) */
+  @media (min-width: 1024px) {
+    .date-fields {
+      grid-template-columns: 1fr 1fr; /* description wider than batch */
+      grid-auto-rows: auto;
     }
   }
 

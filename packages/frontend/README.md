@@ -114,12 +114,12 @@ Responsive crossover values are defined as design tokens in `tokens.css`:
 
 ```css
 :root {
-  --bp-tablet: 768px;   /* >= tablet layout adjustments */
+  --bp-tablet: 768px; /* >= tablet layout adjustments */
   --bp-desktop: 1024px; /* >= desktop (wider grids, multi-column form) */
 }
 ```
 
-Because current browsers do not allow using CSS Custom Properties directly inside media query conditions (e.g. `@media (min-width: var(--bp-desktop))` is invalid or ignored), we: 
+Because current browsers do not allow using CSS Custom Properties directly inside media query conditions (e.g. `@media (min-width: var(--bp-desktop))` is invalid or ignored), we:
 
 1. Keep the literal value in the `@media` rule: `@media (min-width: 1024px)`
 2. Precede it with a clarifying comment referencing the token: `/* ≥ desktop breakpoint (min-width: var(--bp-desktop) = 1024px) */`
@@ -129,7 +129,9 @@ Future option: introduce a lightweight build-time transform (e.g. PostCSS custom
 
 ```css
 @custom-media --desktop (min-width: 1024px);
-@media (--desktop) { /* ... */ }
+@media (--desktop) {
+  /* ... */
+}
 ```
 
 We defer that until breakpoint complexity increases (e.g. adding container or large desktop tiers).

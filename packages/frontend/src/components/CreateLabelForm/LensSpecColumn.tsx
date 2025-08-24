@@ -1,6 +1,10 @@
-import { formOptions } from '@tanstack/react-form';
+import { formOptions, useStore } from '@tanstack/react-form';
 
-import { type FormType, withForm } from '../../hooks/useCreateLabelForm';
+import {
+  type FormType,
+  useFormContext,
+  withForm,
+} from '../../hooks/useCreateLabelForm';
 import { LensSide } from '../../validation/schema';
 import { defaultValues } from './defaultValues';
 
@@ -64,12 +68,37 @@ const LensSpecCopyData = withForm({
   },
 });
 
+const LensSpecColumnGridDatarWrapper = ({
+  form,
+  side,
+}: {
+  form: FormType;
+  side: LensSide;
+}) => {
+  const typedSide = side;
+  const formObject = useFormContext() as unknown as FormType;
+
+  const isEnabled = useStore(
+    formObject.store,
+    (state): boolean => state.values.lens_specs[typedSide].enabled,
+  );
+
+  return (
+    <LensSpecColumnGridData
+      form={form}
+      isEnabled={isEnabled}
+      side={typedSide}
+    />
+  );
+};
+
 const LensSpecColumnGridData = withForm({
   ...formOptionsObject,
   props: {
+    isEnabled: false,
     side: 'left',
   },
-  render: ({ form, side }) => {
+  render: ({ form, isEnabled, side }) => {
     const typedSide = side as LensSide;
     const lensSpecSideName = `lens_specs.${typedSide}` as const;
     const lensSpecSideDataName = `${lensSpecSideName}.data` as const;
@@ -82,10 +111,7 @@ const LensSpecColumnGridData = withForm({
       <fieldset aria-label={groupLabel} className="lens-grid" role="group">
         <form.AppField name={`${lensSpecSideDataName}.bc` as const}>
           {(field) => (
-            <field.FloatNumberField
-              disabled={!field.form.getFieldValue(activeCheckboxFieldName)}
-              label="BC"
-            />
+            <field.FloatNumberField disabled={!isEnabled} label="BC" />
           )}
         </form.AppField>
         <form.AppField name={`${lensSpecSideDataName}.dia` as const}>
@@ -173,7 +199,7 @@ export const LensSpecColumn = withForm({
           {(field) => <field.CheckboxField label={`${typedSide} lens`} />}
         </form.AppField>
 
-        <LensSpecColumnGridData
+        <LensSpecColumnGridDatarWrapper
           form={form as unknown as FormType}
           side={typedSide}
         />

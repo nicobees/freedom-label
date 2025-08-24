@@ -103,7 +103,7 @@ export default function Header() {
               >
                 English
               </li>
-              <li
+              {/* <li
                 aria-selected="true"
                 className="lang-item"
                 onClick={() => setLangOpen(false)}
@@ -114,7 +114,7 @@ export default function Header() {
                 tabIndex={0}
               >
                 Italian
-              </li>
+              </li> */}
             </ul>
           </div>
         ) : null}
