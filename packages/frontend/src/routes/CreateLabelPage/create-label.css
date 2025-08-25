@@ -1,6 +1,6 @@
 /* Create Label layout */
 .create-label {
-  padding: 16px;
+  padding: 8px;
   margin-inline: auto;
   width: 100%;
 }
@@ -75,29 +75,59 @@
   }
 }
 
-/* Lens grid: always single-column list of fields */
+/* Lens grid: always single-column list of fields with aligned inputs */
 .lens-grid {
   grid-template-columns: 1fr; /* enforce vertical stacking of BC, DIA, etc. */
 }
 
-/* Float number field internal layout: sign select + input inline */
+/* Align all input fields vertically by using consistent label width */
+.lens-grid .field__label {
+  display: grid;
+  grid-template-columns: minmax(30px, max-content) 1fr;
+  align-items: center;
+  gap: 12px;
+  cursor: default; /* prevent pointer cursor on label text */
+}
+
+/* Reset margin for float-field since we're using grid gap */
+.lens-grid .field__label .float-field {
+  margin-inline-start: 0; /* grid gap handles spacing */
+}
+
+/* Reset margin for date-dropdown since we're using grid gap */
+.lens-grid .field__label .date-dropdown {
+  margin-inline-start: 0; /* grid gap handles spacing */
+}
+
+/* Reset margin for regular inputs since we're using grid gap */
+.lens-grid .field__label .field__input {
+  margin-inline-start: 0; /* grid gap handles spacing */
+}
+
+/* Float number field internal layout: sign toggle + input inline */
 .float-field {
   display: inline-flex;
   align-items: center;
   gap: var(
     --space-3,
     12px
-  ); /* slightly larger gap between sign select and input */
+  ); /* slightly larger gap between sign toggle and input */
+  pointer-events: none; /* prevent clicks on the container */
 }
-.float-field select {
-  width: auto;
-  min-width: 2.25ch; /* just sign */
-  padding-inline: 4px;
+
+.float-field > * {
+  pointer-events: auto; /* re-enable clicks on child elements (button and input) */
 }
+
 .float-field input {
   flex: 0 0 auto;
   width: 7ch; /* fixed width to fit values like "+12.34" */
   min-width: 7ch;
+}
+
+.float-field input:focus-visible {
+  border-color: var(--color-accent);
+  outline: 1px solid var(--color-accent);
 }
 
 /* Tighten vertical spacing between individual numeric fields */
@@ -105,7 +135,7 @@
   margin-block-end: 4px; /* smaller than global field spacing */
 }
 
-/* Increase space between label text and its inner float-field container */
-.field .float-field {
-  margin-top: 4px; /* visual separation from label */
+/* Add horizontal space between label text and its inner float-field container */
+.field__label .float-field {
+  margin-inline-start: 12px; /* horizontal separation from label text */
 }

@@ -1,6 +1,7 @@
 /* eslint-disable react-compiler/react-compiler */
 import { useMemo } from 'react';
 
+import './float-number-field.css';
 import {
   useFieldContext,
   useFormContext,
@@ -52,27 +53,7 @@ export function FloatNumberField({
       <label className="field__label">
         {label}
         <div aria-label={label} className="float-field" role={role}>
-          {withSign ? (
-            <select
-              aria-label={`${label} sign`}
-              disabled={disabled}
-              // eslint-disable-next-line react/jsx-no-leaked-render
-              onChange={(e) => {
-                const target = e.currentTarget as HTMLSelectElement;
-                const s = target.value;
-                const input = target.parentElement?.querySelector(
-                  'input',
-                ) as HTMLInputElement | null;
-                const n = input?.value ?? '';
-                emit({ number: n, sign: s });
-              }}
-              value={sign}
-            >
-              <option value=""> </option>
-              <option value="+">+</option>
-              <option value="-">-</option>
-            </select>
-          ) : null}
+          {/** IMPORTANT: input is placed BEFORE the sign toggle button in the DOM so that clicking the surrounding label activates/focuses the input, not the button (which previously caused unintended sign toggles). The button is visually moved before the input via CSS (order:-1). */}
           <input
             aria-invalid={!isValid}
             aria-label={label}
@@ -86,6 +67,21 @@ export function FloatNumberField({
             placeholder={label}
             value={number}
           />
+          {withSign ? (
+            <button
+              aria-label={`${label} sign`}
+              className="key__button"
+              disabled={disabled}
+              onClick={() => {
+                const currentSign = sign || '+'; // treat empty as '+'
+                const newSign = currentSign === '+' ? '-' : '+';
+                emit({ number, sign: newSign });
+              }}
+              type="button"
+            >
+              {sign || '+'}
+            </button>
+          ) : null}
         </div>
       </label>
       {showError && errors?.length > 0 ? (

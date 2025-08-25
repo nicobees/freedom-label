@@ -12,10 +12,10 @@ const queryClient = new QueryClient({
   },
 });
 
-const ReactQueryWrapper = ({ children }: PropsWithChildren) => (
+export const ReactQueryWrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
 export const withReactQuery = (ui: ReactElement) => {
-  return render(<ReactQueryWrapper>{ui}</ReactQueryWrapper>);
+  return render(ui, { wrapper: ReactQueryWrapper });
 };

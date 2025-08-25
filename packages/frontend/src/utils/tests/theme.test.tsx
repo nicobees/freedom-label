@@ -1,11 +1,20 @@
+import { RouterProvider } from '@tanstack/react-router';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { expect, test, vi } from 'vitest';
 
-import { applyTheme, initTheme, toggleTheme } from '../theme';
+import { createMemoryAppRouter } from '../../routes';
+import { withProviders } from '../../test-utils/test-providers';
+import { applyTheme, initTheme } from '../theme';
 
-// Simple setup helper (Arrange) clearing previous theme + storage
-const setup = () => {
+const setup = (initialEntries: string[] = ['/']) => {
+  const user = userEvent.setup();
   document.documentElement.removeAttribute('data-theme');
   localStorage.clear();
+
+  const router = createMemoryAppRouter(initialEntries);
+  const utils = withProviders(<RouterProvider router={router} />);
+  return { router, user, ...utils };
 };
 
 test('applyTheme should set attribute and store value', () => {
@@ -41,24 +50,20 @@ test('initTheme should fall back to system preference: light', () => {
   expect(document.documentElement.getAttribute('data-theme')).toBe('light');
 });
 
-test('toggleTheme should flip between light and dark', () => {
-  setup();
-  applyTheme('light');
-  toggleTheme();
+test('toggleTheme should flip between light and dark', async () => {
+  const { user } = setup();
+  const themeButton = await screen.findByRole('button', {
+    name: /toggle theme/i,
+  });
+  await user.click(themeButton);
+
   expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
   expect(localStorage.getItem('app-theme')).toBe('dark');
 
-  toggleTheme();
+  await user.click(themeButton);
+
   expect(document.documentElement.getAttribute('data-theme')).toBe('light');
   expect(localStorage.getItem('app-theme')).toBe('light');
-});
-
-test('toggleTheme should set light when attribute absent, then dark on second toggle', () => {
-  setup();
-  toggleTheme();
-  expect(document.documentElement.getAttribute('data-theme')).toBe('light');
-  toggleTheme();
-  expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
 });
 
 // --- Utilities ---

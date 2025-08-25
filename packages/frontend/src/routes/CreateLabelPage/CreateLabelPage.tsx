@@ -1,12 +1,13 @@
 import type { LabelDataSubmit } from '../../validation/schema';
 
 import { defaultValuesFilled } from '../../components/CreateLabelForm/defaultValues';
+import { FormDirtyChecker } from '../../components/CreateLabelForm/FormDirtyChecker';
 import { LensSpecSection } from '../../components/CreateLabelForm/LensSpecSection';
 import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
+import './create-label.css';
 import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfoSection';
 import { useCreateLabelForm } from '../../hooks/useCreateLabelForm';
 import { useLabelLocalStorage } from '../../hooks/useLabelLocalStorage';
-import './create-label.css';
 import { useRouter } from '../../hooks/useRouter';
 import { useCreatePrintMutation } from '../../services/api';
 
@@ -63,6 +64,7 @@ export default function CreateLabelPage() {
               Fill form (temp)
             </button>
           </div>
+          <FormDirtyChecker form={form} />
         </form.AppForm>
       </form>
     </section>

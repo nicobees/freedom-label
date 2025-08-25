@@ -6,15 +6,17 @@ import { createRoot } from 'react-dom/client';
 import { router } from './routes/index';
 import './styles/global.css';
 import { queryClient } from './services/queryClient';
-import { initTheme } from './utils/theme';
+import { initTheme, ThemeProvider } from './utils/theme';
 
 // Initialize theme
-initTheme();
+const initialTheme = initTheme();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <ThemeProvider initialTheme={initialTheme}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </ThemeProvider>
   </StrictMode>,
 );

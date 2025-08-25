@@ -4,11 +4,11 @@ import userEvent from '@testing-library/user-event';
 import { expect, test } from 'vitest';
 
 import { createMemoryAppRouter } from '../../routes/index.tsx';
-import { withReactQuery } from '../../test-utils/react-query';
+import { withProviders } from '../../test-utils/test-providers.tsx';
 
 const setup = (path: string = '/') => {
   const router = createMemoryAppRouter([path]);
-  withReactQuery(<RouterProvider router={router} />);
+  withProviders(<RouterProvider router={router} />);
   return { router };
 };
 
