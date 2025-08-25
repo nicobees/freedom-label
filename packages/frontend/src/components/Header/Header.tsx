@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 
 import './header.css';
 import { useRouter } from '../../hooks/useRouter';
-import { toggleTheme } from '../../utils/theme';
+import { useTheme } from '../../utils/theme';
 
 // Pure CSS morphing icon is rendered with spans; see header.css (.morph-icon)
 
@@ -13,6 +13,8 @@ export default function Header() {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const { isHome, title } = useRouter();
+
+  const { themeIcon, toggle: toggleTheme } = useTheme();
 
   return (
     <header aria-label="Application header" className="toolbar fl-header">
@@ -82,7 +84,7 @@ export default function Header() {
           type="button"
         >
           {/* Simple icon swap via currentColor, could be improved */}
-          <span aria-hidden="true">🌓</span>
+          <span aria-hidden="true">{themeIcon}</span>
         </button>
         {langOpen ? (
           <div

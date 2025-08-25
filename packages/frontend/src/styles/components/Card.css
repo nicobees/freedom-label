@@ -9,7 +9,7 @@
     border: 1px solid var(--color-surface-border, transparent);
   }
   .card + .card {
-    margin-top: var(--space-3); /* reduce inter-card spacing */
+    margin-top: var(--space-1); /* reduce inter-card spacing */
   }
   .card__title {
     font-size: var(--font-size-h3);

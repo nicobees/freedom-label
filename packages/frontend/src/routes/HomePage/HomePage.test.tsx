@@ -3,14 +3,14 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test } from 'vitest';
 
-import { withReactQuery } from '../../test-utils/react-query';
+import { withProviders } from '../../test-utils/test-providers';
 import { createMemoryAppRouter } from '../index';
 
 // Shared Arrange helper following the testing guide
 const setup = (initialEntries: string[] = ['/']) => {
   const user = userEvent.setup();
   const router = createMemoryAppRouter(initialEntries);
-  const utils = withReactQuery(<RouterProvider router={router} />);
+  const utils = withProviders(<RouterProvider router={router} />);
   return { router, user, ...utils };
 };
 

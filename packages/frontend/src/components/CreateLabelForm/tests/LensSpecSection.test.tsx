@@ -23,7 +23,7 @@ test('renders Lens specs section with left and right columns', async () => {
   expect(pwrInputs.length).toBe(2);
 
   // Two sign selects for PWR
-  const signSelects = screen.getAllByRole('combobox', { name: /pwr sign/i });
+  const signSelects = screen.getAllByRole('button', { name: /pwr sign/i });
   expect(signSelects.length).toBe(2);
 });
 
@@ -52,14 +52,15 @@ test('copy left → right duplicates values', async () => {
 
   const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: /bc/i });
   const [leftPwr, rightPwr] = screen.getAllByRole('textbox', { name: /pwr/i });
-  const [leftPwrSign, rightPwrSign] = screen.getAllByRole('combobox', {
-    name: /pwr sign/i,
-  });
+  const [leftPwrSign, rightPwrSign] = screen.getAllByLabelText(/pwr sign/i);
   const [leftSag, rightSag] = screen.getAllByRole('textbox', { name: /sag/i });
 
   // Fill LEFT values
   await userEvent.type(leftBc, '8.60');
-  await userEvent.selectOptions(leftPwrSign, '+');
+  // Click to ensure it's '+' (default should be '+', but let's be explicit)
+  if (!leftPwrSign.textContent?.includes('+')) {
+    await userEvent.click(leftPwrSign);
+  }
   await userEvent.type(leftPwr, '1.25');
   await userEvent.type(leftSag, '10.00');
 
@@ -71,7 +72,7 @@ test('copy left → right duplicates values', async () => {
 
   // Assert RIGHT mirrored
   expect(rightBc).toHaveValue('8.60');
-  expect(rightPwrSign).toHaveValue('+');
+  expect(rightPwrSign).toHaveTextContent('+');
   expect(rightPwr).toHaveValue('1.25');
   expect(rightSag).toHaveValue('10.00');
 });
@@ -81,14 +82,13 @@ test('copy right to left duplicates values', async () => {
 
   const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: /bc/i });
   const [leftPwr, rightPwr] = screen.getAllByRole('textbox', { name: /pwr/i });
-  const [leftPwrSign, rightPwrSign] = screen.getAllByRole('combobox', {
-    name: /pwr sign/i,
-  });
+  const [leftPwrSign, rightPwrSign] = screen.getAllByLabelText(/pwr sign/i);
   const [leftSag, rightSag] = screen.getAllByRole('textbox', { name: /sag/i });
 
   // Fill RIGHT values
   await userEvent.type(rightBc, '8.70');
-  await userEvent.selectOptions(rightPwrSign, '-');
+  // Click to toggle to '-'
+  await userEvent.click(rightPwrSign); // Should toggle from '+' to '-'
   await userEvent.type(rightPwr, '2.00');
   await userEvent.type(rightSag, '11.50');
 
@@ -100,7 +100,7 @@ test('copy right to left duplicates values', async () => {
 
   // Assert LEFT mirrored
   expect(leftBc).toHaveValue('8.70');
-  expect(leftPwrSign).toHaveValue('-');
+  expect(leftPwrSign).toHaveTextContent('-');
   expect(leftPwr).toHaveValue('2.00');
   expect(leftSag).toHaveValue('11.50');
 });
@@ -110,13 +110,7 @@ test('a11y roles snapshot for lens specs', () => {
   const roles = getRoles(container);
   // Basic presence checks instead of giant snapshots
   expect(Object.keys(roles)).toEqual(
-    expect.arrayContaining([
-      'group',
-      'checkbox',
-      'textbox',
-      'combobox',
-      'button',
-    ]),
+    expect.arrayContaining(['group', 'checkbox', 'textbox', 'button']),
   );
 });
 
@@ -129,12 +123,15 @@ test('disable toggle keeps values visible and re-enable preserves them', async (
 
   const [leftBc] = screen.getAllByRole('textbox', { name: /bc/i });
   const [leftPwr] = screen.getAllByRole('textbox', { name: /pwr/i });
-  const [leftPwrSign] = screen.getAllByRole('combobox', { name: /pwr sign/i });
+  const [leftPwrSign] = screen.getAllByLabelText(/pwr sign/i);
   const [leftSag] = screen.getAllByRole('textbox', { name: /sag/i });
 
   // Fill LEFT values
   await userEvent.type(leftBc, '8.88');
-  await userEvent.selectOptions(leftPwrSign, '+');
+  // Click to ensure it's '+'
+  if (!leftPwrSign.textContent?.includes('+')) {
+    await userEvent.click(leftPwrSign);
+  }
   await userEvent.type(leftPwr, '3.25');
   await userEvent.type(leftSag, '12.34');
 
@@ -144,14 +141,12 @@ test('disable toggle keeps values visible and re-enable preserves them', async (
   // Re-query to avoid stale element references
   const [leftBcAfter] = screen.getAllByRole('textbox', { name: /bc/i });
   const [leftPwrAfter] = screen.getAllByRole('textbox', { name: /pwr/i });
-  const [leftPwrSignAfter] = screen.getAllByRole('combobox', {
-    name: /pwr sign/i,
-  });
+  const [leftPwrSignAfter] = screen.getAllByLabelText(/pwr sign/i);
   const [leftSagAfter] = screen.getAllByRole('textbox', { name: /sag/i });
 
   // Values should remain visible in the fields after disabling
   expect(leftBcAfter).toHaveValue('8.88');
-  expect(leftPwrSignAfter).toHaveValue('+');
+  expect(leftPwrSignAfter).toHaveTextContent('+');
   expect(leftPwrAfter).toHaveValue('3.25');
   expect(leftSagAfter).toHaveValue('12.34');
 
@@ -163,14 +158,12 @@ test('disable toggle keeps values visible and re-enable preserves them', async (
 
   const [leftBcEnabled] = screen.getAllByRole('textbox', { name: /bc/i });
   const [leftPwrEnabled] = screen.getAllByRole('textbox', { name: /pwr/i });
-  const [leftPwrSignEnabled] = screen.getAllByRole('combobox', {
-    name: /pwr sign/i,
-  });
+  const [leftPwrSignEnabled] = screen.getAllByLabelText(/pwr sign/i);
   const [leftSagEnabled] = screen.getAllByRole('textbox', { name: /sag/i });
 
   // Values remain intact after re-enable
   expect(leftBcEnabled).toHaveValue('8.88');
-  expect(leftPwrSignEnabled).toHaveValue('+');
+  expect(leftPwrSignEnabled).toHaveTextContent('+');
   expect(leftPwrEnabled).toHaveValue('3.25');
   expect(leftSagEnabled).toHaveValue('12.34');
 });

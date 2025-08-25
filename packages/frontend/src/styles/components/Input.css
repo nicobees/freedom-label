@@ -90,9 +90,8 @@
     opacity: 0.55;
   }
   .field__input:focus-visible {
-    border-color: var(--color-primary);
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+    border-color: var(--color-accent);
+    outline: 2px solid var(--color-accent);
   }
   .field__assist {
     font-size: var(--font-size-sm);
