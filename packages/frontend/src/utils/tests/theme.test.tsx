@@ -3,9 +3,9 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test, vi } from 'vitest';
 
+import { applyTheme, initTheme } from '../../contexts/theme';
 import { createMemoryAppRouter } from '../../routes';
 import { withProviders } from '../../test-utils/test-providers';
-import { applyTheme, initTheme } from '../theme';
 
 const setup = (initialEntries: string[] = ['/']) => {
   const user = userEvent.setup();
