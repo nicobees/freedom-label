@@ -121,7 +121,10 @@ async def create_label_endpoint(
             headers={"X-Error-Code": "VALIDATION_ERROR"},
         ) from ValueError
 
-    logging.info(msg=f"[POST /label/create] - PDF label created at {pdf_path}")
+    post_message = "[POST /label/create]"
+    detail_message = "PDF label created successfully"
+    message = f"{post_message} - {detail_message}: {pdf_path}"
+    logging.info(msg=message)
 
     return {"status": "ok", "pdf_filename": pdf_filename}
 
@@ -150,9 +153,10 @@ async def print_label_endpoint(body_data: PathData) -> dict[str, str]:
             headers={"X-Error-Code": "TEMPLATE_PDF_NOT_FOUND_ERROR"},
         ) from FileNotFoundError
 
-    logging.info(
-        msg=f"[POST /label/print] - PDF label at {pdf_path} printed successfully"
-    )
+    post_message = "[POST /label/print]"
+    detail_message = "PDF label printed successfully"
+    message = f"{post_message} - {detail_message}: {pdf_path}"
+    logging.info(msg=message)
 
     return {"status": "ok", "pdf_filename": pdf_filename}
 
@@ -223,8 +227,9 @@ async def create_print_label_endpoint(
             headers={"X-Error-Code": "VALIDATION_ERROR"},
         ) from ValueError
 
-    logging.info(
-        msg=f"[POST /label/create-print] - PDF label at {pdf_path} created and printed successfully"
-    )
+    post_message = "[POST /label/create-print]"
+    detail_message = "PDF label created and printed successfully"
+    message = f"{post_message} - {detail_message}: {pdf_path}"
+    logging.info(msg=message)
 
     return {"status": "ok", "pdf_filename": pdf_filename}
