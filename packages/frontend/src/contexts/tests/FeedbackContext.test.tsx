@@ -31,7 +31,7 @@ const renderWithFeedback = async () => {
   return apiPromise;
 };
 
-test('success snackbar auto-dismisses after its duration', async () => {
+test('success snackbar auto-dismisses after its duration (4000ms default)', async () => {
   vi.useFakeTimers();
   const utils = await renderWithFeedback();
 
@@ -42,18 +42,18 @@ test('success snackbar auto-dismisses after its duration', async () => {
   expect(screen.getByText('Saved successfully')).toBeInTheDocument();
 
   act(() => {
-    vi.advanceTimersByTime(1999); // just before auto-dismiss
+    vi.advanceTimersByTime(3999); // just before auto-dismiss (4000ms)
   });
   expect(screen.getByText('Saved successfully')).toBeInTheDocument();
 
   act(() => {
-    vi.advanceTimersByTime(2); // cross 2000ms threshold
+    vi.advanceTimersByTime(2); // cross 4000ms threshold
   });
   expect(screen.queryByText('Saved successfully')).toBeNull();
   vi.useRealTimers();
 });
 
-test('multiple errors collapse to only the latest after collapse window', async () => {
+test('multiple errors collapse to only the latest after collapse window (8000ms)', async () => {
   vi.useFakeTimers();
   const utils = await renderWithFeedback();
 
@@ -68,14 +68,14 @@ test('multiple errors collapse to only the latest after collapse window', async 
   expect(screen.getByText('Error C')).toBeInTheDocument();
 
   act(() => {
-    vi.advanceTimersByTime(3999); // just before collapse (4000ms)
+    vi.advanceTimersByTime(7999); // just before collapse (8000ms)
   });
   expect(screen.getByText('Error A')).toBeInTheDocument();
   expect(screen.getByText('Error B')).toBeInTheDocument();
   expect(screen.getByText('Error C')).toBeInTheDocument();
 
   act(() => {
-    vi.advanceTimersByTime(2); // cross collapse threshold
+    vi.advanceTimersByTime(2); // cross 8000ms collapse threshold
   });
   expect(screen.queryByText('Error A')).toBeNull();
   expect(screen.queryByText('Error B')).toBeNull();
