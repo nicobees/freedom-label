@@ -209,6 +209,7 @@
 
 .lang-item {
   padding: 8px 12px;
+  cursor: pointer;
 }
 
 .lang-item[aria-selected='true'] {

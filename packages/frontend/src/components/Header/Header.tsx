@@ -17,6 +17,8 @@ export default function Header() {
   const { isHome, title } = useRouter();
   const { i18n, t } = useTranslation('common');
 
+  const currentLanguage = i18n.language;
+
   const { themeIcon, toggle: toggleTheme } = useTheme();
 
   return (
@@ -83,7 +85,7 @@ export default function Header() {
           ref={buttonRef}
           type="button"
         >
-          🌐
+          {currentLanguage.toUpperCase()}
         </button>
         <button
           aria-label={t('toggleTheme')}
@@ -100,7 +102,11 @@ export default function Header() {
             className="lang-dropdown"
             role="dialog"
           >
-            <ul aria-label="Languages" className="lang-list" role="listbox">
+            <ul
+              aria-label={t('languages')}
+              className="lang-list"
+              role="listbox"
+            >
               {SUPPORTED_LANGS.map((lng) => {
                 const selected = i18n.language === lng;
                 const labelKey = lng === 'en' ? 'english' : 'italian';
