@@ -1,6 +1,6 @@
 import { createContext, type ReactNode, useContext, useState } from 'react';
 
-import { getItemFromLocalStorage } from './localStorage';
+import { getItemFromLocalStorage } from '../utils/localStorage';
 
 /* Theme toggle helper */
 export type AppTheme = 'dark' | 'light';

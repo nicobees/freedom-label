@@ -37,7 +37,7 @@ def validate_label_data(label_data: LabelData) -> None:
 async def create_label(
     label_data: LabelData,
     show_borders: bool = False,
-) -> str:
+) -> tuple[str, str]:
     """Generate a label PDF from the provided data.
 
     This function takes label data, creates a PDF file for it.
@@ -55,16 +55,18 @@ async def create_label(
     """
     pdf_filename = generate_random_filename()
 
-    return create_label_pdf(
+    pdf_path = create_label_pdf(
         pdf_filename,
         label_data,
         show_borders=show_borders,
     )
 
+    return pdf_path, pdf_filename
+
 
 async def print_label(
     pdf_path: str,
-) -> str:
+) -> tuple[str, str]:
     """Print a label from a given PDF file path.
 
     Args:
@@ -83,14 +85,14 @@ async def print_label(
 
     print_label_pdf(file_path=str(full_path), file_name=pdf_path)
 
-    return pdf_path
+    return str(full_path), pdf_path
 
 
 async def create_print_label(
     label_data: LabelData,
     print_disabled: bool = False,
     show_borders: bool = False,
-) -> str:
+) -> tuple[str, str]:
     """Generate and prints a label PDF from the provided data.
 
     This function takes label data, creates a PDF file for it,
@@ -119,8 +121,8 @@ async def create_print_label(
     )
 
     if print_disabled:
-        return pdf_path
+        return pdf_path, pdf_filename
 
     print_label_pdf(file_path=pdf_path, file_name=pdf_filename)
 
-    return pdf_path
+    return pdf_path, pdf_filename

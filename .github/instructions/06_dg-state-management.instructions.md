@@ -21,22 +21,23 @@ Zustand is a small, fast, and scalable state management solution that is often s
 - **Good TypeScript Support.**
 
 ```typescript
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface ThirdPartyScriptsState {
-	consentsStatus: Record<string, boolean>;
-	setConsentsStatus: (consents: Record<string, boolean>) => void;
-	setCasperSession: (session?: string) => void;
+  consentsStatus: Record<string, boolean>;
+  setConsentsStatus: (consents: Record<string, boolean>) => void;
+  setCasperSession: (session?: string) => void;
 }
 
 const useThirdPartyScriptsStore = create<ThirdPartyScriptsState>((set) => ({
-	consentsStatus: {},
-	setConsentsStatus: (consentsStatus) => set({ consentsStatus }),
-	setCasperSession: (casperSession) => set({ casperSession }),
+  consentsStatus: {},
+  setConsentsStatus: (consentsStatus) => set({ consentsStatus }),
+  setCasperSession: (casperSession) => set({ casperSession }),
 }));
 
 // Selector hooks for components to consume parts of the store
-export const useConsentsStatus = () => useThirdPartyScriptsStore((state) => state.consentsStatus);
+export const useConsentsStatus = () =>
+  useThirdPartyScriptsStore((state) => state.consentsStatus);
 ```
 
 ### When to Consider Zustand
@@ -53,31 +54,33 @@ The React Context API is used for passing data through the component tree withou
 
 - **Context Creation & Provider:**
 
-    ```typescript
-    // MyContext.ts
-    import React, { createContext, useContext, useState, useMemo } from 'react';
+  ```typescript
+  // MyContext.ts
+  import React, { createContext, useContext, useState, useMemo } from "react";
 
-    interface MyContextType {
-      theme: string;
-      setTheme: (theme: string) => void;
+  interface MyContextType {
+    theme: string;
+    setTheme: (theme: string) => void;
+  }
+
+  const MyContext = createContext<MyContextType | undefined>(undefined);
+
+  export const MyProvider: FunctionComponent<{ children: ReactNode }> = ({
+    children,
+  }) => {
+    const [theme, setTheme] = useState("light");
+    const value = useMemo(() => ({ theme, setTheme }), [theme]);
+    return <MyContext.Provider value={value}>{children}</MyContext.Provider>;
+  };
+
+  export const useMyContext = () => {
+    const context = useContext(MyContext);
+    if (context === undefined) {
+      throw new Error("useMyContext must be used within a MyProvider");
     }
-
-    const MyContext = createContext<MyContextType | undefined>(undefined);
-
-    export const MyProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
-      const [theme, setTheme] = useState('light');
-      const value = useMemo(() => ({ theme, setTheme }), [theme]);
-      return <MyContext.Provider value={value}>{children}</MyContext.Provider>;
-    };
-
-    export const useMyContext = () => {
-      const context = useContext(MyContext);
-      if (context === undefined) {
-        throw new Error('useMyContext must be used within a MyProvider');
-      }
-      return context;
-    };
-    ```
+    return context;
+  };
+  ```
 
 - **Consumer Hook:** A custom hook (`useMyContext` in the example) is the standard way to consume the context.
 
@@ -103,7 +106,7 @@ Standard React local state is used for UI-specific concerns that don't need to b
 ```typescript
 function MyInteractiveComponent() {
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
 
   return (
     <div>

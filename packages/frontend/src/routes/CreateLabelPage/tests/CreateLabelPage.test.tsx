@@ -3,6 +3,16 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test, vi } from 'vitest';
 
+vi.mock('@tanstack/react-router', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    getRouteApi: () => ({
+      useSearch: () => ({ debug: true }),
+    }),
+  };
+});
+
 import { shouldBlockNavigation } from '../../../components/CreateLabelForm/FormDirtyChecker';
 import { withProviders } from '../../../test-utils/test-providers';
 import { createMemoryAppRouter } from '../../index';

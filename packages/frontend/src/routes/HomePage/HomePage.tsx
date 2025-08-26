@@ -1,8 +1,12 @@
-import { Link } from '@tanstack/react-router';
+import { getRouteApi, Link } from '@tanstack/react-router';
 
 import './homepage.css';
 
+const route = getRouteApi('/');
+
 export default function HomePage() {
+  const { debug } = route.useSearch();
+
   return (
     <section className="home-screen">
       <div aria-label="Main actions" className="home-actions" role="group">
@@ -13,16 +17,18 @@ export default function HomePage() {
         >
           Create Label
         </Link>
-        <Link
-          aria-disabled="true"
-          className="btn btn--outline is-disabled"
-          disabled
-          role="button"
-          title="Not available yet"
-          to="/list"
-        >
-          Label List (Disabled)
-        </Link>
+        {debug ? (
+          <Link
+            aria-disabled="true"
+            className="btn btn--outline is-disabled"
+            disabled
+            role="button"
+            title="Not available yet"
+            to="/list"
+          >
+            Label List (Disabled)
+          </Link>
+        ) : null}
       </div>
     </section>
   );

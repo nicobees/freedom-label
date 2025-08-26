@@ -2,8 +2,8 @@ import { Link } from '@tanstack/react-router';
 import { useRef, useState } from 'react';
 
 import './header.css';
+import { useTheme } from '../../contexts/theme';
 import { useRouter } from '../../hooks/useRouter';
-import { useTheme } from '../../utils/theme';
 
 // Pure CSS morphing icon is rendered with spans; see header.css (.morph-icon)
 
