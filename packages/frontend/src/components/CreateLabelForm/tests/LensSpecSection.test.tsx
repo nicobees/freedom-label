@@ -66,7 +66,7 @@ test('copy left → right duplicates values', async () => {
 
   // Click copy
   const copyBtn = screen.getByRole('button', {
-    name: /copy lens specs left to right/i,
+    name: /copy lens specs from left to right/i,
   });
   await userEvent.click(copyBtn);
 
@@ -94,7 +94,7 @@ test('copy right to left duplicates values', async () => {
 
   // Click copy
   const copyBtn = screen.getByRole('button', {
-    name: /copy lens specs right to left/i,
+    name: /copy lens specs from right to left/i,
   });
   await userEvent.click(copyBtn);
 

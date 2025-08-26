@@ -42,13 +42,13 @@ test('should render Not Found for unknown route', async () => {
   ).toBeInTheDocument();
 });
 
-test('should render List Label disabled page at /list', async () => {
+test('should render Labels List disabled page at /list', async () => {
   // Arrange
   setup('/list');
 
   // Assert
   expect(
-    await screen.findByRole('heading', { name: /list label/i }),
+    await screen.findByRole('heading', { name: /labels list/i }),
   ).toBeInTheDocument();
   expect(screen.getByText(/not available yet/i)).toBeInTheDocument();
 });

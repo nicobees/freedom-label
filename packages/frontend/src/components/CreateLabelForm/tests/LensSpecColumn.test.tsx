@@ -7,10 +7,10 @@ import { LensSide } from '../../../validation/schema';
 import { LensSpecColumn } from '../LensSpecColumn';
 
 function setupBothSides() {
-  return renderWithForm(({ form }) => (
+  return renderWithForm(({ form, t }) => (
     <div>
-      <LensSpecColumn form={form} side={LensSide.Left} />
-      <LensSpecColumn form={form} side={LensSide.Right} />
+      <LensSpecColumn form={form} side={LensSide.Left} t={t} />
+      <LensSpecColumn form={form} side={LensSide.Right} t={t} />
     </div>
   ));
 }
@@ -27,7 +27,7 @@ test('copy left → right duplicates bc and dia values', async () => {
   await userEvent.type(leftDia, '16.20');
 
   const copyBtn = screen.getByRole('button', {
-    name: /copy lens specs left to right/i,
+    name: /copy lens specs from left to right/i,
   });
   await userEvent.click(copyBtn);
 

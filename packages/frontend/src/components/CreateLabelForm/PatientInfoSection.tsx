@@ -2,7 +2,7 @@ import { formOptions } from '@tanstack/react-form';
 import { useTranslation } from 'react-i18next';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { withForm } from '../../hooks/useCreateLabelForm';
+import { type FormType, withForm } from '../../hooks/useCreateLabelForm';
 import { defaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
@@ -10,10 +10,10 @@ const formOptionsObject = formOptions({
 });
 
 // Using generic form type from hook; runtime shape is sufficient for field rendering.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function PatientInfoSectionRender({ form }: { form: any }) {
+function PatientInfoSectionRender({ form }: { form: FormType }) {
   const { t } = useTranslation();
   const label = t('patientInfo');
+
   return (
     <div aria-label={label} className="card" role="group">
       <div aria-level={2} className="card__title" role="heading">

@@ -27,6 +27,11 @@ export function detectInitialLanguage(): SupportedLang {
   return DEFAULT_LANG;
 }
 
+const resources = {
+  en: { common: enCommon },
+  it: { common: itCommon },
+} as const;
+
 export function initI18n() {
   if (!i18n.isInitialized) {
     void i18n.use(initReactI18next).init({
@@ -35,10 +40,7 @@ export function initI18n() {
       interpolation: { escapeValue: false },
       lng: detectInitialLanguage(),
       ns: ['common'],
-      resources: {
-        en: { common: enCommon },
-        it: { common: itCommon },
-      },
+      resources,
       returnEmptyString: false,
     });
   }

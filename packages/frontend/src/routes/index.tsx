@@ -13,6 +13,7 @@ import {
 
 import Header from '../components/Header/Header';
 import { useLabelLocalStorage } from '../hooks/useLabelLocalStorage';
+import { i18n } from '../i18n';
 import { UrlSearchSchema } from '../validation/schema';
 import CreateLabelPage from './CreateLabelPage/CreateLabelPage';
 import HomePage from './HomePage/HomePage';
@@ -91,7 +92,7 @@ const homeRoute = createRoute({
   beforeLoad: () => {
     return {
       getIsHome: () => true,
-      getTitle: () => 'Home',
+      getTitle: () => i18n.t('home'),
     };
   },
   component: HomePage,
@@ -102,7 +103,7 @@ const homeRoute = createRoute({
 const createLabelRoute = createRoute({
   beforeLoad: () => {
     return {
-      getTitle: () => 'Create Label',
+      getTitle: () => i18n.t('createLabel'),
     };
   },
   component: CreateLabelPage,
@@ -113,7 +114,7 @@ const createLabelRoute = createRoute({
 const listLabelRoute = createRoute({
   beforeLoad: () => {
     return {
-      getTitle: () => 'List Label',
+      getTitle: () => i18n.t('labelsList'),
     };
   },
   component: ListLabelPageDisabled,

@@ -7,8 +7,8 @@ import { LensSide } from '../../../validation/schema';
 import { LensSpecColumn } from '../LensSpecColumn';
 
 function setupLeftColumn() {
-  return renderWithForm(({ form }) => (
-    <LensSpecColumn form={form} side={LensSide.Left} />
+  return renderWithForm(({ form, t }) => (
+    <LensSpecColumn form={form} side={LensSide.Left} t={t} />
   ));
 }
 

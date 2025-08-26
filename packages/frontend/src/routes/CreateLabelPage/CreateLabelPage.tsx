@@ -58,8 +58,8 @@ export default function CreateLabelPage() {
       <form aria-label={`${title} Form`} className="create-form" role="form">
         <form.AppForm>
           <PatientInfoSection form={form} />
-          <ManufacturingSection form={form} />
-          <LensSpecSection form={form} />
+          <ManufacturingSection form={form} t={t} />
+          <LensSpecSection form={form} t={t} />
           <div className="actions">
             {debug ? (
               <button
