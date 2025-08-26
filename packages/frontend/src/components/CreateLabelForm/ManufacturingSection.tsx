@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next';
+
 import { formOptions } from '@tanstack/react-form';
 
 import { withForm } from '../../hooks/useCreateLabelForm';
@@ -9,8 +11,11 @@ const formOptionsObject = formOptions({
 
 export const ManufacturingSection = withForm({
   ...formOptionsObject,
-  render: ({ form }) => {
-    const label = 'Manufacturing Info';
+  props: {
+    t: ((key: string) => key) as TFunction,
+  },
+  render: ({ form, t }) => {
+    const label = t('manufacturingInfo');
 
     return (
       <div aria-label={label} className="card" role="group">
@@ -22,32 +27,22 @@ export const ManufacturingSection = withForm({
             {(field) => (
               <field.TextField
                 className="description-field"
-                label="Description"
+                label={t('description')}
               />
             )}
           </form.AppField>
           <form.AppField name="batch">
             {(field) => (
-              <field.TextField className="batch-field" label="Batch" />
+              <field.TextField className="batch-field" label={t('batch')} />
             )}
           </form.AppField>
         </div>
         <div className="card__section field-group date-fields">
-          <form.AppField
-            name="production_date"
-            // validators={{
-            //   onChange: LabelDataSchema.shape.production_date,
-            // }}
-          >
-            {(field) => <field.DateField label="Production Date" />}
+          <form.AppField name="production_date">
+            {(field) => <field.DateField label={t('productionDate')} />}
           </form.AppField>
-          <form.AppField
-            name="due_date"
-            // validators={{
-            //   onChange: LabelDataSchema.shape.due_date,
-            // }}
-          >
-            {(field) => <field.DateField label="Due Date" />}
+          <form.AppField name="due_date">
+            {(field) => <field.DateField label={t('dueDate')} />}
           </form.AppField>
         </div>
       </div>

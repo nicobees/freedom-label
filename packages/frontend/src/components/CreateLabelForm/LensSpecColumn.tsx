@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next';
+
 import { formOptions, useStore } from '@tanstack/react-form';
 
 import {
@@ -12,7 +14,7 @@ const formOptionsObject = formOptions({
   defaultValues,
 });
 
-const arrowButtonMapping = {
+const arrowButtonMapping: Record<LensSide, string> = {
   [LensSide.Left]: '→',
   [LensSide.Right]: '←',
 };
@@ -25,8 +27,9 @@ const LensSpecCopyData = withForm({
   ...formOptionsObject,
   props: {
     side: 'left',
+    t: ((key: string) => key) as TFunction,
   },
-  render: ({ form, side }) => {
+  render: ({ form, side, t }) => {
     const typedSide = side as LensSide;
     const lensSpecSideName = `lens_specs.${typedSide}` as const;
     const lensSpecSideDataName = `${lensSpecSideName}.data` as const;
@@ -50,8 +53,14 @@ const LensSpecCopyData = withForm({
       await form.validate('change');
     };
 
-    const label = `Copy ${typedSide} ${arrowButtonMapping[typedSide]} ${oppositeSide}`;
-    const ariaLabel = `Copy lens specs ${typedSide} to ${oppositeSide} `;
+    const copyLabel = t('copy');
+    const fromLabel = t('from');
+    const toLabel = t('to');
+    const sideLabel = t(typedSide);
+    const oppositeSideLabel = t(oppositeSide);
+    const label = `${copyLabel} ${sideLabel} ${arrowButtonMapping[typedSide]} ${oppositeSideLabel}`;
+    const lensSpecsLabel = t('lensSpecs');
+    const ariaLabel = `${copyLabel} ${lensSpecsLabel} ${fromLabel} ${sideLabel} ${toLabel} ${oppositeSideLabel}`;
 
     return (
       <div className="copy-actions">
@@ -68,12 +77,14 @@ const LensSpecCopyData = withForm({
   },
 });
 
-const LensSpecColumnGridDatarWrapper = ({
+const LensSpecColumnGridDataWrapper = ({
   form,
   side,
+  t,
 }: {
   form: FormType;
   side: LensSide;
+  t: TFunction;
 }) => {
   const typedSide = side;
   const formObject = useFormContext() as unknown as FormType;
@@ -88,6 +99,7 @@ const LensSpecColumnGridDatarWrapper = ({
       form={form}
       isEnabled={isEnabled}
       side={typedSide}
+      t={t}
     />
   );
 };
@@ -97,15 +109,17 @@ const LensSpecColumnGridData = withForm({
   props: {
     isEnabled: false,
     side: 'left',
+    t: ((key: string) => key) as TFunction,
   },
-  render: ({ form, isEnabled, side }) => {
+  render: ({ form, isEnabled, side, t }) => {
     const typedSide = side as LensSide;
     const lensSpecSideName = `lens_specs.${typedSide}` as const;
     const lensSpecSideDataName = `${lensSpecSideName}.data` as const;
 
     const activeCheckboxFieldName = `${lensSpecSideName}.enabled` as const;
 
-    const groupLabel = `${typedSide} Lens Specs Data`;
+    const groupLabelKey = `${typedSide}LensSpecsData` as const;
+    const groupLabel = t(groupLabelKey);
 
     return (
       <fieldset aria-label={groupLabel} className="lens-grid" role="group">
@@ -174,11 +188,12 @@ const LensSpecColumnCopyData = withForm({
   ...formOptionsObject,
   props: {
     side: 'left',
+    t: ((key: string) => key) as TFunction,
   },
-  render: ({ form, side }) => {
+  render: ({ form, side, t }) => {
     const typedSide = side as LensSide;
 
-    return <LensSpecCopyData form={form} side={typedSide} />;
+    return <LensSpecCopyData form={form} side={typedSide} t={t} />;
   },
 });
 
@@ -186,26 +201,33 @@ export const LensSpecColumn = withForm({
   ...formOptionsObject,
   props: {
     side: 'left',
+    t: ((key: string) => key) as TFunction,
   },
-  render: ({ form, side }) => {
+  render: ({ form, side, t }) => {
     const typedSide = side as LensSide;
     const base = `lens_specs.${typedSide}` as const;
 
-    const groupLabel = `${typedSide} Lens Specs`;
+    const groupLabelKey = `${typedSide}LensSpecs` as const;
+    const groupLabel = t(groupLabelKey);
+
+    const checkboxLabelKey = `${typedSide}Lens` as const;
+    const checkboxLabel = t(checkboxLabelKey);
 
     return (
       <fieldset aria-label={groupLabel} className="lens-col" role="group">
         <form.AppField name={`${base}.enabled` as const}>
-          {(field) => <field.CheckboxField label={`${typedSide} lens`} />}
+          {(field) => <field.CheckboxField label={checkboxLabel} />}
         </form.AppField>
 
-        <LensSpecColumnGridDatarWrapper
+        <LensSpecColumnGridDataWrapper
           form={form as unknown as FormType}
           side={typedSide}
+          t={t}
         />
         <LensSpecColumnCopyData
           form={form as unknown as FormType}
           side={typedSide}
+          t={t}
         />
       </fieldset>
     );

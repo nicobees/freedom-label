@@ -1,7 +1,7 @@
 import { RouterProvider } from '@tanstack/react-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, Mock, test, vi } from 'vitest';
 
 vi.mock('@tanstack/react-router', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
@@ -17,7 +17,20 @@ import { shouldBlockNavigation } from '../../../components/CreateLabelForm/FormD
 import { withProviders } from '../../../test-utils/test-providers';
 import { createMemoryAppRouter } from '../../index';
 
+beforeEach(() => {
+  globalThis.fetch = vi.fn();
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 const setup = (initialEntries: string[] = ['/create']) => {
+  (fetch as unknown as Mock).mockResolvedValueOnce({
+    json: () => Promise.resolve({ pdf_filename: 'test.pdf', status: '1' }),
+    ok: true,
+    status: 200,
+  });
   const router = createMemoryAppRouter(initialEntries);
   const utils = withProviders(<RouterProvider router={router} />);
   return { router, ...utils };

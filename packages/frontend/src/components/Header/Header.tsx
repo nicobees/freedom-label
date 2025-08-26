@@ -1,9 +1,11 @@
 import { Link } from '@tanstack/react-router';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import './header.css';
 import { useTheme } from '../../contexts/theme';
 import { useRouter } from '../../hooks/useRouter';
+import { changeLanguage, SUPPORTED_LANGS } from '../../i18n';
+import './header.css';
 
 // Pure CSS morphing icon is rendered with spans; see header.css (.morph-icon)
 
@@ -13,11 +15,14 @@ export default function Header() {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const { isHome, title } = useRouter();
+  const { i18n, t } = useTranslation('common');
+
+  const currentLanguage = i18n.language;
 
   const { themeIcon, toggle: toggleTheme } = useTheme();
 
   return (
-    <header aria-label="Application header" className="toolbar fl-header">
+    <header aria-label={t('applicationHeader')} className="toolbar fl-header">
       <div className="fl-header__left toolbar__actions">
         <div className="icon-shell">
           <input
@@ -35,14 +40,19 @@ export default function Header() {
           </span>
           {isHome ? (
             <button
-              aria-label="Menu"
+              aria-label={t('menu')}
               className="icon-btn"
               disabled
-              title="Not available yet"
+              title={t('notAvailableYet')}
               type="button"
             />
           ) : (
-            <Link aria-label="Back to Home" className="icon-btn back" to="/" />
+            <Link
+              aria-label={t('backToHome')}
+              className="icon-btn back"
+              title={t('backToHome')}
+              to="/"
+            />
           )}
         </div>
       </div>
@@ -69,16 +79,16 @@ export default function Header() {
         <button
           aria-expanded={langOpen}
           aria-haspopup="listbox"
-          aria-label="Change language"
+          aria-label={t('changeLanguage')}
           className="icon-btn"
           onClick={() => setLangOpen((v) => !v)}
           ref={buttonRef}
           type="button"
         >
-          🌐
+          {currentLanguage.toUpperCase()}
         </button>
         <button
-          aria-label="Toggle theme"
+          aria-label={t('toggleTheme')}
           className="icon-btn"
           onClick={() => toggleTheme()}
           type="button"
@@ -88,35 +98,42 @@ export default function Header() {
         </button>
         {langOpen ? (
           <div
-            aria-label="Language selector"
+            aria-label={t('languageSelector')}
             className="lang-dropdown"
             role="dialog"
           >
-            <ul aria-label="Languages" className="lang-list" role="listbox">
-              <li
-                aria-selected="true"
-                className="lang-item"
-                onClick={() => setLangOpen(false)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') setLangOpen(false);
-                }}
-                role="option"
-                tabIndex={0}
-              >
-                English
-              </li>
-              {/* <li
-                aria-selected="true"
-                className="lang-item"
-                onClick={() => setLangOpen(false)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') setLangOpen(false);
-                }}
-                role="option"
-                tabIndex={0}
-              >
-                Italian
-              </li> */}
+            <ul
+              aria-label={t('languages')}
+              className="lang-list"
+              role="listbox"
+            >
+              {SUPPORTED_LANGS.map((lng) => {
+                const selected = i18n.language === lng;
+                const labelKey = lng === 'en' ? 'english' : 'italian';
+                return (
+                  <li
+                    aria-selected={selected}
+                    className="lang-item"
+                    key={lng}
+                    onClick={() => {
+                      changeLanguage(lng);
+                      setLangOpen(false);
+                      buttonRef.current?.focus();
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        changeLanguage(lng);
+                        setLangOpen(false);
+                        buttonRef.current?.focus();
+                      }
+                    }}
+                    role="option"
+                    tabIndex={0}
+                  >
+                    {t(labelKey)}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ) : null}
