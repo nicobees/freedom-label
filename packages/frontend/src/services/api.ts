@@ -76,8 +76,6 @@ export const useCreatePrintMutation = ({
     mutationFn: async (data: LabelDataSubmit) => {
       const url = getFullUrl('label/create-print');
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       return apiFetch<SuccessResponse>(url, {
         body: JSON.stringify(data),
         method: 'POST',
