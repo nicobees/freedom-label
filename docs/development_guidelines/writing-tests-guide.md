@@ -111,7 +111,7 @@ await userEvent.type(screen.getByRole("textbox"), "Hello world!");
 
 - **File per Component:** Typically, one test file per component (e.g., `MyComponent.test.tsx`).
 - **Isolate Complex Scenarios:** For components with significantly different behaviors (e.g., based on major prop variations), consider splitting tests into multiple files (e.g., `MyForm.basic.test.tsx`, `MyForm.advanced.test.tsx`).
-- **Avoid Excessive Nesting:** Prefer flat `test(...)` blocks over deeply nested `describe > describe > test`. Use `describe` for logical grouping if a component has many distinct areas of functionality.
+- **Avoid Excessive Nesting:** Prefer flat `test(...)` blocks over deeply nested `describe > describe > test`. Use `describe` only if strictly needed, and in cases where logical grouping is deeply encouraged (e.g. component has many distinct areas of functionality), then separate the tests into different files (with naming convention as `TestFile.distinctArea.test.tsx`).
 - **Clear Test Descriptions:** Start test descriptions with "should" and clearly state the expected behavior (e.g., `test('should disable submit button when form is invalid')`).
 
 ### 7. Setup Functions

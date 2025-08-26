@@ -6,12 +6,13 @@ import { createRoot } from 'react-dom/client';
 import { SnackbarHost } from './components/Feedback/Snackbar';
 import { FeedbackProvider } from './contexts/FeedbackContext';
 import { initTheme, ThemeProvider } from './contexts/theme';
+import { initI18n } from './i18n';
 import { router } from './routes/index';
-import './styles/global.css';
 import { queryClient } from './services/queryClient';
-
-// Initialize theme
+import './styles/global.css';
+// Initialize theme & i18n (synchronously for now)
 const initialTheme = initTheme();
+initI18n();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

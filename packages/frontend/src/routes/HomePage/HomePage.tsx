@@ -1,4 +1,5 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 import './homepage.css';
 
@@ -6,16 +7,17 @@ const route = getRouteApi('/');
 
 export default function HomePage() {
   const { debug } = route.useSearch();
+  const { t } = useTranslation();
 
   return (
     <section className="home-screen">
-      <div aria-label="Main actions" className="home-actions" role="group">
+      <div aria-label={t('mainActions')} className="home-actions" role="group">
         <Link
-          aria-label="Create Label"
+          aria-label={t('createLabel')}
           className="btn btn--filled"
           to="/create"
         >
-          Create Label
+          {t('createLabel')}
         </Link>
         {debug ? (
           <Link
@@ -23,10 +25,10 @@ export default function HomePage() {
             className="btn btn--outline is-disabled"
             disabled
             role="button"
-            title="Not available yet"
+            title={t('notAvailableYet')}
             to="/list"
           >
-            Label List (Disabled)
+            {t('labelsList')} (Disabled)
           </Link>
         ) : null}
       </div>

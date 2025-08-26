@@ -1,4 +1,5 @@
 import { getRouteApi } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 import type { LabelDataSubmit } from '../../validation/schema';
 
@@ -22,19 +23,20 @@ export default function CreateLabelPage() {
   const { saveLabel } = useLabelLocalStorage();
   const { showError, showSuccess } = useFeedback();
   const { debug } = route.useSearch();
+  const { t } = useTranslation();
 
   const onCreatePrintLabelResponse = (
     errorMessage?: string,
     filename?: string,
   ) => {
     if (errorMessage) {
-      const errorMessageBase = 'Error in printing label';
+      const errorMessageBase = t('errorInPrintingLabel');
       const error = errorMessage
         ? `${errorMessageBase}: ${errorMessage}`
         : errorMessageBase;
       showError(error);
     } else {
-      const messageBase = 'Label printed successfully';
+      const messageBase = t('labelPrintedSuccessfully');
       const message = filename ? `${messageBase}: ${filename}` : messageBase;
       showSuccess(message);
     }
@@ -64,20 +66,20 @@ export default function CreateLabelPage() {
                 aria-disabled="true"
                 className="btn btn--outline"
                 disabled
-                title="Not available yet"
+                title={t('notAvailableYet')}
                 type="button"
               >
-                Save
+                {t('save')}
               </button>
             ) : null}
-            <form.PrintButton label="Print" />
+            <form.PrintButton label={t('print')} />
             {debug ? (
               <button
                 className="btn btn--text"
                 onClick={() => form.reset(defaultValuesFilled)}
                 type="button"
               >
-                Fill form (temp)
+                {t('fillFormTemp')}
               </button>
             ) : null}
           </div>

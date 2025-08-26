@@ -3,10 +3,7 @@
 ```json
 {
   "priority": "P1",
-  "labels": [
-    "frontend",
-    "enhancement"
-  ]
+  "labels": ["frontend", "enhancement"]
 }
 ```
 
@@ -19,7 +16,7 @@ As a user, I want to be able to switch the language of the application, so that 
 - [ ] 1. The application should support internationalization (i18n).
 - [ ] 2. A language-switch button should be available in the header.
 - [ ] 3. When the language-switch button is clicked, a dropdown with available languages should be displayed.
-- [ ] 4. For the MVP, only English should be available.
+- [ ] 4. For the MVP, only English and Italian languages should be available.
 - [ ] 5. All user-visible strings should be translated, including tooltips and form labels.
 - [ ] 6. The language switch should be seamless, without a page refresh.
 - [ ] 7. Unit tests should be created for the i18n feature, checking that the correct translations are loaded and displayed.
