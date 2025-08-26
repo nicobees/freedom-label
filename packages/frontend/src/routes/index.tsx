@@ -7,11 +7,13 @@ import {
   createRoute,
   createRouter,
   Outlet,
+  retainSearchParams,
   RouterProvider,
 } from '@tanstack/react-router';
 
 import Header from '../components/Header/Header';
 import { useLabelLocalStorage } from '../hooks/useLabelLocalStorage';
+import { UrlSearchSchema } from '../validation/schema';
 import CreateLabelPage from './CreateLabelPage/CreateLabelPage';
 import HomePage from './HomePage/HomePage';
 
@@ -72,6 +74,10 @@ const rootRoute = createRootRouteWithContext<RouterContext>()({
     </Layout>
   ),
   notFoundComponent: NotFoundPage,
+  search: {
+    middlewares: [retainSearchParams(true)], // preserves ALL search params
+  },
+  validateSearch: UrlSearchSchema,
 });
 
 const Paths = {

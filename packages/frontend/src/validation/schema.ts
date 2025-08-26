@@ -133,6 +133,10 @@ export const LabelDataSubmitSchema = LabelDataSchemaBase.extend({
 
 export type LabelDataSubmit = z.infer<typeof LabelDataSubmitSchema>;
 
+export const UrlSearchSchema = z.object({
+  debug: z.boolean().optional(),
+});
+
 // TODO: remove the commented code
 /**
  * "patient_info": {

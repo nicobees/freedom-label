@@ -1,9 +1,11 @@
+import { getRouteApi } from '@tanstack/react-router';
+
 import type { LabelDataSubmit } from '../../validation/schema';
 
 import { defaultValuesFilled } from '../../components/CreateLabelForm/defaultValues';
 import { FormDirtyChecker } from '../../components/CreateLabelForm/FormDirtyChecker';
-import { LensSpecSection } from '../../components/CreateLabelForm/LensSpecSection';
 import './create-label.css';
+import { LensSpecSection } from '../../components/CreateLabelForm/LensSpecSection';
 import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
 import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfoSection';
 import { LoadingOverlay } from '../../components/Loading/LoadingOverlay';
@@ -13,10 +15,13 @@ import { useLabelLocalStorage } from '../../hooks/useLabelLocalStorage';
 import { useRouter } from '../../hooks/useRouter';
 import { useCreatePrintMutation } from '../../services/api';
 
+const route = getRouteApi('/create');
+
 export default function CreateLabelPage() {
   const { title } = useRouter();
   const { saveLabel } = useLabelLocalStorage();
   const { showError, showSuccess } = useFeedback();
+  const { debug } = route.useSearch();
 
   const onCreatePrintLabelResponse = (
     errorMessage?: string,
@@ -54,23 +59,27 @@ export default function CreateLabelPage() {
           <ManufacturingSection form={form} />
           <LensSpecSection form={form} />
           <div className="actions">
-            <button
-              aria-disabled="true"
-              className="btn btn--outline"
-              disabled
-              title="Not available yet"
-              type="button"
-            >
-              Save
-            </button>
+            {debug ? (
+              <button
+                aria-disabled="true"
+                className="btn btn--outline"
+                disabled
+                title="Not available yet"
+                type="button"
+              >
+                Save
+              </button>
+            ) : null}
             <form.PrintButton label="Print" />
-            <button
-              className="btn btn--text"
-              onClick={() => form.reset(defaultValuesFilled)}
-              type="button"
-            >
-              Fill form (temp)
-            </button>
+            {debug ? (
+              <button
+                className="btn btn--text"
+                onClick={() => form.reset(defaultValuesFilled)}
+                type="button"
+              >
+                Fill form (temp)
+              </button>
+            ) : null}
           </div>
           <FormDirtyChecker form={form} />
         </form.AppForm>
