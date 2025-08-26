@@ -2,7 +2,7 @@ import type { PropsWithChildren, ReactElement } from 'react';
 
 import { render } from '@testing-library/react';
 
-import { ThemeProvider } from '../utils/theme';
+import { ThemeProvider } from '../contexts/theme';
 
 export const ThemeWrapper = ({ children }: PropsWithChildren) => (
   <ThemeProvider initialTheme="light">{children}</ThemeProvider>

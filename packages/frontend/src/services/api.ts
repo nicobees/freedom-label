@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import type { LabelDataSubmit } from '../validation/schema';
 
-import { isNetworkError, NetworkError } from '../utils/exceptions';
+import { ApiError, isApiError } from '../utils/exceptions';
 
 const BASE_URL = import.meta.env?.VITE_BACKEND_URL ?? '';
 const IS_PROD = import.meta.env.PROD;
@@ -24,7 +24,22 @@ export const getFullUrl = (path: string) => {
   return `${base}/${path}`;
 };
 
-export const apiFetch = async <T>(
+type ApiResponse = ErrorResponse | SuccessResponse;
+
+type ErrorResponse = {
+  detail: string;
+};
+
+type SuccessResponse = {
+  pdf_filename: string;
+  status: 'ok';
+};
+
+const isErrorResponse = (data: ApiResponse): data is ErrorResponse => {
+  return !!(data as ErrorResponse)?.detail;
+};
+
+export const apiFetch = async <T extends ApiResponse>(
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<T> => {
@@ -36,40 +51,52 @@ export const apiFetch = async <T>(
     },
   });
 
+  const data = (await response.json()) as T;
+
   if (!response.ok) {
-    throw new NetworkError(
-      `API request failed with status ${response.status}`,
-      response.status,
-    );
+    if (isErrorResponse(data)) {
+      throw new ApiError(response.status, data.detail);
+    }
+
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   }
 
-  return (await response.json()) as T;
+  return data;
 };
 
 export const useCreatePrintMutation = ({
   onMutationHandler,
 }: {
-  onMutationHandler: (error?: string, data?: LabelDataSubmit) => void;
+  onMutationHandler: (
+    error?: string,
+    filename?: SuccessResponse['pdf_filename'],
+  ) => void;
 }) => {
   const mutation = useMutation({
-    mutationFn: (data: LabelDataSubmit) => {
+    mutationFn: async (data: LabelDataSubmit) => {
       const url = getFullUrl('label/create-print');
 
-      return apiFetch(url, {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      return apiFetch<SuccessResponse>(url, {
         body: JSON.stringify(data),
         method: 'POST',
       });
     },
     onError: (error) => {
-      const errorMessage = isNetworkError(error)
-        ? error.formatMessage()
-        : error.message;
-      onMutationHandler(errorMessage);
+      console.error(error);
+
+      if (isApiError(error)) {
+        onMutationHandler(error.getMessageDetail());
+        return;
+      }
+
+      onMutationHandler(error.message);
     },
-    onSuccess: (_, data) => {
-      onMutationHandler(undefined, data);
+    onSuccess: (responseData) => {
+      onMutationHandler(undefined, responseData.pdf_filename);
     },
   });
 
-  return { mutate: mutation.mutate };
+  return { loading: mutation.isPending, mutate: mutation.mutate };
 };

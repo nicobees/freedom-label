@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 
 import './header.css';
 import { useRouter } from '../../hooks/useRouter';
-import { useTheme } from '../../utils/theme';
+import { useTheme } from '../../contexts/theme';
 
 // Pure CSS morphing icon is rendered with spans; see header.css (.morph-icon)
 

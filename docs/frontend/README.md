@@ -210,6 +210,22 @@ New tests were added to cover persistence logic:
 
 All tests follow the documented guidelines: flat `test()` blocks, AAA pattern, minimal mocking.
 
+### Feedback & notifications
+
+The feedback system (snackbar + error collapse) is covered by `src/contexts/tests/FeedbackContext.test.tsx`:
+
+- Verifies success messages auto-dismiss after the 2s default.
+- Verifies multiple error messages are temporarily all visible, then after 4s only the latest error remains (collapse logic).
+- Verifies a persistent error can be manually dismissed via the close button.
+
+Testing techniques used:
+
+- `vi.useFakeTimers()` to deterministically advance time for auto-dismiss and collapse windows.
+- Direct invocation of context methods (`showSuccess`, `showError`) through a harness component — keeps tests fast and focused on state transitions and DOM output.
+- Assertions rely on text presence/absence and the accessible close button (`role="button"`, `aria-label="Close notification"`).
+
+When adding new feedback behaviors (e.g., queued informational messages, focus trapping for critical alerts), prefer extending this test file with additional small, isolated `test()` blocks rather than large grouped suites.
+
 Running the full suite:
 
 ```
