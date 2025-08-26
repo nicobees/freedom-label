@@ -21,6 +21,11 @@ from app.service_layer import (
 if TYPE_CHECKING:
     from app.models import LabelData, PathData
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
+
 app = FastAPI()
 
 app.add_middleware(
@@ -88,7 +93,7 @@ async def create_label_endpoint(
     show_borders = debug_border == 1
 
     try:
-        pdf_path = await create_label(
+        pdf_path, pdf_filename = await create_label(
             label_data,
             show_borders=show_borders,
         )
@@ -116,7 +121,9 @@ async def create_label_endpoint(
             headers={"X-Error-Code": "VALIDATION_ERROR"},
         ) from ValueError
 
-    return {"status": "ok", "pdf_filename": pdf_path}
+    logging.info(msg=f"[POST /label/create] - PDF label created at {pdf_path}")
+
+    return {"status": "ok", "pdf_filename": pdf_filename}
 
 
 @app.post("/label/print")
@@ -133,7 +140,7 @@ async def print_label_endpoint(body_data: PathData) -> dict[str, str]:
 
     """
     try:
-        pdf_path = await print_label(pdf_path=body_data.pdf_path)
+        pdf_path, pdf_filename = await print_label(pdf_path=body_data.pdf_path)
     except FileNotFoundError as error:
         # TODO(nicobees): log error message as str(error)
         # https://github.com/nicobees/freedom-label/issues/2
@@ -143,7 +150,11 @@ async def print_label_endpoint(body_data: PathData) -> dict[str, str]:
             headers={"X-Error-Code": "TEMPLATE_PDF_NOT_FOUND_ERROR"},
         ) from FileNotFoundError
 
-    return {"status": "ok", "pdf_filename": pdf_path}
+    logging.info(
+        msg=f"[POST /label/print] - PDF label at {pdf_path} printed successfully"
+    )
+
+    return {"status": "ok", "pdf_filename": pdf_filename}
 
 
 @app.post("/label/create-print")
@@ -185,7 +196,7 @@ async def create_print_label_endpoint(
     show_borders = debug_border == 1
 
     try:
-        pdf_path = await create_print_label(
+        pdf_path, pdf_filename = await create_print_label(
             label_data,
             print_disabled=print_disabled,
             show_borders=show_borders,
@@ -212,4 +223,8 @@ async def create_print_label_endpoint(
             headers={"X-Error-Code": "VALIDATION_ERROR"},
         ) from ValueError
 
-    return {"status": "ok", "pdf_filename": pdf_path}
+    logging.info(
+        msg=f"[POST /label/create-print] - PDF label at {pdf_path} created and printed successfully"
+    )
+
+    return {"status": "ok", "pdf_filename": pdf_filename}
