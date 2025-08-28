@@ -56,11 +56,11 @@ RUN useradd --create-home --shell /bin/bash appuser \
 
 # CUPS directories as volumes for persistence (optional)
 # /etc/cups holds printers.conf and PPDs, /var/spool/cups holds job spool
-VOLUME ["/etc/cups", "/var/spool/cups"]
+# VOLUME ["/etc/cups", "/var/spool/cups"]
 
 # Provide a minimal cupsd.conf if you want to ensure it listens on all interfaces.
 # Otherwise, rely on image defaults and adjust via bind-mount.
-COPY ./cupsd.conf /etc/cups/cupsd.conf
+# COPY ./cupsd.conf /etc/cups/cupsd.conf
 
 # Simple entrypoint script to start dbus, cupsd (foreground), then uvicorn app.
 # Using bash -lc allows sourcing env and failing fast on errors.
@@ -70,7 +70,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 USER appuser
 
 # Expose CUPS and app ports
-EXPOSE 631 8000
+EXPOSE 8000
 
 # Environment for PATH in case service layers propagate differently
 ENV PATH="/home/appuser/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"

@@ -19,8 +19,7 @@ services:
       - "./cups:/etc/cups" # persist CUPS config
       - "./cups-spool:/var/spool/cups" # persist spool (optional)
     environment:
-      # If you also interpolate host PATH, add:
-      - PATH: ${PATH}
+      PATH: ${PATH}
     privileged: true # If permissions to USB are an issue, you can try privileged.
 
   frontend:
