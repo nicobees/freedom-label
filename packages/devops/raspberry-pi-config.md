@@ -68,7 +68,7 @@ Choose one of the following commands to shutdown:
 
 - find usb device in mac os: `ioreg -irc IOUSBDevice`
 
-## Printer config
+## Printer config (mac os)
 
 - printer status information in mac os (https://ss64.com/mac/lpstat.html): `lpstat -p`
 
@@ -81,6 +81,50 @@ Choose one of the following commands to shutdown:
 - lp(r) fit to page params https://discussions.apple.com/thread/7899241?sortBy=rank
 
 - lp(r) margins and smaller font https://superuser.com/questions/229480/how-do-you-get-lpr-on-os-x-to-print-with-margins-and-a-smaller-font
+
+## Printer setup (raspberry)
+
+Install cups and lpr command
+
+```sh
+sudo apt install cups cups-bsd
+```
+
+Follow instructions in the [official video](https://www.youtube.com/watch?v=dTs_B5rYI6o)
+
+Copy script file 4BARCODE into raspberry, manually or with scp command through ssh
+
+```sh
+scp -r ./4BARCODE [raspberry-user]@[raspberry-ip-address]:/any/location/in/raspberry
+```
+
+Access raspberry through ssh and give permissions to the script file
+
+```sh
+sudo chmod 777 4BARCODE
+```
+
+Execute the script
+
+```sh
+sudo ./4BARCODE
+```
+
+Open cups page and set printer to be shared
+
+### Printer setup in docker container
+
+Set CUPS_PRINTER environment variable in the `.env` file with the value of docker bridge gateway
+
+```
+CUPS_PRINTER=172.17.0.1:631
+```
+
+Get docker bridge gateway with this command
+
+```
+sudo docker network inspect bridge | grep Gateway
+```
 
 ## Python config
 
