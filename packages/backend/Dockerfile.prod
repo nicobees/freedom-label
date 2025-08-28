@@ -27,10 +27,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cups \
     cups-bsd \
     cups-client \
-    openprinting-ppds \
-    dbus \
-    avahi-daemon \
-    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Poetry
@@ -49,10 +45,9 @@ COPY ./app ./app
 
 # Prepare non-root user and grant print permissions
 # Add user to lp and lpadmin so it can submit/manage jobs if needed
-RUN useradd --create-home --shell /bin/bash appuser \
- && usermod -aG lp,lpadmin appuser \
- && mkdir -p /freedom-label-app/app/services/pdf_output \
- && chown -R appuser:appuser /freedom-label-app/app
+RUN useradd --create-home --shell /bin/bash appuser
+RUN usermod -aG lp,lpadmin appuser
+RUN chown -R appuser:appuser /freedom-label-app/app/services/pdf_output
 
 # CUPS directories as volumes for persistence (optional)
 # /etc/cups holds printers.conf and PPDs, /var/spool/cups holds job spool
@@ -64,9 +59,6 @@ RUN useradd --create-home --shell /bin/bash appuser \
 
 # Simple entrypoint script to start dbus, cupsd (foreground), then uvicorn app.
 # Using bash -lc allows sourcing env and failing fast on errors.
-COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
 USER appuser
 
 # Expose CUPS and app ports
@@ -75,5 +67,4 @@ EXPOSE 8000
 # Environment for PATH in case service layers propagate differently
 ENV PATH="/home/appuser/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-# Start both CUPS and the Python app
-CMD ["/usr/local/bin/entrypoint.sh"]
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
