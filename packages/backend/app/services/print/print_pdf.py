@@ -36,7 +36,7 @@ def print_label_pdf(
     printer_name = "-P SN_420B"
     layout_options = "-o PageSize=Custom.50x30mm -o orientation-requested=3"
 
-    command_to_run = f"{command} {printer_name} {layout_options} {file_name}"
+    command_to_run = f"{command} {printer_name} {layout_options} {pdf_file}"
     print(command_to_run)  # noqa: T201
 
     # The following lines are commented out because they interact with the system's

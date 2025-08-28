@@ -10,6 +10,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    environment:
+      CUPS_SERVER: "${CUPS_SERVER}"
     volumes:
       - pdf_output_data:/freedom-label-app/app/services/pdf_output
     # privileged: true # If permissions to USB are an issue, you can try privileged.

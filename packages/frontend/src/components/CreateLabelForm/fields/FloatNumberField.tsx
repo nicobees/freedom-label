@@ -1,5 +1,6 @@
 /* eslint-disable react-compiler/react-compiler */
 import { useMemo } from 'react';
+import { isMobile } from 'react-device-detect';
 
 import './float-number-field.css';
 import {
@@ -66,6 +67,9 @@ export function FloatNumberField({
             }}
             placeholder={label}
             value={number}
+            {...(isMobile
+              ? { inputMode: 'decimal', step: '0.01', type: 'number' }
+              : { type: 'text' })}
           />
           {withSign ? (
             <button
