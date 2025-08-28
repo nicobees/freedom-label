@@ -27,7 +27,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cups \
     cups-bsd \
     cups-client \
-    printer-driver-gutenprint \
     openprinting-ppds \
     dbus \
     avahi-daemon \
