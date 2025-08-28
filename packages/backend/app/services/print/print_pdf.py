@@ -32,7 +32,7 @@ def print_label_pdf(
         raise FileNotFoundError(custom_error_message)
     # print("Inside printing method")  # noqa: ERA001
 
-    command = "lpr"
+    command = "/usr/bin/lpr"
     printer_name = "-P SN_420B"
     layout_options = "-o PageSize=Custom.50x30mm -o orientation-requested=3"
 

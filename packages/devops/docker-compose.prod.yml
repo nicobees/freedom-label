@@ -4,14 +4,24 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+      - "631:631"
     depends_on: []
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
     volumes:
       - pdf_output_data:/freedom-label-app/app/services/pdf_output
+      - "/var/run/dbus:/var/run/dbus"
+      - "./cups:/etc/cups" # persist CUPS config
+      - "./cups-spool:/var/spool/cups" # persist spool (optional)
+    environment:
+      # If you also interpolate host PATH, add:
+      - PATH: ${PATH}
+    privileged: true # If permissions to USB are an issue, you can try privileged.
 
   frontend:
     image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_FRONTEND}:${VERSION_FRONTEND}
