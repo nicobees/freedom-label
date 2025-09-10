@@ -6,7 +6,7 @@ import { type FormType, withForm } from '../../hooks/useCreateLabelForm';
 import { defaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
-  defaultValues,
+  defaultValues: defaultValues(),
 });
 
 // Using generic form type from hook; runtime shape is sufficient for field rendering.

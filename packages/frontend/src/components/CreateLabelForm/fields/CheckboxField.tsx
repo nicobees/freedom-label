@@ -21,7 +21,10 @@ export function CheckboxField({ label }: { label: string }) {
         aria-label={label}
         checked={field.state.value}
         className="field__input field__input--checkbox"
-        onChange={(e) => field.handleChange(e.target.checked)}
+        onChange={(e) => {
+          const checked = e.target.checked;
+          field.handleChange(checked);
+        }}
         type="checkbox"
       />
       <span aria-hidden="true" className="field__label">

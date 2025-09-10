@@ -8,7 +8,7 @@ import { defaultValues } from './defaultValues';
 import { LensSpecColumn } from './LensSpecColumn';
 
 const formOptionsObject = formOptions({
-  defaultValues,
+  defaultValues: defaultValues(),
 });
 
 export const LensSpecSection = withForm({

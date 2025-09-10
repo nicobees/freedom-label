@@ -1,11 +1,13 @@
+import type { AnyFieldMeta } from '@tanstack/react-form';
+
 import { getRouteApi } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import type { LabelDataSubmit } from '../../validation/schema';
 
 import { defaultValuesFilled } from '../../components/CreateLabelForm/defaultValues';
-import { FormDirtyChecker } from '../../components/CreateLabelForm/FormDirtyChecker';
 import './create-label.css';
+import { FormDirtyChecker } from '../../components/CreateLabelForm/FormDirtyChecker';
 import { LensSpecSection } from '../../components/CreateLabelForm/LensSpecSection';
 import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
 import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfoSection';
@@ -76,7 +78,17 @@ export default function CreateLabelPage() {
             {debug ? (
               <button
                 className="btn btn--text"
-                onClick={() => form.reset(defaultValuesFilled)}
+                onClick={() => {
+                  form.reset(defaultValuesFilled, { keepDefaultValues: true });
+                  const meta = form.getFieldMeta(
+                    'patient_info.name',
+                  ) as AnyFieldMeta;
+                  form.setFieldMeta('patient_info.name', {
+                    ...meta,
+                    isDirty: true,
+                  });
+                  void form.validate('change');
+                }}
                 type="button"
               >
                 {t('fillFormTemp')}

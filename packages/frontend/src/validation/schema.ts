@@ -10,7 +10,7 @@ export const LensSpecsDataSchema = z.object({
   sag: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid SAG format'),
 });
 
-// type LensSpecsData = z.infer<typeof LensSpecsDataSchema>;
+export type LensSpecsData = z.infer<typeof LensSpecsDataSchema>;
 
 export const LensSide = {
   Left: 'left',
@@ -18,10 +18,16 @@ export const LensSide = {
 } as const;
 export type LensSide = (typeof LensSide)[keyof typeof LensSide];
 
-const LensSpecsGridSchema = z.object({
-  data: z.optional(LensSpecsDataSchema).nullable(),
-  enabled: z.boolean(),
-});
+const LensSpecsGridSchema = z.discriminatedUnion('enabled', [
+  z.object({
+    data: LensSpecsDataSchema,
+    enabled: z.literal(true),
+  }),
+  z.object({
+    data: z.unknown().nullable(),
+    enabled: z.literal(false),
+  }),
+]);
 
 type LensSpecsGrid = z.infer<typeof LensSpecsGridSchema>;
 
@@ -64,9 +70,7 @@ export const LabelDataSchema = LabelDataSchemaBase.extend({}).superRefine(
     const { left, right } = lens_specs;
 
     const leftEnabled = left?.enabled ?? false;
-    const leftData = left?.data;
     const rightEnabled = right?.enabled ?? false;
-    const rightData = right?.data;
 
     if (!leftEnabled && !rightEnabled) {
       ctx.addIssue({
@@ -84,10 +88,10 @@ export const LabelDataSchema = LabelDataSchemaBase.extend({}).superRefine(
     }
 
     // check lens_specs data properly filled
-    const leftResults = LensSpecsDataSchema.safeParse(leftData);
-    const rightResults = LensSpecsDataSchema.safeParse(rightData);
+    const leftResults = LensSpecsGridSchema.safeParse(left);
+    const rightResults = LensSpecsGridSchema.safeParse(right);
 
-    if (leftEnabled && !leftResults.success) {
+    if (!leftResults.success) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Properly fill all data',
@@ -95,7 +99,7 @@ export const LabelDataSchema = LabelDataSchemaBase.extend({}).superRefine(
       });
     }
 
-    if (rightEnabled && !rightResults.success) {
+    if (!rightResults.success) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Properly fill all data',
@@ -115,12 +119,9 @@ const LensSpecDataTransform = (value: LensSpecsGrid) => {
   return { ...data };
 };
 
-const LensSpecsGridSubmitSchema = z
-  .object({
-    data: z.optional(LensSpecsDataSchema).nullable(),
-    enabled: z.boolean(),
-  })
-  .transform(LensSpecDataTransform);
+const LensSpecsGridSubmitSchema = LensSpecsGridSchema.transform(
+  LensSpecDataTransform,
+);
 
 const LensesSpecsSubmitSchema = z.object({
   [LensSide.Left]: LensSpecsGridSubmitSchema,

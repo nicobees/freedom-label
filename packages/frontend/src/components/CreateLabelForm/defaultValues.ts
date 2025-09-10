@@ -1,38 +1,52 @@
 import type { LabelData } from '../../validation/schema';
 
-export const defaultValues: LabelData = {
-  batch: '',
-  description: '',
-  due_date: '',
-  lens_specs: {
-    left: {
-      data: {
-        add: '',
-        ax: '',
-        bc: '',
-        cyl: '',
-        dia: '',
-        pwr: '',
-        sag: '',
-      },
-      enabled: true,
-    },
-    right: {
-      data: { add: '', ax: '', bc: '', cyl: '', dia: '', pwr: '', sag: '' },
-      enabled: true,
-    },
-  },
-  patient_info: {
-    name: '',
-    surname: '',
-  },
-  production_date: '',
+import { formatDateToFullDateString, fromDate } from '../../utils/date';
+
+export const LensSpecsDataDefaultValue = {
+  add: '',
+  ax: '',
+  bc: '',
+  cyl: '',
+  dia: '',
+  pwr: '',
+  sag: '',
 };
 
-export const defaultValuesFilled: LabelData = {
+export const defaultValues = (todayDate = new Date()): LabelData => {
+  const formattedTodayDate = formatDateToFullDateString(fromDate(todayDate));
+
+  return {
+    batch: '',
+    description: '',
+    due_date: formattedTodayDate,
+    lens_specs: {
+      left: {
+        data: LensSpecsDataDefaultValue,
+        enabled: true,
+      },
+      right: {
+        data: LensSpecsDataDefaultValue,
+        enabled: true,
+      },
+    },
+    patient_info: {
+      name: '',
+      surname: '',
+    },
+    production_date: formattedTodayDate,
+  };
+};
+
+const addOneYearToDate = (date: Date): Date => {
+  date.setFullYear(date.getFullYear() + 1);
+
+  return date;
+};
+
+export const defaultValuesFilled = {
   batch: '25-0001',
   description: 'Lente sclerale F2mid',
-  due_date: '20/04/2026',
+  due_date: formatDateToFullDateString(fromDate(new Date())),
   lens_specs: {
     left: {
       data: {
@@ -48,7 +62,6 @@ export const defaultValuesFilled: LabelData = {
     },
     right: {
       data: null,
-
       enabled: false,
     },
   },
@@ -56,5 +69,7 @@ export const defaultValuesFilled: LabelData = {
     name: 'gabriele',
     surname: 'cara',
   },
-  production_date: '20/04/2025',
-};
+  production_date: formatDateToFullDateString(
+    fromDate(addOneYearToDate(new Date())),
+  ),
+} satisfies LabelData;
