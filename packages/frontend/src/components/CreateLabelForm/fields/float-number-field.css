@@ -61,3 +61,12 @@
     0 0px 4px rgba(68, 68, 68, 0.25);
   transform: translateY(4px);
 }
+
+/* Disabled state: ensure the key button is not clickable and communicates disabled */
+.float-field .key__button:disabled {
+  pointer-events: none; /* do not receive mouse/touch events */
+  cursor: not-allowed; /* visual cue */
+  opacity: 0.6; /* toned-down appearance */
+  box-shadow: none;
+  text-shadow: none;
+}

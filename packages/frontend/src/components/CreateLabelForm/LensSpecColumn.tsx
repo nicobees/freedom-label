@@ -128,11 +128,23 @@ const LensSpecColumnGridData = withForm({
 
     return (
       <fieldset aria-label={groupLabel} className="lens-grid" role="group">
-        <form.AppField name={`${lensSpecSideDataName}.bc` as const}>
-          {(field) => (
-            <field.FloatNumberField disabled={!isEnabled} label="BC" />
-          )}
-        </form.AppField>
+        <div className="bc-wrapper-container">
+          <form.AppField name={`${lensSpecSideDataName}.bc` as const}>
+            {(field) => (
+              <field.FloatNumberField disabled={!isEnabled} label="BC" />
+            )}
+          </form.AppField>
+          {' / '}
+          <form.AppField name={`${lensSpecSideDataName}.bc_toric` as const}>
+            {(field) => (
+              <field.FloatNumberField
+                disabled={!isEnabled}
+                label="BC Toric"
+                showLabel={false}
+              />
+            )}
+          </form.AppField>
+        </div>
         <form.AppField name={`${lensSpecSideDataName}.dia` as const}>
           {(field) => (
             <field.FloatNumberField disabled={!isEnabled} label="DIA" />

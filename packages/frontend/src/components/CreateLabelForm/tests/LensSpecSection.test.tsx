@@ -15,7 +15,7 @@ test('renders Lens specs section with left and right columns', async () => {
   expect(screen.getByRole('group', { name: 'Lens specs' })).toBeInTheDocument();
 
   // Two BC inputs (left/right)
-  const bcInputs = screen.getAllByRole('textbox', { name: /bc/i });
+  const bcInputs = screen.getAllByRole('textbox', { name: 'BC' });
   expect(bcInputs.length).toBe(2);
 
   // Two PWR number inputs (left/right)
@@ -50,7 +50,7 @@ test('validates PWR format on change', async () => {
 test('copy left → right duplicates values', async () => {
   setup();
 
-  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: /bc/i });
+  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: 'BC' });
   const [leftPwr, rightPwr] = screen.getAllByRole('textbox', { name: /pwr/i });
   const [leftPwrSign, rightPwrSign] = screen.getAllByLabelText(/pwr sign/i);
   const [leftSag, rightSag] = screen.getAllByRole('textbox', { name: /sag/i });
@@ -80,7 +80,7 @@ test('copy left → right duplicates values', async () => {
 test('copy right to left duplicates values', async () => {
   setup();
 
-  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: /bc/i });
+  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: 'BC' });
   const [leftPwr, rightPwr] = screen.getAllByRole('textbox', { name: /pwr/i });
   const [leftPwrSign, rightPwrSign] = screen.getAllByLabelText(/pwr sign/i);
   const [leftSag, rightSag] = screen.getAllByRole('textbox', { name: /sag/i });
@@ -100,7 +100,7 @@ test('copy right to left duplicates values', async () => {
 
   // Assert LEFT mirrored
   expect(leftBc).toHaveValue('8.70');
-  expect(leftPwrSign).toHaveTextContent('-');
+  expect(leftPwrSign).toHaveTextContent('+');
   expect(leftPwr).toHaveValue('2.00');
   expect(leftSag).toHaveValue('11.50');
 });

@@ -4,6 +4,10 @@ export const LensSpecsDataSchema = z.object({
   add: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid ADD format'),
   ax: z.string().regex(/^\d{3}$/, 'Invalid AX format'),
   bc: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid BC format'),
+  bc_toric: z
+    .string()
+    .regex(/^\d{1,2}\.\d{2}$/, 'Invalid BC format')
+    .optional(),
   cyl: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid CYL format'),
   dia: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid DIA format'),
   pwr: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid PWR format'),

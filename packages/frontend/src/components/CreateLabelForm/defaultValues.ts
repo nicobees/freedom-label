@@ -1,24 +1,35 @@
-import type { LabelData } from '../../validation/schema';
+import type { LabelData, LensSpecsData } from '../../validation/schema';
 
 import { formatDateToFullDateString, fromDate } from '../../utils/date';
 
 export const LensSpecsDataDefaultValue = {
-  add: '',
+  add: '+00.00',
   ax: '',
   bc: '',
   cyl: '',
   dia: '',
   pwr: '',
   sag: '',
+} satisfies LensSpecsData;
+
+const addOneYearToDate = (date: Date): Date => {
+  date.setFullYear(date.getFullYear() + 1);
+
+  return date;
 };
 
 export const defaultValues = (todayDate = new Date()): LabelData => {
-  const formattedTodayDate = formatDateToFullDateString(fromDate(todayDate));
+  const formattedProductionDate = formatDateToFullDateString(
+    fromDate(todayDate),
+  );
+  const formattedDueDate = formatDateToFullDateString(
+    fromDate(addOneYearToDate(todayDate)),
+  );
 
   return {
     batch: '',
     description: '',
-    due_date: formattedTodayDate,
+    due_date: formattedDueDate,
     lens_specs: {
       left: {
         data: LensSpecsDataDefaultValue,
@@ -33,14 +44,8 @@ export const defaultValues = (todayDate = new Date()): LabelData => {
       name: '',
       surname: '',
     },
-    production_date: formattedTodayDate,
+    production_date: formattedProductionDate,
   };
-};
-
-const addOneYearToDate = (date: Date): Date => {
-  date.setFullYear(date.getFullYear() + 1);
-
-  return date;
 };
 
 export const defaultValuesFilled = {
@@ -50,12 +55,12 @@ export const defaultValuesFilled = {
   lens_specs: {
     left: {
       data: {
-        add: '+1.24',
+        add: '+00.00',
         ax: '123',
         bc: '1.24',
-        cyl: '+1.24',
+        cyl: '-1.24',
         dia: '1.24',
-        pwr: '+1.24',
+        pwr: '-1.24',
         sag: '10.04',
       },
       enabled: true,

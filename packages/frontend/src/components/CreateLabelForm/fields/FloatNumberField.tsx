@@ -13,6 +13,7 @@ type Props = {
   disabled?: boolean;
   displayValue?: string;
   label: string;
+  showLabel?: boolean;
   withSign?: boolean;
 };
 
@@ -20,6 +21,7 @@ export function FloatNumberField({
   disabled = false,
   displayValue,
   label,
+  showLabel = true,
   withSign = false,
 }: Props) {
   const field = useFieldContext<string>();
@@ -52,7 +54,7 @@ export function FloatNumberField({
   return (
     <div className={`field ${showError ? 'is-error' : ''} field-group`}>
       <label className="field__label">
-        {label}
+        {showLabel ? label : null}
         <div aria-label={label} className="float-field" role={role}>
           {/** IMPORTANT: input is placed BEFORE the sign toggle button in the DOM so that clicking the surrounding label activates/focuses the input, not the button (which previously caused unintended sign toggles). The button is visually moved before the input via CSS (order:-1). */}
           <input
@@ -77,13 +79,13 @@ export function FloatNumberField({
               className="key__button"
               disabled={disabled}
               onClick={() => {
-                const currentSign = sign || '+'; // treat empty as '+'
+                const currentSign = sign || '-'; // treat empty as '-'
                 const newSign = currentSign === '+' ? '-' : '+';
                 emit({ number, sign: newSign });
               }}
               type="button"
             >
-              {sign || '+'}
+              {sign || '-'}
             </button>
           ) : null}
         </div>
