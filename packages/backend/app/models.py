@@ -18,6 +18,7 @@ class LensDataSpecs(BaseModel):
     """Represents lens specifications for left or right eye."""
 
     bc: Annotated[str, Field(pattern=r"^(\d{1,2}\.\d{2})?$")]
+    bc_toric: Annotated[str, Field(pattern=r"^(\d{1,2}\.\d{2})?$")] | None = None
     dia: Annotated[str, Field(pattern=r"^(\d{1,2}\.\d{2})?$")]
     pwr: Annotated[str, Field(pattern=r"^([+-]?\d{1,2}\.\d{2})?$")]
     cyl: Annotated[str, Field(pattern=r"^([+-]?\d{1,2}\.\d{2})?$")]
