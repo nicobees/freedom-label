@@ -24,7 +24,7 @@ export function FloatNumberField({
   showLabel = true,
   withSign = false,
 }: Props) {
-  const field = useFieldContext<string>();
+  const field = useFieldContext<string | undefined>();
   const form = useFormContext();
 
   const isValid = field.state.meta.isValid;
@@ -43,6 +43,10 @@ export function FloatNumberField({
   }, [displayValue, field.state.value, withSign]);
 
   const emit = (next: { number: string; sign: string }) => {
+    if (typeof next.number === 'undefined' || next.number === '') {
+      field.handleChange(undefined);
+      return;
+    }
     const value = withSign ? `${next.sign}${next.number}` : next.number;
     field.handleChange(value);
   };
