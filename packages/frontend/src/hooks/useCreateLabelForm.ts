@@ -35,7 +35,7 @@ export type FormType = ReturnType<typeof useCreateLabelForm>;
 
 export function useCreateLabelForm(onSubmit?: (data: LabelDataSubmit) => void) {
   const form = useAppForm({
-    defaultValues,
+    defaultValues: defaultValues(),
     onSubmit: ({ value }) => {
       const results = LabelDataSchema.safeParse(value);
 
@@ -69,7 +69,6 @@ export function useCreateLabelForm(onSubmit?: (data: LabelDataSubmit) => void) {
     validators: {
       onChange: LabelDataSchema,
       onChangeAsyncDebounceMs: FORM_DEBOUNCE_MS,
-      onMount: LabelDataSchema,
     },
   });
 

@@ -18,7 +18,7 @@ function setupBothSides() {
 test('copy left → right duplicates bc and dia values', async () => {
   setupBothSides();
 
-  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: /bc/i });
+  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: 'BC' });
   const [leftDia, rightDia] = screen.getAllByRole('textbox', { name: /dia/i });
 
   await userEvent.clear(leftBc);

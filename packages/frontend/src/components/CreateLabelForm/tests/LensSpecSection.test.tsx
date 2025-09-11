@@ -15,7 +15,7 @@ test('renders Lens specs section with left and right columns', async () => {
   expect(screen.getByRole('group', { name: 'Lens specs' })).toBeInTheDocument();
 
   // Two BC inputs (left/right)
-  const bcInputs = screen.getAllByRole('textbox', { name: /bc/i });
+  const bcInputs = screen.getAllByRole('textbox', { name: 'BC' });
   expect(bcInputs.length).toBe(2);
 
   // Two PWR number inputs (left/right)
@@ -50,7 +50,7 @@ test('validates PWR format on change', async () => {
 test('copy left → right duplicates values', async () => {
   setup();
 
-  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: /bc/i });
+  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: 'BC' });
   const [leftPwr, rightPwr] = screen.getAllByRole('textbox', { name: /pwr/i });
   const [leftPwrSign, rightPwrSign] = screen.getAllByLabelText(/pwr sign/i);
   const [leftSag, rightSag] = screen.getAllByRole('textbox', { name: /sag/i });
@@ -72,7 +72,7 @@ test('copy left → right duplicates values', async () => {
 
   // Assert RIGHT mirrored
   expect(rightBc).toHaveValue('8.60');
-  expect(rightPwrSign).toHaveTextContent('+');
+  expect(rightPwrSign).toHaveTextContent('-');
   expect(rightPwr).toHaveValue('1.25');
   expect(rightSag).toHaveValue('10.00');
 });
@@ -80,14 +80,14 @@ test('copy left → right duplicates values', async () => {
 test('copy right to left duplicates values', async () => {
   setup();
 
-  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: /bc/i });
+  const [leftBc, rightBc] = screen.getAllByRole('textbox', { name: 'BC' });
   const [leftPwr, rightPwr] = screen.getAllByRole('textbox', { name: /pwr/i });
   const [leftPwrSign, rightPwrSign] = screen.getAllByLabelText(/pwr sign/i);
   const [leftSag, rightSag] = screen.getAllByRole('textbox', { name: /sag/i });
 
   // Fill RIGHT values
   await userEvent.type(rightBc, '8.70');
-  // Click to toggle to '-'
+  // Click to toggle to '+'
   await userEvent.click(rightPwrSign); // Should toggle from '+' to '-'
   await userEvent.type(rightPwr, '2.00');
   await userEvent.type(rightSag, '11.50');
@@ -146,7 +146,7 @@ test('disable toggle keeps values visible and re-enable preserves them', async (
 
   // Values should remain visible in the fields after disabling
   expect(leftBcAfter).toHaveValue('8.88');
-  expect(leftPwrSignAfter).toHaveTextContent('+');
+  expect(leftPwrSignAfter).toHaveTextContent('-');
   expect(leftPwrAfter).toHaveValue('3.25');
   expect(leftSagAfter).toHaveValue('12.34');
 
@@ -163,7 +163,7 @@ test('disable toggle keeps values visible and re-enable preserves them', async (
 
   // Values remain intact after re-enable
   expect(leftBcEnabled).toHaveValue('8.88');
-  expect(leftPwrSignEnabled).toHaveTextContent('+');
+  expect(leftPwrSignEnabled).toHaveTextContent('-');
   expect(leftPwrEnabled).toHaveValue('3.25');
   expect(leftSagEnabled).toHaveValue('12.34');
 });

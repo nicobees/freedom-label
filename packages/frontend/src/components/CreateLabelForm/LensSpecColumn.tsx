@@ -7,11 +7,11 @@ import {
   useFormContext,
   withForm,
 } from '../../hooks/useCreateLabelForm';
-import { LensSide } from '../../validation/schema';
+import { LensSide, type LensSpecsData } from '../../validation/schema';
 import { defaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
-  defaultValues,
+  defaultValues: defaultValues(),
 });
 
 const arrowButtonMapping: Record<LensSide, string> = {
@@ -36,9 +36,14 @@ const LensSpecCopyData = withForm({
     const oppositeSide = getOppositeSide(typedSide);
 
     const onClickHandler = async () => {
-      const currentSideData = form.getFieldValue(lensSpecSideDataName);
+      const currentSideData = form.getFieldValue(
+        lensSpecSideDataName,
+      ) as LensSpecsData;
       const lensSpecOppositeSideName = `lens_specs.${oppositeSide}` as const;
-      const oppositeSideData = { data: currentSideData, enabled: true };
+      const oppositeSideData = {
+        data: currentSideData,
+        enabled: true,
+      };
 
       form.setFieldValue(lensSpecOppositeSideName, oppositeSideData);
 
@@ -123,17 +128,26 @@ const LensSpecColumnGridData = withForm({
 
     return (
       <fieldset aria-label={groupLabel} className="lens-grid" role="group">
-        <form.AppField name={`${lensSpecSideDataName}.bc` as const}>
-          {(field) => (
-            <field.FloatNumberField disabled={!isEnabled} label="BC" />
-          )}
-        </form.AppField>
+        <div className="bc-wrapper-container">
+          <form.AppField name={`${lensSpecSideDataName}.bc` as const}>
+            {(field) => (
+              <field.FloatNumberField disabled={!isEnabled} label="BC" />
+            )}
+          </form.AppField>
+          {' / '}
+          <form.AppField name={`${lensSpecSideDataName}.bc_toric` as const}>
+            {(field) => (
+              <field.FloatNumberField
+                disabled={!isEnabled}
+                label="BC Toric"
+                showLabel={false}
+              />
+            )}
+          </form.AppField>
+        </div>
         <form.AppField name={`${lensSpecSideDataName}.dia` as const}>
           {(field) => (
-            <field.FloatNumberField
-              disabled={!field.form.getFieldValue(activeCheckboxFieldName)}
-              label="DIA"
-            />
+            <field.FloatNumberField disabled={!isEnabled} label="DIA" />
           )}
         </form.AppField>
         <form.AppField name={`${lensSpecSideDataName}.pwr`}>
@@ -148,7 +162,7 @@ const LensSpecColumnGridData = withForm({
         <form.AppField name={`${lensSpecSideDataName}.cyl`}>
           {(field) => (
             <field.FloatNumberField
-              disabled={!field.form.getFieldValue(activeCheckboxFieldName)}
+              disabled={!isEnabled}
               label="CYL"
               withSign
             />
@@ -156,16 +170,13 @@ const LensSpecColumnGridData = withForm({
         </form.AppField>
         <form.AppField name={`${lensSpecSideDataName}.ax` as const}>
           {(field) => (
-            <field.FloatNumberField
-              disabled={!field.form.getFieldValue(activeCheckboxFieldName)}
-              label="AX"
-            />
+            <field.FloatNumberField disabled={!isEnabled} label="AX" />
           )}
         </form.AppField>
         <form.AppField name={`${lensSpecSideDataName}.add`}>
           {(field) => (
             <field.FloatNumberField
-              disabled={!field.form.getFieldValue(activeCheckboxFieldName)}
+              disabled={!isEnabled}
               label="ADD"
               withSign
             />
@@ -173,10 +184,7 @@ const LensSpecColumnGridData = withForm({
         </form.AppField>
         <form.AppField name={`${lensSpecSideDataName}.sag` as const}>
           {(field) => (
-            <field.FloatNumberField
-              disabled={!field.form.getFieldValue(activeCheckboxFieldName)}
-              label="SAG"
-            />
+            <field.FloatNumberField disabled={!isEnabled} label="SAG" />
           )}
         </form.AppField>
       </fieldset>

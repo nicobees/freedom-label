@@ -15,20 +15,27 @@ export const PrintButton = ({
     <form.Subscribe
       selector={(state) => ({
         canSubmit: state.canSubmit,
+        isPristine: state.isPristine,
+        isTouched: state.isTouched,
+        isValid: state.isValid,
       })}
     >
-      {({ canSubmit }) => (
-        <button
-          className={`btn btn--${variant}`}
-          disabled={!canSubmit}
-          onClick={() => {
-            void form.handleSubmit();
-          }}
-          type="button"
-        >
-          {label}
-        </button>
-      )}
+      {({ canSubmit, isPristine, isTouched, isValid }) => {
+        console.info({ canSubmit, isPristine, isTouched, isValid });
+
+        return (
+          <button
+            className={`btn btn--${variant}`}
+            disabled={!canSubmit || !isValid || isPristine}
+            onClick={() => {
+              void form.handleSubmit();
+            }}
+            type="button"
+          >
+            {label}
+          </button>
+        );
+      }}
     </form.Subscribe>
   );
 };

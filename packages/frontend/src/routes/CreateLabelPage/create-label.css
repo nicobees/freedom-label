@@ -80,12 +80,20 @@
   grid-template-columns: 1fr; /* enforce vertical stacking of BC, DIA, etc. */
 }
 
-/* Align all input fields vertically by using consistent label width */
-.lens-grid .field__label {
-  display: grid;
-  grid-template-columns: minmax(30px, max-content) 1fr;
+/* Lens grid fields: keep label and input inline and allow wrapping */
+.lens-grid .field {
+  display: inline-flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap; /* wrap assist when space is tight */
+  margin-block-end: 4px; /* smaller than global field spacing */
+}
+
+.lens-grid .field__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0; /* avoid extra vertical spacing */
   cursor: default; /* prevent pointer cursor on label text */
 }
 
@@ -102,6 +110,23 @@
 /* Reset margin for regular inputs since we're using grid gap */
 .lens-grid .field__label .field__input {
   margin-inline-start: 0; /* grid gap handles spacing */
+}
+
+/* Lens grid assist: inline by default (sits after the field); wraps below when needed */
+.lens-grid .field__assist {
+  margin-top: 0;
+}
+
+.lens-grid .bc-wrapper-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-block-end: 4px;
+}
+
+.bc-wrapper-container > :first-child {
+  display: block;
 }
 
 /* Float number field internal layout: sign toggle + input inline */
@@ -128,11 +153,6 @@
 .float-field input:focus-visible {
   border-color: var(--color-accent);
   outline: 1px solid var(--color-accent);
-}
-
-/* Tighten vertical spacing between individual numeric fields */
-.lens-grid .field {
-  margin-block-end: 4px; /* smaller than global field spacing */
 }
 
 /* Add horizontal space between label text and its inner float-field container */

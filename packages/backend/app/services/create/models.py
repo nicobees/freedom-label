@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Generic, TypeVar
 
 from fpdf import FPDF
+from fpdf.fonts import FontFace
 from pydantic import BaseModel
 
 if TYPE_CHECKING:
@@ -106,6 +107,7 @@ class LabelTemplate(Generic[T], ABC):
         self.lens_spec_type = lens_spec_type
         self.producer_name = producer_name
         self.show_borders = show_borders
+        self.smaller_font = FontFace(size_pt=6)
 
     def page_setup(self, columns_amount: int | None) -> None:
         """Set up the page margins, auto page break, and add a new page.

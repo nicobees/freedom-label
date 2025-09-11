@@ -95,7 +95,7 @@
   }
   .field__assist {
     font-size: var(--font-size-sm);
-    margin-top: 4px;
+    margin-top: 4px; /* default: below the field */
     color: var(--color-on-surface);
     opacity: 0.7;
   }

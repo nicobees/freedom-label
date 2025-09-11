@@ -6,7 +6,7 @@ import { withForm } from '../../hooks/useCreateLabelForm';
 import { defaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
-  defaultValues,
+  defaultValues: defaultValues(),
 });
 
 export const ManufacturingSection = withForm({
