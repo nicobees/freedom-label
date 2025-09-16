@@ -3,6 +3,7 @@ import { z } from 'zod';
 const validationErrorMessages = {
   add: 'Invalid ADD format',
   ax: 'Invalid AX format',
+  batch: 'Invalid Batch format',
   bc: 'Invalid BC format',
   bc_toric: 'Invalid BC Toric format',
   cyl: 'Invalid CYL format',
@@ -17,6 +18,11 @@ export const LensSpecsDataSchema = z.object({
   ax: z
     .string({ invalid_type_error: 'Invalid AX format: 3-digits string' })
     .regex(/^\d{1,3}$/, validationErrorMessages.ax),
+  batch: z
+    .string()
+    .regex(/^.{0,7}$/, validationErrorMessages.batch)
+    .optional()
+    .nullable(),
   bc: z.string().regex(/^\d{1,2}\.\d{2}$/, validationErrorMessages.bc),
   bc_toric: z
     .string()
@@ -73,10 +79,8 @@ export type PatientInfo = z.infer<typeof PatientInfoSchema>;
 
 const dateStringRegex = /^\d{2}\/\d{2}\/\d{4}$/;
 const dateStringValidationErrorMessage = 'Invalid date format (DD/MM/YYYY)';
-const batchRegex = /^\d{2}-\d{4}$/;
 
 export const LabelDataSchemaBase = z.object({
-  batch: z.string().regex(batchRegex),
   description: z.string().min(2).max(24),
   due_date: z.string().regex(dateStringRegex, dateStringValidationErrorMessage),
   lens_specs: LensesSpecsSchema,
@@ -140,7 +144,9 @@ const LensSpecDataTransform = (value: LensSpecsGrid) => {
 
   if (!enabled) return null;
 
-  return { ...data };
+  const computedBatch = data.batch === '' ? undefined : data.batch;
+
+  return { ...data, batch: computedBatch };
 };
 
 const LensSpecsGridSubmitSchema = LensSpecsGridSchema.transform(
