@@ -10,18 +10,6 @@ from app.services.create.models import LabelTemplate, LensSpecType, LensSpecType
 if TYPE_CHECKING:
     from app.models import LabelData
 
-font_settings_mapping: dict[int, TableDataFontSetting] = {
-    9: TableDataFontSetting(label=7, value=6),
-    10: TableDataFontSetting(label=7, value=5),
-    11: TableDataFontSetting(label=7, value=4.5),
-}
-
-font_settings_long_int_mapping: dict[int, TableDataFontSetting] = {
-    7: TableDataFontSetting(label=6, value=6, align="C"),
-    8: TableDataFontSetting(label=6, value=6),
-    9: TableDataFontSetting(label=5, value=5),
-}
-
 
 def _select_lens_spec_type(left: bool, right: bool) -> LensSpecType:
     """Select and return the appropriate lens spec type.
