@@ -17,6 +17,7 @@ class PatientInfo(BaseModel):
 class LensDataSpecs(BaseModel):
     """Represents lens specifications for left or right eye."""
 
+    batch: Annotated[str, Field(pattern=r"^.{0,7}$")] | None = None
     bc: Annotated[str, Field(pattern=r"^(\d{1,2}\.\d{2})?$")]
     bc_toric: Annotated[str, Field(pattern=r"^(\d{1,2}\.\d{2})?$")] | None = None
     dia: Annotated[str, Field(pattern=r"^(\d{1,2}\.\d{2})?$")]
@@ -40,7 +41,6 @@ class LabelData(BaseModel):
 
     patient_info: PatientInfo
     description: Annotated[str, Field(min_length=0, max_length=24)]
-    batch: Annotated[str, Field(pattern=r"^\d{2}-\d{4}$")]
     due_date: Annotated[str, Field(pattern=r"^(\d{2}/\d{2}/\d{4})?$")]
     production_date: Annotated[str, Field(pattern=r"^(\d{2}/\d{2}/\d{4})?$")]
     lens_specs: LensSpecs
