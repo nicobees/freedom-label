@@ -5,11 +5,12 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
-from fpdf import FPDF
-from fpdf.fonts import FontFace
+from fpdf import FPDF, FontFace
 from pydantic import BaseModel
+
+from app.models import LensDataSpecs, TableData, TableDataFontSetting
 
 if TYPE_CHECKING:
     from app.models import LabelData
@@ -54,6 +55,271 @@ class PageSetupProperties(BaseModel):
     orientation: OrientationValues = OrientationValues.landscape
     unit: UnitValues = UnitValues.mm
     size: tuple[int, int] = (30, 50)
+
+
+font_settings_mapping: dict[int, TableDataFontSetting] = {
+    9: TableDataFontSetting(label=7, value=6),
+    10: TableDataFontSetting(label=7, value=5),
+    11: TableDataFontSetting(label=7, value=4.5),
+}
+
+font_settings_long_int_mapping: dict[int, TableDataFontSetting] = {
+    7: TableDataFontSetting(label=6, value=6, align="C"),
+    8: TableDataFontSetting(label=6, value=6),
+    9: TableDataFontSetting(label=5, value=5),
+}
+
+
+def _get_row_data(
+    value: str,
+    label: str,
+    borders: list[int],
+    toric_value: str | None = None,
+    font_size_mapping: dict[int, TableDataFontSetting] | None = font_settings_mapping,
+) -> tuple[TableData, TableData, TableData]:
+    """Create the table data for the row, with different result for toric lenses.
+
+    Returns
+    -------
+        tuple[TableData, TableData, TableData]: The table data for the table data row.
+
+    """
+    if toric_value is not None:
+        value = f"{value}/{toric_value}"
+        value_length = len(value)
+
+        font_size_default = TableDataFontSetting(label=7, value=7, align="L")
+        smaller_font_size_mapping = (
+            font_size_mapping.get(
+                value_length,
+                font_size_default,
+            )
+            if font_size_mapping is not None
+            else font_size_default
+        )
+        smaller_font_size_label = smaller_font_size_mapping.label
+        smaller_font_size_value = smaller_font_size_mapping.value
+        smaller_font_size_align = smaller_font_size_mapping.align
+        smaller_font_label = FontFace(size_pt=smaller_font_size_label)  # type: ignore[arg-type]
+        smaller_font_value = FontFace(size_pt=smaller_font_size_value)  # type: ignore[arg-type]
+
+        return (
+            TableData(
+                value=f"{label}:",
+                border=borders[0],
+                align="C",
+                colspan=1,
+                style=smaller_font_label,
+            ),
+            TableData(
+                value=value,
+                border=borders[1],
+                align=smaller_font_size_align,
+                colspan=2,
+                style=smaller_font_value,
+            ),
+            TableData(
+                value=toric_value,
+                skip=True,
+            ),
+        )
+
+    value_length = len(value) if font_size_mapping is not None else 0
+
+    font_size_default = TableDataFontSetting(label=7, value=7, align="L")
+    smaller_font_size_mapping = (
+        font_size_mapping.get(
+            value_length,
+            font_size_default,
+        )
+        if font_size_mapping is not None
+        else font_size_default
+    )
+    smaller_font_size_label = smaller_font_size_mapping.label
+    smaller_font_size_value = smaller_font_size_mapping.value
+    smaller_font_size_align = smaller_font_size_mapping.align
+    smaller_font_label = FontFace(size_pt=smaller_font_size_label)  # type: ignore[arg-type]
+    smaller_font_value = FontFace(size_pt=smaller_font_size_value)  # type: ignore[arg-type]
+
+    return (
+        TableData(
+            value=f"{label}:",
+            border=borders[0],
+            colspan=2,
+            style=smaller_font_label,
+        ),
+        TableData(
+            value=value,
+            skip=True,
+        ),
+        TableData(
+            value=value,
+            border=borders[2],
+            style=smaller_font_value,
+        ),
+    )
+
+
+def _get_borders(show_borders: bool, borders: list[int]) -> list[int]:
+    """Get the border settings based on whether borders should be shown.
+
+    Args:
+    ----
+        show_borders (bool): Whether to show borders.
+        borders (list[int | None]): The original border settings to apply when
+            show_borders is True.
+
+    Returns:
+    -------
+        list[int | None]: The border settings.
+
+    """
+    return borders if show_borders else [0, 0, 0]
+
+
+def _get_column_data(
+    data: LensDataSpecs,
+    left_or_right: LensSpecTypeBase | LensSpecType,
+    show_borders: bool = True,
+) -> list[tuple[TableData, TableData, TableData]]:
+    """Create the table data for the lens specifications with borders.
+
+    Args:
+    ----
+        data (LensDataSpecs): The lens data specifications.
+        left_or_right (LensSpecTypeBase): The side of the lens ("left" or "right").
+        show_borders (bool): Whether to include cell borders in the generated table.
+
+    Returns:
+    -------
+        list[tuple[TableData, TableData, TableData]]: The table data with borders
+            (or without if show_borders is False).
+
+    """
+    if data is None:
+        return []
+
+    middle_border: list[int] = [
+        1,
+        2,
+        2,
+    ]
+    last_border: list[int] = [
+        1 | 8,
+        2 | 8,
+        2 | 8,
+    ]
+    one_to_last_field_borders: list[int] = (
+        last_border if data.batch is None else middle_border
+    )
+
+    column_data = [
+        _get_row_data(
+            value=data.bc,
+            toric_value=data.bc_toric,
+            label="BC",
+            borders=_get_borders(
+                show_borders=show_borders,
+                borders=[
+                    1 | 4 if left_or_right.value == "left" else 4,
+                    4 if left_or_right.value == "left" else 2 | 4,
+                    4 if left_or_right.value == "left" else 2 | 4,
+                ],
+            ),
+        ),
+        _get_row_data(
+            value=data.dia,
+            label="DIA",
+            borders=_get_borders(
+                show_borders=show_borders,
+                borders=[
+                    1 if left_or_right.value == "left" else 0,
+                    0 if left_or_right.value == "left" else 2,
+                    0 if left_or_right.value == "left" else 2,
+                ],
+            ),
+            font_size_mapping=None,
+        ),
+        _get_row_data(
+            value=data.pwr,
+            label="Pwr",
+            borders=_get_borders(
+                show_borders=show_borders,
+                borders=[
+                    1 if left_or_right.value == "left" else 0,
+                    0 if left_or_right.value == "left" else 2,
+                    0 if left_or_right.value == "left" else 2,
+                ],
+            ),
+            font_size_mapping=None,
+        ),
+        _get_row_data(
+            value=data.cyl,
+            label="Cyl",
+            borders=_get_borders(
+                show_borders=show_borders,
+                borders=[
+                    1,
+                    2,
+                    2,
+                ],
+            ),
+            font_size_mapping=None,
+        ),
+        _get_row_data(
+            value=data.ax,
+            label="AX",
+            borders=_get_borders(
+                show_borders=show_borders,
+                borders=[
+                    1,
+                    2,
+                    2,
+                ],
+            ),
+            font_size_mapping=None,
+        ),
+        _get_row_data(
+            value=data.add,
+            label="ADD",
+            borders=_get_borders(
+                show_borders=show_borders,
+                borders=[
+                    1,
+                    2,
+                    2,
+                ],
+            ),
+            font_size_mapping=None,
+        ),
+        _get_row_data(
+            value=data.sag,
+            toric_value=data.sag_toric,
+            label="SAG",
+            borders=_get_borders(
+                show_borders=show_borders,
+                borders=one_to_last_field_borders,
+            ),
+            font_size_mapping=font_settings_long_int_mapping,
+        ),
+    ]
+
+    if data.batch is not None:
+        column_data.append(
+            (
+                _get_row_data(
+                    value=data.batch,
+                    label="Lot",
+                    borders=_get_borders(
+                        show_borders=show_borders,
+                        borders=last_border,
+                    ),
+                    font_size_mapping=font_settings_long_int_mapping,
+                )
+            ),
+        )
+
+    return column_data
 
 
 class LabelTemplate(Generic[T], ABC):
@@ -107,7 +373,6 @@ class LabelTemplate(Generic[T], ABC):
         self.lens_spec_type = lens_spec_type
         self.producer_name = producer_name
         self.show_borders = show_borders
-        self.smaller_font = FontFace(size_pt=6)
 
     def page_setup(self, columns_amount: int | None) -> None:
         """Set up the page margins, auto page break, and add a new page.
@@ -183,6 +448,67 @@ class LabelTemplate(Generic[T], ABC):
             text=self.label_data.description,
             align="C",
             border=self.show_borders,
+        )
+
+    def columns_layout(
+        self,
+        table: Any,  # noqa: ANN401
+        table_data: list[tuple[TableData, TableData, TableData]],
+    ) -> None:
+        """Layout the PDF lens specification table when three data columns are needed.
+
+        Args:
+        ----
+            table (Any): The table context/handler used to create rows and cells in
+                the PDF.
+            table_data (list[tuple[TableData, TableData, TableData]]): The sequence
+                of table rows (label, value left, value right)
+                already enriched with border information.
+
+        Returns:
+        -------
+            None
+
+        """
+        for data_row in table_data:
+            row = table.row()
+            for datum in data_row:
+                if datum.skip:
+                    continue
+
+                row.cell(
+                    datum.value,
+                    border=datum.border,
+                    align=datum.align,
+                    colspan=datum.colspan,
+                    style=datum.style,
+                )
+
+    def _create_table_data(
+        self,
+        left_or_right: LensSpecTypeBase | LensSpecType,
+        show_borders: bool = True,
+    ) -> list[tuple[TableData, TableData, TableData]]:
+        """Create the table data for the lens specifications.
+
+        Args:
+        ----
+            left_or_right (LensSpecTypeBase): The side of the lens ("left" or "right").
+            show_borders (bool): Whether to include cell borders in the generated table.
+
+        Returns:
+        -------
+            list[tuple[TableData, TableData]]: The table data.
+
+        """
+        data = getattr(self.label_data.lens_specs, left_or_right.value, None)
+        if data is None:
+            return []
+
+        return _get_column_data(
+            data=data,
+            left_or_right=left_or_right,
+            show_borders=show_borders,
         )
 
     @abstractmethod

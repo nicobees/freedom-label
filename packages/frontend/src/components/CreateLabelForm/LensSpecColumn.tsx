@@ -128,7 +128,7 @@ const LensSpecColumnGridData = withForm({
 
     return (
       <fieldset aria-label={groupLabel} className="lens-grid" role="group">
-        <div className="bc-wrapper-container">
+        <div className="toric-wrapper-container">
           <form.AppField name={`${lensSpecSideDataName}.bc` as const}>
             {(field) => (
               <field.FloatNumberField disabled={!isEnabled} label="BC" />
@@ -140,6 +140,7 @@ const LensSpecColumnGridData = withForm({
               <field.FloatNumberField
                 disabled={!isEnabled}
                 label="BC Toric"
+                overwriteToNull={true}
                 showLabel={false}
               />
             )}
@@ -182,11 +183,24 @@ const LensSpecColumnGridData = withForm({
             />
           )}
         </form.AppField>
-        <form.AppField name={`${lensSpecSideDataName}.sag` as const}>
-          {(field) => (
-            <field.FloatNumberField disabled={!isEnabled} label="SAG" />
-          )}
-        </form.AppField>
+        <div className="toric-wrapper-container">
+          <form.AppField name={`${lensSpecSideDataName}.sag` as const}>
+            {(field) => (
+              <field.FloatNumberField disabled={!isEnabled} label="SAG" />
+            )}
+          </form.AppField>
+          {' / '}
+          <form.AppField name={`${lensSpecSideDataName}.sag_toric` as const}>
+            {(field) => (
+              <field.FloatNumberField
+                disabled={!isEnabled}
+                label="SAG Toric"
+                overwriteToNull={true}
+                showLabel={false}
+              />
+            )}
+          </form.AppField>
+        </div>
       </fieldset>
     );
   },

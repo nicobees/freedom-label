@@ -3,13 +3,13 @@ import type { LabelData, LensSpecsData } from '../../validation/schema';
 import { formatDateToFullDateString, fromDate } from '../../utils/date';
 
 export const LensSpecsDataDefaultValue = {
-  add: '+00.00',
-  ax: '',
+  add: '+0.00',
+  ax: '0',
   bc: '',
-  cyl: '',
+  cyl: '-0.00',
   dia: '',
-  pwr: '',
-  sag: '',
+  pwr: '-0.00',
+  sag: '0',
 } satisfies LensSpecsData;
 
 const addOneYearToDate = (date: Date): Date => {
@@ -55,13 +55,13 @@ export const defaultValuesFilled = {
   lens_specs: {
     left: {
       data: {
-        add: '+00.00',
-        ax: '123',
+        add: '+0.00',
+        ax: '90',
         bc: '1.24',
         cyl: '-1.24',
         dia: '1.24',
         pwr: '-1.24',
-        sag: '10.04',
+        sag: '1248',
       },
       enabled: true,
     },

@@ -117,7 +117,7 @@
   margin-top: 0;
 }
 
-.lens-grid .bc-wrapper-container {
+.lens-grid .toric-wrapper-container {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -125,7 +125,7 @@
   margin-block-end: 4px;
 }
 
-.bc-wrapper-container > :first-child {
+.toric-wrapper-container > :first-child {
   display: block;
 }
 
@@ -146,8 +146,8 @@
 
 .float-field input {
   flex: 0 0 auto;
-  width: 7ch; /* fixed width to fit values like "+12.34" */
-  min-width: 7ch;
+  width: 8ch; /* fixed width to fit values like "+12.34" */
+  min-width: 8ch;
 }
 
 .float-field input:focus-visible {
