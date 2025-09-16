@@ -1,17 +1,37 @@
 import { z } from 'zod';
 
+const validationErrorMessages = {
+  add: 'Invalid ADD format',
+  ax: 'Invalid AX format',
+  bc: 'Invalid BC format',
+  bc_toric: 'Invalid BC Toric format',
+  cyl: 'Invalid CYL format',
+  dia: 'Invalid DIA format',
+  pwr: 'Invalid PWR format',
+  sag: 'Invalid SAG format',
+  sag_toric: 'Invalid SAG Toric format',
+};
+
 export const LensSpecsDataSchema = z.object({
-  add: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid ADD format'),
-  ax: z.string().regex(/^\d{3}$/, 'Invalid AX format'),
-  bc: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid BC format'),
+  add: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, validationErrorMessages.add),
+  ax: z
+    .string({ invalid_type_error: 'Invalid AX format: 3-digits string' })
+    .regex(/^\d{1,3}$/, validationErrorMessages.ax),
+  bc: z.string().regex(/^\d{1,2}\.\d{2}$/, validationErrorMessages.bc),
   bc_toric: z
     .string()
-    .regex(/^\d{1,2}\.\d{2}$/, 'Invalid BC format')
-    .optional(),
-  cyl: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid CYL format'),
-  dia: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid DIA format'),
-  pwr: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, 'Invalid PWR format'),
-  sag: z.string().regex(/^\d{1,2}\.\d{2}$/, 'Invalid SAG format'),
+    .regex(/^\d{1,2}\.\d{2}$/, validationErrorMessages.bc_toric)
+    .optional()
+    .nullable(),
+  cyl: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, validationErrorMessages.cyl),
+  dia: z.string().regex(/^\d{1,2}\.\d{2}$/, validationErrorMessages.dia),
+  pwr: z.string().regex(/^[+-]?\d{1,2}\.\d{2}$/, validationErrorMessages.pwr),
+  sag: z.string().regex(/^\d{1,4}$/, validationErrorMessages.sag),
+  sag_toric: z
+    .string()
+    .regex(/^\d{1,4}$/, validationErrorMessages.sag_toric)
+    .optional()
+    .nullable(),
 });
 
 export type LensSpecsData = z.infer<typeof LensSpecsDataSchema>;

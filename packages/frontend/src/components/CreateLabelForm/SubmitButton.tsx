@@ -16,13 +16,10 @@ export const PrintButton = ({
       selector={(state) => ({
         canSubmit: state.canSubmit,
         isPristine: state.isPristine,
-        isTouched: state.isTouched,
         isValid: state.isValid,
       })}
     >
-      {({ canSubmit, isPristine, isTouched, isValid }) => {
-        console.info({ canSubmit, isPristine, isTouched, isValid });
-
+      {({ canSubmit, isPristine, isValid }) => {
         return (
           <button
             className={`btn btn--${variant}`}

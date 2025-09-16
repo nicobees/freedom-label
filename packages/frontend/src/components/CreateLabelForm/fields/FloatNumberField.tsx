@@ -1,8 +1,8 @@
-/* eslint-disable react-compiler/react-compiler */
 import { useMemo } from 'react';
-import { isMobile } from 'react-device-detect';
 
 import './float-number-field.css';
+import { isMobile } from 'react-device-detect';
+
 import {
   useFieldContext,
   useFormContext,
@@ -13,6 +13,7 @@ type Props = {
   disabled?: boolean;
   displayValue?: string;
   label: string;
+  overwriteToNull?: boolean;
   showLabel?: boolean;
   withSign?: boolean;
 };
@@ -21,10 +22,11 @@ export function FloatNumberField({
   disabled = false,
   displayValue,
   label,
+  overwriteToNull = false,
   showLabel = true,
   withSign = false,
 }: Props) {
-  const field = useFieldContext<string | undefined>();
+  const field = useFieldContext<null | string | undefined>();
   const form = useFormContext();
 
   const isValid = field.state.meta.isValid;
@@ -43,8 +45,8 @@ export function FloatNumberField({
   }, [displayValue, field.state.value, withSign]);
 
   const emit = (next: { number: string; sign: string }) => {
-    if (typeof next.number === 'undefined' || next.number === '') {
-      field.handleChange(undefined);
+    if (overwriteToNull && next.number === '') {
+      field.handleChange(null);
       return;
     }
     const value = withSign ? `${next.sign}${next.number}` : next.number;
