@@ -201,6 +201,15 @@ const LensSpecColumnGridData = withForm({
             )}
           </form.AppField>
         </div>
+        <form.AppField name={`${lensSpecSideDataName}.batch` as const}>
+          {(field) => (
+            <field.TextField
+              className="batch-field"
+              disabled={!isEnabled}
+              label={t('batch')}
+            />
+          )}
+        </form.AppField>
       </fieldset>
     );
   },

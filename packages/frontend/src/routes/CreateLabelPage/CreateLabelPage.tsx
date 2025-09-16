@@ -79,7 +79,9 @@ export default function CreateLabelPage() {
               <button
                 className="btn btn--text"
                 onClick={() => {
-                  form.reset(defaultValuesFilled, { keepDefaultValues: true });
+                  form.reset(defaultValuesFilled(), {
+                    keepDefaultValues: true,
+                  });
                   const meta = form.getFieldMeta(
                     'patient_info.name',
                   ) as AnyFieldMeta;

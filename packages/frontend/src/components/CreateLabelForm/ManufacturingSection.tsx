@@ -31,11 +31,6 @@ export const ManufacturingSection = withForm({
               />
             )}
           </form.AppField>
-          <form.AppField name="batch">
-            {(field) => (
-              <field.TextField className="batch-field" label={t('batch')} />
-            )}
-          </form.AppField>
         </div>
         <div className="card__section field-group date-fields">
           <form.AppField name="production_date">

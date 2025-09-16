@@ -6,9 +6,11 @@ import { formatValidationError } from '../utils';
 
 export function TextField({
   className,
+  disabled = false,
   label,
 }: {
   className?: string;
+  disabled?: boolean;
   label: string;
 }) {
   const field = useFieldContext<string>();
@@ -28,6 +30,7 @@ export function TextField({
         <input
           aria-invalid={!isValid}
           className="field__input"
+          disabled={disabled}
           onChange={(e) => {
             field.handleChange(e.target.value);
           }}
