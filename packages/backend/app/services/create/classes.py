@@ -2,15 +2,28 @@
 
 from __future__ import annotations
 
-from enum import IntEnum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, cast
+from typing import TYPE_CHECKING, Any, cast
 
-from app.models import LensDataSpecs, TableData
+from fpdf.fonts import FontFace
+
+from app.models import LensDataSpecs, TableData, TableDataFontSetting
 from app.services.create.models import LabelTemplate, LensSpecType, LensSpecTypeBase
 
 if TYPE_CHECKING:
     from app.models import LabelData
+
+font_settings_mapping: dict[int, TableDataFontSetting] = {
+    9: TableDataFontSetting(label=7, value=6),
+    10: TableDataFontSetting(label=7, value=5),
+    11: TableDataFontSetting(label=7, value=4.5),
+}
+
+font_settings_long_int_mapping: dict[int, TableDataFontSetting] = {
+    7: TableDataFontSetting(label=6, value=6, align="C"),
+    8: TableDataFontSetting(label=6, value=6),
+    9: TableDataFontSetting(label=5, value=5),
+}
 
 
 def _select_lens_spec_type(left: bool, right: bool) -> LensSpecType:
@@ -164,7 +177,74 @@ def _get_two_column_data(
     ]
 
 
-def _get_three_column_data(
+def _get_row_data(
+    value: str,
+    label: str,
+    borders: list[int | None],
+    toric_value: str | None = None,
+    font_size_mapping: dict[int, TableDataFontSetting] = font_settings_mapping,
+) -> tuple[TableData, TableData, TableData]:
+    """Create the table data for the row, with different result for toric lenses.
+
+    Returns
+    -------
+        tuple[TableData, TableData, TableData]: The table data for the table data row.
+
+    """
+    if toric_value is not None:
+        value = f"{value}/{toric_value}"
+        value_length = len(value)
+
+        font_size_default = TableDataFontSetting(label=7, value=7, align="L")
+        smaller_font_size_mapping = font_size_mapping.get(
+            value_length,
+            font_size_default,
+        )
+        smaller_font_size_label = smaller_font_size_mapping.label
+        smaller_font_size_value = smaller_font_size_mapping.value
+        smaller_font_size_align = smaller_font_size_mapping.align
+        smaller_font_label = FontFace(size_pt=smaller_font_size_label)  # type: ignore[arg-type]
+        smaller_font_value = FontFace(size_pt=smaller_font_size_value)  # type: ignore[arg-type]
+
+        return (
+            TableData(
+                value=f"{label}:",
+                border=borders[0],
+                align="C",
+                colspan=1,
+                style=smaller_font_label,
+            ),
+            TableData(
+                value=value,
+                border=borders[1],
+                align=smaller_font_size_align,
+                colspan=2,
+                style=smaller_font_value,
+            ),
+            TableData(
+                value=toric_value,
+                skip=True,
+            ),
+        )
+
+    return (
+        TableData(
+            value=f"{label}:",
+            border=borders[0],
+            colspan=2,
+        ),
+        TableData(
+            value=value,
+            skip=True,
+        ),
+        TableData(
+            value=value,
+            border=borders[2],
+        ),
+    )
+
+
+def _get_column_data(
     data: LensDataSpecs,
     left_or_right: LensSpecTypeBase,
 ) -> list[tuple[TableData, TableData, TableData]]:
@@ -183,66 +263,72 @@ def _get_three_column_data(
     if data is None:
         return []
 
-    bc_value = (
-        f"{data.bc}/{data.bc_toric}" if data.bc_toric is not None else f"{data.bc}"
-    )
-
     return [
-        (
-            TableData(
-                value="BC:",
-                border=1 | 4 if left_or_right.value == "left" else 4,
-            ),
-            TableData(
-                value=bc_value,
-                border=4 if left_or_right.value == "left" else 2 | 4,
-            ),
-            TableData(
-                value=bc_value,
-                border=4 if left_or_right.value == "left" else 2 | 4,
-            ),
+        _get_row_data(
+            value=data.bc,
+            toric_value=data.bc_toric,
+            label="BC",
+            borders=[
+                1 | 4 if left_or_right.value == "left" else 4,
+                4 if left_or_right.value == "left" else 2 | 4,
+                4 if left_or_right.value == "left" else 2 | 4,
+            ],
         ),
-        (
-            TableData(value="DIA:", border=1 if left_or_right.value == "left" else 0),
-            TableData(
-                value=data.dia,
-                border=0 if left_or_right.value == "left" else 2,
-            ),
-            TableData(
-                value=data.dia,
-                border=0 if left_or_right.value == "left" else 2,
-            ),
+        _get_row_data(
+            value=data.dia,
+            label="DIA",
+            borders=[
+                1 if left_or_right.value == "left" else 0,
+                0 if left_or_right.value == "left" else 2,
+                0 if left_or_right.value == "left" else 2,
+            ],
         ),
-        (
-            TableData(value="Pwr:", border=1 if left_or_right.value == "left" else 0),
-            TableData(
-                value=data.pwr,
-                border=0 if left_or_right.value == "left" else 2,
-            ),
-            TableData(
-                value=data.pwr,
-                border=0 if left_or_right.value == "left" else 2,
-            ),
+        _get_row_data(
+            value=data.pwr,
+            label="Pwr",
+            borders=[
+                1 if left_or_right.value == "left" else 0,
+                0 if left_or_right.value == "left" else 2,
+                0 if left_or_right.value == "left" else 2,
+            ],
         ),
-        (
-            TableData(value="Cyl:", border=1),
-            TableData(value=data.cyl, border=2),
-            TableData(value=data.cyl, border=2),
+        _get_row_data(
+            value=data.cyl,
+            label="Cyl",
+            borders=[
+                1,
+                2,
+                2,
+            ],
         ),
-        (
-            TableData(value="AX:", border=1),
-            TableData(value=data.ax, border=2),
-            TableData(value=data.ax, border=2),
+        _get_row_data(
+            value=data.ax,
+            label="AX",
+            borders=[
+                1,
+                2,
+                2,
+            ],
         ),
-        (
-            TableData(value="ADD:", border=1),
-            TableData(value=data.add, border=2),
-            TableData(value=data.add, border=2),
+        _get_row_data(
+            value=data.add,
+            label="ADD",
+            borders=[
+                1,
+                2,
+                2,
+            ],
         ),
-        (
-            TableData(value="SAG:", border=1 | 8),
-            TableData(value=data.sag, border=2 | 8),
-            TableData(value=data.sag, border=2 | 8),
+        _get_row_data(
+            value=data.sag,
+            toric_value=data.sag_toric,
+            label="SAG",
+            borders=[
+                1 | 8,
+                2 | 8,
+                2 | 8,
+            ],
+            font_size_mapping=font_settings_long_int_mapping,
         ),
     ]
 
@@ -267,14 +353,10 @@ def _map_to_table_data_with_borders(
 
     """
     if data is None:
-        return []
+        return 3, []
 
-    if data.bc_toric is not None:
-        two_column_table_data = _get_three_column_data(data, left_or_right)
-        return 3, two_column_table_data
-
-    three_column_table_data = _get_two_column_data(data, left_or_right)
-    return 2, three_column_table_data
+    column_table_data = _get_column_data(data, left_or_right)
+    return 3, column_table_data
 
 
 class SingleLensTemplate(LabelTemplate[None]):
@@ -589,23 +671,6 @@ class SingleLensTemplate(LabelTemplate[None]):
         )
 
 
-class LensSpecColumnLayout(IntEnum):
-    """Enumeration of supported column layouts for lens specification tables.
-
-    Attributes
-    ----------
-    TWO : int
-        Two-column layout (label+single value), used when no toric BC value is present.
-    THREE : int
-        Three-column layout (label+two values), used when toric BC (dual BC values)
-        requires an extra column.
-
-    """
-
-    TWO = 2
-    THREE = 3
-
-
 class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
     """Concrete implementation of Template for double lens labels."""
 
@@ -707,11 +772,7 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
     def _create_table_data(
         self,
         left_or_right: LensSpecTypeBase,
-    ) -> tuple[
-        int,
-        list[tuple[TableData, TableData, TableData]]
-        | list[tuple[TableData, TableData]],
-    ]:
+    ) -> list[tuple[TableData, TableData, TableData]]:
         """Create the table data for the lens specifications.
 
         Args:
@@ -725,9 +786,9 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
         """
         data = getattr(self.label_data.lens_specs, left_or_right.value, None)
         if data is None:
-            return 2, []
+            return []
 
-        return _map_to_table_data_with_borders(data=data, left_or_right=left_or_right)
+        return _get_column_data(data=data, left_or_right=left_or_right)
 
     def add_patient_section(self) -> None:
         """Add the patient information section to the PDF."""
@@ -771,7 +832,7 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
             new_y="NEXT",
         )
 
-    def three_columns_layout(
+    def columns_layout(
         self,
         table: Any,  # noqa: ANN401
         table_data: list[tuple[TableData, TableData, TableData]],
@@ -791,56 +852,19 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
             None
 
         """
-        first_column_index = 0
-        second_column_index = 1
-        third_column_index = 2
-
-        for r_idx, data_row in enumerate(table_data):
+        for data_row in table_data:
             row = table.row()
-            for c_idx, datum in enumerate(data_row):
-                if r_idx == 0:
-                    # first row has special handling
-
-                    # skip third column, will be used only to give the second column
-                    # more space
-                    if c_idx == third_column_index:
-                        continue
-
-                    # align left only in the second column
-                    align = "L" if c_idx == 1 else "C"
-
-                    # only the second column spans two columns (towards the third
-                    # column)
-                    colspan = 2 if c_idx == second_column_index else 1
-
-                    style = self.smaller_font if c_idx == second_column_index else None
-
-                    row.cell(
-                        datum.value,
-                        border=datum.border,
-                        align=align,
-                        colspan=colspan,
-                        style=style,
-                    )
-                elif c_idx == first_column_index:
-                    # in the other rows, keep it as before with first column spanning
-                    # in order to gain back its initial width (4+1=5)
-                    row.cell(
-                        datum.value,
-                        border=datum.border,
-                        colspan=2,
-                    )
-                elif c_idx == second_column_index:
-                    # in the other rows, skip the second column, is only needed to
-                    # handle the first row
+            for datum in data_row:
+                if datum.skip:
                     continue
-                else:
-                    # in the other rows, handle the third column as before (it will
-                    # be rendered as second column)
-                    row.cell(
-                        datum.value,
-                        border=datum.border,
-                    )
+
+                row.cell(
+                    datum.value,
+                    border=datum.border,
+                    align=datum.align,
+                    colspan=datum.colspan,
+                    style=datum.style,
+                )
 
     def two_columns_layout(
         self,
@@ -867,17 +891,6 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
             for datum in data_row:
                 row.cell(datum.value, border=datum.border)
 
-    double_lens_layout_method_mapping: ClassVar[
-        dict[LensSpecColumnLayout, Callable[..., None]]
-    ] = {
-        LensSpecColumnLayout.TWO: two_columns_layout,
-        LensSpecColumnLayout.THREE: three_columns_layout,
-    }
-    column_widths_mapping: ClassVar[dict[LensSpecColumnLayout, tuple[int, ...]]] = {
-        LensSpecColumnLayout.TWO: (5, 7),
-        LensSpecColumnLayout.THREE: (4, 1, 7),
-    }
-
     def add_left_lens(
         self,
         _left_margin: float | None,
@@ -900,12 +913,9 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
         if top_margin is not None:
             self.pdf.set_y(top_margin)
 
-        data_columns_amount, table_data = self._create_table_data(
+        table_data = self._create_table_data(
             left_or_right=LensSpecTypeBase.left,
         )
-        layout_key = LensSpecColumnLayout(data_columns_amount)
-        layout_method = self.double_lens_layout_method_mapping[layout_key]
-        column_widths = self.column_widths_mapping[layout_key]
 
         self.pdf.set_font("openSansRegular", "", 7)
         table_borders: str = "NONE" if not self.show_borders else "ALL"
@@ -916,7 +926,7 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
 
         with self.pdf.table(
             width=self._lens_spec_width,
-            col_widths=column_widths,
+            col_widths=(4, 1, 7),
             line_height=2.8,  # type: ignore[arg-type]
             align="L",
             first_row_as_headings=False,
@@ -924,7 +934,7 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
             text_align="C",
             borders_layout=table_borders,
         ) as table:
-            layout_method(self, table, table_data)
+            self.columns_layout(table, table_data)
 
         return left_lens_spec_x_right, left_lens_spec_y_top
 
@@ -1019,19 +1029,16 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
         self.pdf.set_font("openSansBold", "", 20)
         self._set_xy_custom(_left_margin, top_margin)
 
-        data_columns_amount, table_data = self._create_table_data(
+        table_data = self._create_table_data(
             left_or_right=LensSpecTypeBase.right,
         )
-        layout_key = LensSpecColumnLayout(data_columns_amount)
-        layout_method = self.double_lens_layout_method_mapping[layout_key]
-        column_widths = self.column_widths_mapping[layout_key]
 
         self.pdf.set_font("openSansRegular", "", 7)
         table_borders: str = "NONE" if not self.show_borders else "ALL"
 
         with self.pdf.table(
             width=self._lens_spec_width,
-            col_widths=column_widths,
+            col_widths=(4, 1, 7),
             line_height=2.8,  # type: ignore[arg-type]
             align="L",
             first_row_as_headings=False,
@@ -1039,7 +1046,8 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
             text_align="C",
             borders_layout=table_borders,
         ) as table:
-            layout_method(self, table, table_data)
+            self.columns_layout(table, table_data)
+
         return self.pdf.get_x(), self.pdf.get_y()
 
     def add_production_info(

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, Any
 
 from pydantic import BaseModel, Field
 
@@ -22,9 +22,10 @@ class LensDataSpecs(BaseModel):
     dia: Annotated[str, Field(pattern=r"^(\d{1,2}\.\d{2})?$")]
     pwr: Annotated[str, Field(pattern=r"^([+-]?\d{1,2}\.\d{2})?$")]
     cyl: Annotated[str, Field(pattern=r"^([+-]?\d{1,2}\.\d{2})?$")]
-    ax: Annotated[str, Field(pattern=r"^(\d{3})?$")]
+    ax: Annotated[str, Field(pattern=r"^(\d{1,3})?$")]
     add: Annotated[str, Field(pattern=r"^([+-]?\d{1,2}\.\d{2})?$")]
-    sag: Annotated[str, Field(pattern=r"^(\d{1,2}\.\d{2})?$")]
+    sag: Annotated[str, Field(pattern=r"^(\d{1,4})?$")]
+    sag_toric: Annotated[str, Field(pattern=r"^(\d{1,4})?$")] | None = None
 
 
 class LensSpecs(BaseModel):
@@ -54,5 +55,17 @@ class PathData(BaseModel):
 class TableData(BaseModel):
     """Represents the table data for the lens specifications."""
 
+    align: Annotated[str, Field()] | None = None
+    border: Annotated[int, Field()] | None = None
+    colspan: Annotated[int, Field()] | None = 1
+    skip: Annotated[bool, Field()] | None = False
+    style: Any | None = None
     value: str
-    border: int
+
+
+class TableDataFontSetting(BaseModel):
+    """Represents the table data font sizes for the lens specifications."""
+
+    label: Annotated[int | float, Field()]
+    value: Annotated[int | float, Field()]
+    align: Annotated[str, Field()] | None = "L"
