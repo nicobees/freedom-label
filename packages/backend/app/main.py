@@ -97,12 +97,11 @@ async def create_label_endpoint(
             label_data,
             show_borders=show_borders,
         )
-    except TypeError:
-        error_message = "Wrong template selection"
-        logging.exception(error_message)
+    except TypeError as error:
+        logging.exception(msg=str(error))
         raise HTTPException(
             status_code=400,
-            detail=error_message,
+            detail="Wrong template selection",
             headers={"X-Error-Code": "VALIDATION_ERROR"},
         ) from TypeError
     except FileNotFoundError as error:
@@ -205,7 +204,8 @@ async def create_print_label_endpoint(
             print_disabled=print_disabled,
             show_borders=show_borders,
         )
-    except TypeError:
+    except TypeError as error:
+        logging.exception(msg=str(error))
         raise HTTPException(
             status_code=400,
             detail="Wrong template selection",

@@ -585,6 +585,31 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
 
         return self.pdf.get_x(), self.pdf.get_y()
 
+    def add_company_info(self) -> None:
+        """Add the company information section to the PDF."""
+        self.pdf.set_font("openSansRegular", "", 4)
+        company_name = self.producer_name.capitalize()
+        self.pdf.cell(
+            w=8.5,
+            h=2.5,
+            text="Prodotto da:",
+            align="L",
+            border=self.show_borders,
+            new_x="RIGHT",
+            new_y="LAST",
+        )
+
+        self.pdf.set_font("openSansRegular", "", 5)
+        self.pdf.cell(
+            w=9.5,
+            h=2.5,
+            text=f"{company_name}",
+            align="L",
+            border=self.show_borders,
+            new_x="LMARGIN",
+            new_y="NEXT",
+        )
+
     def add_production_info(
         self,
         _left_margin: float | None = None,
@@ -689,28 +714,7 @@ class DoubleLensTemplate(LabelTemplate[tuple[float, float]]):
         )
 
         self.pdf.set_x(production_date_initial_x)
-        self.pdf.set_font("openSansRegular", "", 4)
-        company_name = self.producer_name.capitalize()
-        self.pdf.cell(
-            w=8.5,
-            h=2.5,
-            text="Prodotto da:",
-            align="L",
-            border=self.show_borders,
-            new_x="RIGHT",
-            new_y="LAST",
-        )
-
-        self.pdf.set_font("openSansRegular", "", 5)
-        self.pdf.cell(
-            w=9.5,
-            h=2.5,
-            text=f"{company_name}",
-            align="L",
-            border=self.show_borders,
-            new_x="LMARGIN",
-            new_y="NEXT",
-        )
+        self.add_company_info()
 
     def add_lens_specifications(
         self,
