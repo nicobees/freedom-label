@@ -6,15 +6,6 @@ Build a complete monorepo called **freedom-label** that satisfies the following 
 
 1.1 Framework: FastAPI with Pydantic v2 and uvicorn[1].  
 1.2 Single path: `POST /print-label` returning `200 OK` on success, returning 4XX with custom messages in case business logic fails, returning 5XX in case of server errors.
-
-<!-- 1.3 Input model:
-```
-class LabelRequest(BaseModel):
-    patient_name: Annotated[str, Field(min_length=1, max_length=64)]
-    pwr: Annotated[str, Field(min_length=1, max_length=6)]
-    due_date: Annotated[str, Field(min_length=1, max_length=7)]
-``` -->
-
 1.4 Implementation: `from print import print_label` (already exists).  
 1.5 Validation, OpenAPI tags, and example payloads.  
 1.6 Dependency injection for config (use Pydantic Settings).  
@@ -92,40 +83,46 @@ docker rollout -f docker-compose.yml api ui
 6.1 Raspbian Bookworm (32-bit).  
 6.2 Enable systemd hardware watchdog:
 
-````
+```
 echo "RuntimeWatchdogSec=14" | sudo tee -a /etc/systemd/system.conf
 sudo reboot
-```[7][15].
+```
+
 6.3 Auto-restart on kernel panic: `echo 'kernel.panic = 10' | sudo tee -a /etc/sysctl.conf`[19].
 6.4 Install `docker-rollout` CLI via one-liner:
-````
 
+```
 curl -sSL https://raw.githubusercontent.com/wowu/docker-rollout/main/docker-rollout \
  | sudo install -m 755 /dev/stdin /usr/local/bin/docker-rollout
 
-```[24]
+```
 
 ## 7. OpenVPN Exposure
+
 7.1 Use PiVPN for server mode OR maintain `.ovpn` profile for client mode[28][33].
 7.2 The release workflow assumes a TCP 1194 tunnel; it runs `ssh -o "ProxyCommand ..."`.
 7.3 Document firewall port-forward checklist.
 
 ## 8. Environments
+
 8.1 **Development** profile: `.env.dev`, compose override, SQLite, ports 8000/5173.
 8.2 **Production** profile: `.env`, Postgres, Caddy reverse proxy (HTTPS).
 8.3 Twelve-Factor config parity.
 
 ## 9. Observability
+
 9.1 Structured logging (loguru), log rotation.
 9.2 Metrics: `/metrics` Prometheus endpoint via `prometheus_fastapi_instrumentator`.
 9.3 Health endpoints for liveness/readiness.
 
 ## 10. Documentation
+
 10.1 Markdown-based `/docs` directory with MkDocs-Material site.
 10.2 CONTRIBUTING.md (commit-lint rules, Conventional Commits).
 10.3 ARCHITECTURE.md diagram (C4 model, PlantUML).
 
 # === Acceptance Criteria ===
+
 - `gh workflow run ci.yml` green on first try.
 - Running `docker compose --profile=prod up -d` starts all containers healthy in < 30 s on a Raspberry Pi 2 Model B.
 - `curl -X POST http://<pi-ip>:8000/print-label -d '{"sku":"ABC123","quantity":3}'` returns `200 OK`.
@@ -136,39 +133,40 @@ curl -sSL https://raw.githubusercontent.com/wowu/docker-rollout/main/docker-roll
 - Documentation site builds locally via `mkdocs serve`.
 
 # === Output Format ===
+
 Return a **single GitHub pull request** description containing:
+
 1. A bullet-point changelog.
 2. A tree view of new/modified files.
 3. Any follow-up TODOs.
 
 **Do NOT** include generated code inline; instead push commits to the repo detected via `GITHUB_REPOSITORY` env var.
-```
 
 ## Why These Choices?
 
 ### FastAPI over Flask
 
-FastAPI natively supports async, Pydantic v2 validation, and first-class OpenAPI docs, making it ideal for lean API services on constrained ARM boards[1][16].
+FastAPI natively supports async, Pydantic v2 validation, and first-class OpenAPI docs, making it ideal for lean API services on constrained ARM boards.
 
 ### Vite over CRA
 
-Vite’s native ESM dev-server is 58% faster than CRA for TypeScript builds, slashing Pi-cross-build times[17][5].
+Vite’s native ESM dev-server is 58% faster than CRA for TypeScript builds, slashing Pi-cross-build times.
 
 ### Tailwind v4
 
-Tailwind CSS 4.0 delivers 3.5× faster full builds and advanced cascade layers, perfect for the single-form UI without manual CSS[4][18].
+Tailwind CSS 4.0 delivers 3.5× faster full builds and advanced cascade layers, perfect for the single-form UI without manual CSS.
 
 ### docker-rollout
 
-Provides Compose-level blue-green deploys with health-check awareness, something Docker Compose lacks natively[2][19].
+Provides Compose-level blue-green deploys with health-check awareness, something Docker Compose lacks natively.
 
 ### Buildx Multi-Arch
 
-GitHub Actions + `docker buildx` enables one workflow to ship both `amd64` and `arm/v7` images, aligning dev laptops with Raspberry Pi production[8][3][20].
+GitHub Actions + `docker buildx` enables one workflow to ship both `amd64` and `arm/v7` images, aligning dev laptops with Raspberry Pi production.
 
 ### Watchdog & kernel panic auto-reboot
 
-Hardware watchdog reboots within 14 s of a freeze, while `kernel.panic=10` covers fatal kernel errors—critical for unattended kiosks[10][11][12].
+Hardware watchdog reboots within 14 s of a freeze, while `kernel.panic=10` covers fatal kernel errors—critical for unattended kiosks.
 
 ## Suggested Table of Lint/Format Tools
 
