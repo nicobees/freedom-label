@@ -246,7 +246,6 @@ Potential improvements to persistence and related UX:
 
 ## Next steps
 
-- Implement header behaviors (dynamic title, back arrow logic, language switch per MVP scope).
 - Extend the Create Label form: add undo/redo history in a dedicated story.
 - Introduce theme management with CSS variables for “Freedom Blue” and “Freedom Darker.”
 - Add E2E tests when relevant.
