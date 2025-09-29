@@ -1,4 +1,4 @@
-development_guidelines/coding_standards/*
+development_guidelines/coding-standards/*
+!development_guidelines/coding-standards/.gitkeep
 development_guidelines/technologies/*
-development_guidelines/*
-temp/*
+!development_guidelines/technologies/.gitkeep
