@@ -54,6 +54,7 @@ strict = true
 exclude_gitignore = true
 exclude = [
   '.tests\/*\.py$',
+  '_initial_attempts'
 ]
 
 
