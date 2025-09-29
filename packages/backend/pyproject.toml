@@ -47,6 +47,7 @@ quote-style = "double"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["S101"]
+"_initial_attempts/**/*.py" = ["ALL"]
 
 [tool.mypy]
 strict = true

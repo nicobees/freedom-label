@@ -132,6 +132,8 @@ sudo docker network inspect bridge | grep Gateway
 
 - to use python inside the virtual env: `source venv/bin/activate`
 
+- python library to create pdfs: https://py-pdf.github.io/fpdf2
+
 ## Docker config
 
 - installation: follow instructions here https://docs.docker.com/engine/install/raspberry-pi-os/#install-using-the-repository

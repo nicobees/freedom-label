@@ -2,10 +2,13 @@
 __pycache__/
 *.pyc
 
-# Poetry
-.venv/
-
+.venv/*
 .ruff_cache/*
+.pytest_cache/*
+.mypy_cache/*
+.coverage
+
+.env
 
 app/services/pdf_output/*
 !app/services/pdf_output/.gitkeep

@@ -24,7 +24,13 @@ To run the backend application locally, follow these steps:
     poetry install
     ```
 
-4.  **Run the application:**
+4.  **Provide the logo image**
+
+    Change your logo image at `packages/backend/app/services/create/img/logo.png`
+
+    This image will be used in the generated PDF labels and should be relative to your organisation/project.
+
+5.  **Run the application:**
     ```bash
     poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     ```
