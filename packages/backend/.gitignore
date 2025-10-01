@@ -8,9 +8,5 @@ __pycache__/
 .mypy_cache/*
 .coverage
 
-.env
-
 app/services/pdf_output/*
 !app/services/pdf_output/.gitkeep
-
-app/services/create/img/*.png
