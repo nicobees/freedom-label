@@ -61,7 +61,7 @@ BACKEND_IMAGE="ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMA
 FRONTEND_IMAGE="ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPOSITORY_NAME}/${GITHUB_IMAGE_FRONTEND}:${FRONTEND_TAG}"
 
 echo "Logging in to GHCR as ${GHCR_USER}..."
-echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin >/dev/null
+echo "${GHCR_TOKEN}" | sudo docker login ghcr.io -u "${GHCR_USER}" --password-stdin >/dev/null
 
 pull_if_missing() {
   local image="$1"

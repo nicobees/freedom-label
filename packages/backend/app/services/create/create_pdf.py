@@ -19,7 +19,7 @@ def create_label_pdf(
     label_data: LabelData,
     show_borders: bool = False,
 ) -> str:
-    """Create a FreedomLac PDF label with the specified dimensions and data.
+    """Create a PDF label with the specified dimensions and data.
 
     Args:
     ----

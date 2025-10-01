@@ -1,0 +1,23 @@
+POST http://127.0.0.1:8000/label/create-print HTTP/1.1
+content-type: application/json
+
+{
+    "patient_info": {
+        "name": "John",
+        "surname": "Doe"
+    },
+    "description": "",
+    "batch": "25-0001",
+    "due_date": "04/2026",
+    "lens_specs": {
+        "left": {
+            "bc": "1.24",
+            "dia": "1.24",
+            "pwr": "+1.24",
+            "cyl": "+1.24",
+            "ax": "123",
+            "add": "+1.24",
+            "sag": "10.04"
+        }
+    }
+}

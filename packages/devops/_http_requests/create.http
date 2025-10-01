@@ -1,0 +1,27 @@
+POST http://127.0.0.1:8000/label/create?debug_border=1 HTTP/1.1
+content-type: application/json
+
+{
+    "patient_info": {
+        "name": "John",
+        "surname": "Doe"
+    },
+    "description": "Scleral lens F2mid",
+    "batch": "25-0001",
+    "production_date": "22/08/2025",
+    "due_date": "01/08/2026",
+    "lens_specs": {
+        "left": {
+            "batch": "25-0001",
+            "bc": "10.24",
+            "bc_toric": "10.02",
+            "dia": "1.24",
+            "pwr": "+1.24",
+            "cyl": "+1.24",
+            "ax": "123",
+            "add": "+1.24",
+            "sag": "1004",
+            "sag_toric": "1002"
+        }
+    }
+}
