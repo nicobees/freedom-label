@@ -1,4 +1,13 @@
 
+[project]
+name = "freedom-label-backend"
+dynamic = [ "version" ]
+license = "Apache-2.0"
+authors = [
+    { name = "Nicola Abis" },
+]
+readme = "README.md"
+
 [tool.poetry]
 name = "freedom-label-backend"
 version = "0.1.0"

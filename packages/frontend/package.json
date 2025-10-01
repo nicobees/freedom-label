@@ -1,6 +1,8 @@
 {
   "name": "frontend",
   "private": true,
+  "license": "Apache-2.0",
+  "author": "Nicola Abis (https://github.com/nicobees)",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
