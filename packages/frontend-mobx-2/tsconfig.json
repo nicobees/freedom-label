@@ -1,0 +1,15 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "types": [
+      "vitest/globals",
+      "vitest/jsdom",
+      "@testing-library/jest-dom/vitest"
+    ],
+    "useDefineForClassFields": true
+  }
+}
