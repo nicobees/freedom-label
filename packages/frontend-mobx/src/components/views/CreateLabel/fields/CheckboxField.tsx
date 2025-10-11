@@ -1,19 +1,11 @@
 import {
   useFieldContext,
   useFormContext,
-} from '../../../hooks/useCreateLabelForm';
+} from '../../../../hooks/useCreateLabelForm';
 import { formatValidationError } from '../utils';
 
-export function TextField({
-  className,
-  disabled = false,
-  label,
-}: {
-  className?: string;
-  disabled?: boolean;
-  label: string;
-}) {
-  const field = useFieldContext<string>();
+export function CheckboxField({ label }: { label: string }) {
+  const field = useFieldContext<boolean>();
   const form = useFormContext();
 
   const isValid = field.state.meta.isValid;
@@ -24,20 +16,20 @@ export function TextField({
   const showError = !isValid && (isTouched || isSubmitted);
 
   return (
-    <div className={`field ${showError ? 'is-error' : ''} ${className}`}>
-      <label className="field__label">
+    <div className={`field field--checkbox ${showError ? 'is-error' : ''}`}>
+      <input
+        aria-label={label}
+        checked={field.state.value}
+        className="field__input field__input--checkbox"
+        onChange={(e) => {
+          const checked = e.target.checked;
+          field.handleChange(checked);
+        }}
+        type="checkbox"
+      />
+      <span aria-hidden="true" className="field__label">
         {label}
-        <input
-          aria-invalid={!isValid}
-          className="field__input"
-          disabled={disabled}
-          onChange={(e) => {
-            field.handleChange(e.target.value);
-          }}
-          placeholder={label}
-          value={field.state.value}
-        />
-      </label>
+      </span>
       {showError && errors?.length > 0 ? (
         <div
           aria-label={`${label} error`}

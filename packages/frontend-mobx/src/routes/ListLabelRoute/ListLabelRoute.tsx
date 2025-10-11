@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 
 import { useRootStore } from '../../stores';
 
-const ListLabelPage = () => {
+const ListLabelRoute = () => {
   const { lensesStore } = useRootStore();
 
   const labelsData = Array.from(lensesStore.lenses.entries());
@@ -27,4 +27,4 @@ const ListLabelPage = () => {
   );
 };
 
-export default observer(ListLabelPage);
+export default observer(ListLabelRoute);

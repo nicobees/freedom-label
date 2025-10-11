@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test } from 'vitest';
 
-import { renderWithFormAndButtons } from '../../../test-utils/form';
+import { renderWithFormAndButtons } from '../../../../test-utils/form';
 import { PatientInfoSection } from '../PatientInfoSection';
 
 test('should be disabled initially (pristine and untouched)', async () => {

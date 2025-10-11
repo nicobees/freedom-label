@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import './homepage.css';
 
-export default function HomePage() {
+export default function HomePageRoute() {
   const { t } = useTranslation();
 
   return (

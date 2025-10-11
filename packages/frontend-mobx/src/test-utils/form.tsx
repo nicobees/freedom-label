@@ -1,7 +1,7 @@
 import type { TFunction } from 'i18next';
 import type { FunctionComponent } from 'react';
 
-import { PrintButton } from '../components/CreateLabelForm/PrintButton';
+import { PrintButton } from '../components/views/CreateLabel/PrintButton';
 import { type FormType, useCreateLabelForm } from '../hooks/useCreateLabelForm';
 import { initI18n } from '../i18n';
 import { withRootStoreWrapper } from './mobx-store';
@@ -28,7 +28,7 @@ function FormTestProvider({
 }: {
   El: FunctionComponent<RenderWithFormProps>;
 }) {
-  const { form } = useCreateLabelForm();
+  const { form } = useCreateLabelForm({ onSave: () => {} });
   const i18n = initI18n();
 
   return (
@@ -43,7 +43,7 @@ function FormTestProviderWithButtons({
 }: {
   El: FunctionComponent<RenderWithFormProps>;
 }) {
-  const { form } = useCreateLabelForm();
+  const { form } = useCreateLabelForm({ onSave: () => {} });
   const i18n = initI18n();
 
   return (

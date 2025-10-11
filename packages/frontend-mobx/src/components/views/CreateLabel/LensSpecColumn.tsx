@@ -6,8 +6,8 @@ import {
   type FormType,
   useFormContext,
   withForm,
-} from '../../hooks/useCreateLabelForm';
-import { LensSide, type LensSpecsData } from '../../validation/schema';
+} from '../../../hooks/useCreateLabelForm';
+import { LensSide, type LensSpecsData } from '../../../validation/schema';
 import { defaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({

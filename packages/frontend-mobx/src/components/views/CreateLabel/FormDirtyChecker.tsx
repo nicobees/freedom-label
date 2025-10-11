@@ -1,7 +1,7 @@
 import { useStore } from '@tanstack/react-form';
 import { Block } from '@tanstack/react-router';
 
-import type { FormType } from '../../hooks/useCreateLabelForm';
+import type { FormType } from '../../../hooks/useCreateLabelForm';
 
 // Extract the blocking logic for easier testing
 export function shouldBlockNavigation(isDirty: boolean): boolean {

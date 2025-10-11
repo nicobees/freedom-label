@@ -4,13 +4,13 @@ import {
   createFormHookContexts,
 } from '@tanstack/react-form';
 
-import { defaultValues } from '../components/CreateLabelForm/defaultValues';
-import { CheckboxField } from '../components/CreateLabelForm/fields/CheckboxField';
-import { DateField } from '../components/CreateLabelForm/fields/DateField';
-import { FloatNumberField } from '../components/CreateLabelForm/fields/FloatNumberField';
-import { TextField } from '../components/CreateLabelForm/fields/TextField';
-import { PrintButton } from '../components/CreateLabelForm/PrintButton';
-import { SaveButton } from '../components/CreateLabelForm/SaveButton';
+import { defaultValues } from '../components/views/CreateLabel/defaultValues';
+import { CheckboxField } from '../components/views/CreateLabel/fields/CheckboxField';
+import { DateField } from '../components/views/CreateLabel/fields/DateField';
+import { FloatNumberField } from '../components/views/CreateLabel/fields/FloatNumberField';
+import { TextField } from '../components/views/CreateLabel/fields/TextField';
+import { PrintButton } from '../components/views/CreateLabel/PrintButton';
+import { SaveButton } from '../components/views/CreateLabel/SaveButton';
 import {
   type LabelData,
   LabelDataSchema,
@@ -40,7 +40,11 @@ const FORM_DEBOUNCE_MS = 200;
 
 export type FormType = ReturnType<typeof useCreateLabelForm>['form'];
 
-export function useCreateLabelForm(onSave?: (data: LabelDataSubmit) => void) {
+export type UseCreateLabelFormProps = {
+  onSave?: (data: LabelDataSubmit) => void;
+};
+
+export function useCreateLabelForm({ onSave }: UseCreateLabelFormProps) {
   const form = useAppForm({
     defaultValues: defaultValues(),
     onSubmit: ({ formApi, value }) => {

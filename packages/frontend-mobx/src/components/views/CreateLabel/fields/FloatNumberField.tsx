@@ -6,7 +6,7 @@ import { isMobile } from 'react-device-detect';
 import {
   useFieldContext,
   useFormContext,
-} from '../../../hooks/useCreateLabelForm';
+} from '../../../../hooks/useCreateLabelForm';
 import { formatValidationError } from '../utils';
 
 type Props = {

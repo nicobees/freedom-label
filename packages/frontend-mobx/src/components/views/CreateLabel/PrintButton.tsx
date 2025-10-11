@@ -1,9 +1,11 @@
-import { useFormContext } from '../../hooks/useCreateLabelForm';
-import { useRootStore } from '../../stores';
+import type { OnPrintCallbackType } from './CreateLabelView';
+
+import { useFormContext } from '../../../hooks/useCreateLabelForm';
+import { useRootStore } from '../../../stores';
 
 interface PrintButtonProps {
   label: string;
-  onPrintHandler: (errorMessage?: string, filename?: string) => void;
+  onPrintHandler: OnPrintCallbackType;
   variant?: 'filled' | 'outline' | 'text';
 }
 

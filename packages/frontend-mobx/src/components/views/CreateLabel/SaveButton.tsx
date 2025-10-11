@@ -1,4 +1,4 @@
-import { useFormContext } from '../../hooks/useCreateLabelForm';
+import { useFormContext } from '../../../hooks/useCreateLabelForm';
 
 interface PrintButtonProps {
   label: string;

@@ -14,9 +14,9 @@ import {
 import Header from '../components/Header/Header';
 import { i18n } from '../i18n';
 import { UrlSearchSchema } from '../validation/schema';
-import CreateLabelPage from './CreateLabelPage/CreateLabelPage';
-import HomePage from './HomePage/HomePage';
-import ListLabelPage from './ListLabelPage/ListLabelPage';
+import CreateLabelRoute from './CreateLabelRoute/CreateLabelRoute';
+import HomePageRoute from './HomePage/HomePageRoute';
+import ListLabelRoute from './ListLabelRoute/ListLabelRoute';
 
 export type RouterContext = {
   getIsHome?: () => boolean;
@@ -72,7 +72,7 @@ const homeRoute = createRoute({
       getTitle: () => i18n.t('home'),
     };
   },
-  component: HomePage,
+  component: HomePageRoute,
   getParentRoute: () => rootRoute,
   path: Paths.home,
 });
@@ -83,7 +83,7 @@ const createLabelRoute = createRoute({
       getTitle: () => i18n.t('createLabel'),
     };
   },
-  component: CreateLabelPage,
+  component: CreateLabelRoute,
   getParentRoute: () => rootRoute,
   path: Paths.create,
 });
@@ -94,7 +94,7 @@ const listLabelRoute = createRoute({
       getTitle: () => i18n.t('labelsList'),
     };
   },
-  component: ListLabelPage,
+  component: ListLabelRoute,
   getParentRoute: () => rootRoute,
   path: Paths.list,
 });

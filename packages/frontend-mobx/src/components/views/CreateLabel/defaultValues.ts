@@ -1,6 +1,6 @@
-import type { LabelData, LensSpecsData } from '../../validation/schema';
+import type { LabelData, LensSpecsData } from '../../../validation/schema';
 
-import { formatDateToFullDateString, fromDate } from '../../utils/date';
+import { formatDateToFullDateString, fromDate } from '../../../utils/date';
 
 export const LensSpecsDataDefaultValue = {
   add: '+0.00',

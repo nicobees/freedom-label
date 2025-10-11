@@ -2,7 +2,7 @@ import type { TFunction } from 'i18next';
 
 import { formOptions } from '@tanstack/react-form';
 
-import { withForm } from '../../hooks/useCreateLabelForm';
+import { withForm } from '../../../hooks/useCreateLabelForm';
 import { defaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({

@@ -2,7 +2,7 @@ import { formOptions } from '@tanstack/react-form';
 import { useTranslation } from 'react-i18next';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { type FormType, withForm } from '../../hooks/useCreateLabelForm';
+import { type FormType, withForm } from '../../../hooks/useCreateLabelForm';
 import { defaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({

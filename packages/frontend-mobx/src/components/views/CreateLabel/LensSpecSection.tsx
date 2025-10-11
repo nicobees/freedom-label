@@ -2,8 +2,8 @@ import type { TFunction } from 'i18next';
 
 import { formOptions } from '@tanstack/react-form';
 
-import { withForm } from '../../hooks/useCreateLabelForm';
-import { LensSide } from '../../validation/schema';
+import { withForm } from '../../../hooks/useCreateLabelForm';
+import { LensSide } from '../../../validation/schema';
 import { defaultValues } from './defaultValues';
 import { LensSpecColumn } from './LensSpecColumn';
 
