@@ -1,0 +1,161 @@
+/* Create Label layout */
+.create-label {
+  padding: 8px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.create-form {
+  display: grid;
+  gap: 12px; /* reduced vertical spacing between main sections */
+  width: 100%;
+}
+
+.section {
+  border: 1px solid var(--muted, #e5e7eb);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.lens-specs,
+.lens-grid {
+  display: grid;
+  gap: 12px; /* reduced vertical gap inside lens spec fieldset */
+}
+
+.lens-col {
+  display: grid;
+  gap: 8px; /* tighter spacing between checkbox and data grid */
+}
+
+/* Fine-tune only the gap after the first child (checkbox) */
+.lens-col > :first-child {
+  margin-block-end: 2px; /* minimal separation before lens-grid */
+}
+
+.date-dropdown {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.field-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.field.compact select {
+  height: 36px;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.actions button[aria-disabled='true'],
+.actions button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive: lens columns stack for mobile & tablet; side-by-side only at desktop */
+/* ≥ desktop breakpoint (min-width: var(--bp-desktop) = 1024px) */
+@media (min-width: 1024px) {
+  .lens-specs {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Lens grid: always single-column list of fields with aligned inputs */
+.lens-grid {
+  grid-template-columns: 1fr; /* enforce vertical stacking of BC, DIA, etc. */
+}
+
+/* Lens grid fields: keep label and input inline and allow wrapping */
+.lens-grid .field {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap; /* wrap assist when space is tight */
+  margin-block-end: 4px; /* smaller than global field spacing */
+}
+
+.lens-grid .field__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0; /* avoid extra vertical spacing */
+  cursor: default; /* prevent pointer cursor on label text */
+}
+
+/* Reset margin for float-field since we're using grid gap */
+.lens-grid .field__label .float-field {
+  margin-inline-start: 0; /* grid gap handles spacing */
+}
+
+/* Reset margin for date-dropdown since we're using grid gap */
+.lens-grid .field__label .date-dropdown {
+  margin-inline-start: 0; /* grid gap handles spacing */
+}
+
+/* Reset margin for regular inputs since we're using grid gap */
+.lens-grid .field__label .field__input {
+  margin-inline-start: 0; /* grid gap handles spacing */
+}
+
+/* Lens grid assist: inline by default (sits after the field); wraps below when needed */
+.lens-grid .field__assist {
+  margin-top: 0;
+}
+
+.lens-grid .toric-wrapper-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-block-end: 4px;
+}
+
+.toric-wrapper-container > :first-child {
+  display: block;
+}
+
+/* Float number field internal layout: sign toggle + input inline */
+.float-field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(
+    --space-3,
+    12px
+  ); /* slightly larger gap between sign toggle and input */
+  pointer-events: none; /* prevent clicks on the container */
+}
+
+.float-field > * {
+  pointer-events: auto; /* re-enable clicks on child elements (button and input) */
+}
+
+.float-field input {
+  flex: 0 0 auto;
+  width: 8ch; /* fixed width to fit values like "+12.34" */
+  min-width: 8ch;
+}
+
+.float-field input:focus-visible {
+  border-color: var(--color-accent);
+  outline: 1px solid var(--color-accent);
+}
+
+/* Add horizontal space between label text and its inner float-field container */
+.field__label .float-field {
+  margin-inline-start: 12px; /* horizontal separation from label text */
+}

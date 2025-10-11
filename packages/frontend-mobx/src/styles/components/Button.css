@@ -1,0 +1,59 @@
+@layer components {
+  .btn {
+    --_bg: transparent;
+    --bg: var(--_bg);
+    --_color: var(--color-on-surface);
+    --_border: var(--color-outline);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-m);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-sm);
+    line-height: 1;
+    cursor: pointer;
+    border: 1px solid var(--_border);
+    background: var(--_bg);
+    color: var(--_color);
+    transition:
+      background 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .btn--filled {
+    --_bg: var(--color-button-filled-bg, var(--color-primary));
+    --_color: var(--color-on-primary);
+    --_border: var(--color-button-filled-bg, var(--color-primary));
+    background: var(--_bg);
+    color: var(--_color);
+    border-color: var(--_border);
+  }
+  .btn--outline {
+    --_bg: transparent;
+  }
+  .btn--text {
+    --_bg: transparent;
+    border-color: transparent;
+  }
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  /* Variant-specific hover handling */
+  .btn--filled:not(:disabled):hover {
+    --_bg: var(--color-button-filled-bg-hover, var(--color-button-filled-bg));
+  }
+  .btn:not(.btn--filled):not(:disabled):hover {
+    filter: brightness(1.07);
+  }
+  .btn:not(:disabled):active {
+    transform: translateY(1px);
+  }
+  .btn:focus-visible {
+    /* box-shadow: var(--elevation-focus-ring); */
+  }
+}

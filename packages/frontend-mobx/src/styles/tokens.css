@@ -1,0 +1,105 @@
+/* Design Tokens & Themes */
+@layer tokens {
+  :root {
+    /* Spacing scale */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+
+    /* Radii */
+    --radius-s: 6px;
+    --radius-m: 10px;
+    --radius-l: 14px;
+
+    /* Elevation */
+    --elevation-1: 0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+    --elevation-focus-ring: 0 0 0 2px var(--color-primary);
+
+    /* Typography scale */
+    --font-family-base:
+      system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans,
+      Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    --font-size-base: 16px;
+    --font-size-sm: 0.875rem; /* 14px */
+    --font-size-lg: 1.125rem; /* 18px */
+    --font-size-h1: 2rem; /* 32px */
+    --font-size-h2: 1.5rem; /* 24px */
+    --font-size-h3: 1.25rem; /* 20px */
+    --line-height-base: 1.5;
+    --font-weight-bold: 600;
+
+    /* Layout */
+    --layout-max-width: 1200px; /* full shell max */
+    --layout-content-width: 960px; /* primary content column */
+    /* Breakpoints (content-first approach) */
+    --bp-tablet: 768px;
+    --bp-desktop: 1024px;
+
+    /* Component defaults (theme-independent fallbacks) */
+    --color-button-filled-bg: var(--color-primary);
+    --color-button-filled-bg-hover: color-mix(
+      in srgb,
+      var(--color-button-filled-bg) 90%,
+      white
+    );
+  }
+
+  /* Light Theme (Freedom Blue) */
+  :root[data-theme='light'] {
+    --color-primary: #005392;
+    --color-primary-accent: #0180d1;
+    --color-accent: #148b8d;
+    --color-background: #fafafb;
+    --color-background-alt: #f3f4f6; /* subtle canvas tint for contrast */
+    --color-on-background: #1c1b1f;
+    --color-surface: #ffffff;
+    --color-surface-border: #d9dce1; /* subtle card border */
+    --color-on-surface: #1c1b1f;
+    --color-surface-variant: #f2eef6;
+    --color-outline: #8e8a92;
+    --color-on-primary: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --focus-outline: var(--color-primary);
+    --elevation-card: var(--elevation-1), 0 0 0 1px var(--color-surface-border);
+    --color-button-filled-bg: var(--color-accent);
+    --color-button-filled-bg-hover: color-mix(
+      in srgb,
+      var(--color-accent) 90%,
+      white
+    );
+  }
+
+  /* Dark Theme (Freedom Darker) */
+  :root[data-theme='dark'] {
+    --color-primary: #005392;
+    --color-primary-accent: #000a92;
+    --color-accent: #009288;
+    --color-background: #000000;
+    --color-background-alt: #000000; /* keep canvas black for now */
+    --color-on-background: #e6e1e5;
+    /* Slightly lifted surface for contrast against pure black background */
+    --color-surface: #0d0f12;
+    --color-surface-border: color-mix(
+      in srgb,
+      var(--color-outline) 40%,
+      transparent
+    );
+    --color-on-surface: #ffffff; /* increase field text & label contrast */
+    --color-surface-variant: #2a2830;
+    --color-outline: #928f99;
+    --color-on-primary: #000000;
+    --shadow-color: rgba(255, 255, 255, 0.4);
+    --focus-outline: var(--color-primary);
+    --elevation-1:
+      0 1px 2px rgba(255, 255, 255, 0.14), 0 1px 3px rgba(255, 255, 255, 0.08);
+    --elevation-card: var(--elevation-1), 0 0 0 1px var(--color-surface-border);
+    --color-button-filled-bg: var(--color-accent);
+    --color-button-filled-bg-hover: color-mix(
+      in srgb,
+      var(--color-accent) 85%,
+      black
+    );
+  }
+}
