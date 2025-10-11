@@ -4,12 +4,12 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test } from 'vitest';
 
-import type { useCreateLabelForm } from '../../../hooks/useCreateLabelForm';
+import type { useCreateLabelForm } from '../../../../hooks/useCreateLabelForm';
 
-import { renderWithForm } from '../../../test-utils/form';
+import { renderWithForm } from '../../../../test-utils/form';
 
 const ProductionDateSetup: FC<{
-  form: ReturnType<typeof useCreateLabelForm>;
+  form: ReturnType<typeof useCreateLabelForm>['form'];
 }> = ({ form }) => (
   <form.AppForm>
     <form.AppField name="production_date">

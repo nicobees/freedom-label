@@ -2,7 +2,7 @@ import type { Dispatch, RefObject } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
-import { changeLanguage, SUPPORTED_LANGS } from '../../i18n';
+import { changeLanguage, SUPPORTED_LANGS } from '../../../i18n';
 
 type LanguageDropdownProps = {
   buttonRef: RefObject<HTMLButtonElement | null>;

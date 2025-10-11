@@ -2,8 +2,8 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test } from 'vitest';
 
-import { renderWithForm } from '../../../test-utils/form';
-import { LensSide } from '../../../validation/schema';
+import { renderWithForm } from '../../../../test-utils/form';
+import { LensSide } from '../../../../validation/schema';
 import { LensSpecColumn } from '../LensSpecColumn';
 
 function setupLeftColumn() {

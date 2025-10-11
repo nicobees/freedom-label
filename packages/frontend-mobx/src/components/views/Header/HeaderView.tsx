@@ -3,19 +3,22 @@ import { observer } from 'mobx-react-lite';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useRouter } from '../../hooks/useRouter';
 import './header.css';
-import { useRootStore } from '../../stores';
+import { useRootStore } from '../../../stores';
 import { LanguageDropdown } from './LanguageDropdown';
 
 // Pure CSS morphing icon is rendered with spans; see header.css (.morph-icon)
 
-const Header = () => {
+type HeaderViewProps = {
+  isHome?: boolean;
+  title: string;
+};
+
+const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
   const [langOpen, setLangOpen] = useState(false);
   const groupRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const { isHome, title } = useRouter();
   const { themeStore } = useRootStore();
   const { i18n, t } = useTranslation('common');
 
@@ -106,4 +109,4 @@ const Header = () => {
   );
 };
 
-export default observer(Header);
+export default observer(HeaderView);

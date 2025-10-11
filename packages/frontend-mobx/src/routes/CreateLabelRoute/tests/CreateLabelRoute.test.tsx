@@ -13,7 +13,7 @@ vi.mock('@tanstack/react-router', async (importOriginal) => {
   };
 });
 
-import { shouldBlockNavigation } from '../../../components/CreateLabelForm/FormDirtyChecker';
+import { shouldBlockNavigation } from '../../../components/views/CreateLabel/FormDirtyChecker';
 import { LABEL_LOCAL_STORAGE_KEY } from '../../../services/localStorage/lenses';
 import { withProviders } from '../../../test-utils/test-providers';
 import { createMemoryAppRouter } from '../../index';

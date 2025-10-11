@@ -11,7 +11,8 @@ import {
   RouterProvider,
 } from '@tanstack/react-router';
 
-import Header from '../components/Header/Header';
+import HeaderView from '../components/views/Header/HeaderView';
+import { useRouter } from '../hooks/useRouter';
 import { i18n } from '../i18n';
 import { UrlSearchSchema } from '../validation/schema';
 import CreateLabelRoute from './CreateLabelRoute/CreateLabelRoute';
@@ -26,9 +27,11 @@ export type RouterContext = {
 export const APPLICATION_NAME = 'Freedom Label';
 
 function Layout({ children }: PropsWithChildren) {
+  const { isHome, title } = useRouter();
+
   return (
     <div className="app-container">
-      <Header />
+      <HeaderView isHome={isHome} title={title} />
       <main className="app-main" role="main">
         {children}
       </main>
