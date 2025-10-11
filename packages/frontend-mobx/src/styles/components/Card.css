@@ -1,0 +1,21 @@
+@layer components {
+  .card {
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    border-radius: var(--radius-m);
+    box-shadow: var(--elevation-card, var(--elevation-1));
+    padding: var(--space-3); /* slightly tighter vertical density */
+    position: relative;
+    border: 1px solid var(--color-surface-border, transparent);
+  }
+  .card + .card {
+    margin-top: var(--space-1); /* reduce inter-card spacing */
+  }
+  .card__title {
+    font-size: var(--font-size-h3);
+    margin: 0 0 var(--space-2); /* tighter title to content */
+  }
+  .card__section + .card__section {
+    margin-top: var(--space-3); /* reduce intra-card section spacing */
+  }
+}

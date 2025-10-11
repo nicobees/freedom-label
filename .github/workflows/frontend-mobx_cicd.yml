@@ -1,0 +1,179 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "f-mobx-*.*.*"
+    paths:
+      - "packages/frontend-mobx/**"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g., v1.2.3)"
+        required: true
+
+env:
+  WORKDIR: ./packages/frontend-mobx
+  NODE_VERSION: "22"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKDIR }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node + deps (cached)
+        uses: ./.github/actions/setup-npm-typescript
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          working-directory: ${{ env.WORKDIR }}
+          upload-node-modules-artifact: "true"
+          artifact-name: frontend-mobx-node_modules
+
+      - name: Lint
+        run: npm run lint --silent
+
+      - name: Type check
+        run: npm run type-check --silent
+
+  test:
+    runs-on: ubuntu-latest
+    needs: verify
+    defaults:
+      run:
+        working-directory: ${{ env.WORKDIR }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # - name: Setup Node + deps (cached)
+      #   uses: ./.github/actions/setup-npm-typescript
+      #   with:
+      #     node-version: ${{ env.NODE_VERSION }}
+      #     working-directory: ${{ env.WORKDIR }}
+      #     download-node-modules-artifact: "true"
+      #     artifact-name: frontend-node_modules
+
+      - name: Install dependencies
+        run: npm ci
+
+      # - name: Rebuild node_modules binaries
+      #   run: npm rebuild
+
+      # - name: Debug node_modules/.bin
+      #   run: |
+      #     echo $PATH
+      #     ls -l ./node_modules/.bin
+      #     which vitest || true
+
+      - name: Test
+        run: npm run test --silent
+
+  build:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    needs: [verify, test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure tag is on main
+        shell: bash
+        run: |
+          TAG_REF="${GITHUB_REF#refs/tags/}"
+          git fetch --no-tags --prune --depth=1 origin +refs/heads/main:refs/remotes/origin/main
+          TAG_COMMIT=$(git rev-list -n 1 "refs/tags/${TAG_REF}" 2>/dev/null || true)
+          if [ -z "$TAG_COMMIT" ]; then
+            echo "Tag not found: ${TAG_REF}" >&2
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor "$TAG_COMMIT" origin/main; then
+            echo "Tag '${TAG_REF}' is not reachable from main. Skipping build." >&2
+            exit 1
+          fi
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        # env:
+        #   BUILDKIT_PROGRESS: plain
+        with:
+          context: packages/frontend-mobx
+          file: packages/frontend-mobx/Dockerfile
+          push: true
+          tags: ghcr.io/${{ vars.USERNAME }}/${{ vars.REPOSITORY_NAME }}/${{ vars.IMAGE_FRONTEND_MOBX }}:${{ env.VERSION }}
+          platforms: linux/arm/v7
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # release:
+  #   if: github.event_name == 'workflow_dispatch'
+  #   runs-on: ubuntu-latest
+  #   needs: [verify, test]
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: Checkout code (main)
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ref: main
+  #         fetch-depth: 0
+
+  #     - name: Validate branch is main
+  #       run: |
+  #         CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  #         if [ "$CURRENT_BRANCH" != "main" ]; then
+  #           echo "Release can only be triggered on main branch. Current: $CURRENT_BRANCH"
+  #           exit 1
+  #         fi
+
+  #     - name: Validate input tag exists and is on main
+  #       run: |
+  #         TAG="${{ github.event.inputs.tag }}"
+  #         if [ -z "$TAG" ]; then
+  #           echo "No tag provided."
+  #           exit 1
+  #         fi
+  #         if ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+  #           echo "Tag '$TAG' does not exist."
+  #           exit 1
+  #         fi
+  #         TAG_COMMIT=$(git rev-list -n 1 "refs/tags/$TAG")
+  #         if ! git merge-base --is-ancestor "$TAG_COMMIT" origin/main; then
+  #           echo "Tag '$TAG' is not reachable from main."
+  #           exit 1
+  #         fi
+
+  #     # - name: Connect to Raspberry Pi and update application
+  #     #   uses: apple-oss-distributions/raspberry-pi-connect-action@v1
+  #     #   with:
+  #     #     host: ${{ secrets.RPI_HOST }}
+  #     #     username: ${{ secrets.RPI_USERNAME }}
+  #     #     password: ${{ secrets.RPI_PASSWORD }}
+  #     #     script: |
+  #     #       set -euo pipefail
+  #     #       cd ${{ secrets.APP_PATH }}
+  #     #       export VERSION=${{ github.event.inputs.tag }}
+  #     #       docker compose -f docker-compose.prod.yml pull
+  #     #       docker compose -f docker-compose.prod.yml up -d
