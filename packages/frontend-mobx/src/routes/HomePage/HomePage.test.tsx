@@ -33,9 +33,9 @@ test('should render actions and show Label List as disabled with tooltip', async
     await screen.findByRole('link', { name: /create label/i }),
   ).toBeInTheDocument();
 
-  const disabled = screen.getByRole('link', { name: /labels list/i });
-  expect(disabled).toHaveAttribute('aria-disabled', 'true');
-  expect(disabled).toHaveAttribute('title', 'Not available yet');
+  expect(
+    screen.getByRole('link', { name: /labels list/i }),
+  ).toBeInTheDocument();
 });
 
 test('should navigate to /create when clicking Create Label', async () => {

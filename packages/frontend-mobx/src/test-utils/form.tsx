@@ -1,11 +1,10 @@
 import type { TFunction } from 'i18next';
 import type { FunctionComponent } from 'react';
 
-import { render } from '@testing-library/react';
-
-import { SaveButton } from '../components/CreateLabelForm/SaveButton';
+import { PrintButton } from '../components/CreateLabelForm/PrintButton';
 import { type FormType, useCreateLabelForm } from '../hooks/useCreateLabelForm';
 import { initI18n } from '../i18n';
+import { withRootStoreWrapper } from './mobx-store';
 
 type RenderWithFormProps = {
   form: FormType;
@@ -13,13 +12,13 @@ type RenderWithFormProps = {
 };
 
 export function renderWithForm(ui: FunctionComponent<RenderWithFormProps>) {
-  return render(<FormTestProvider El={ui} />);
+  return withRootStoreWrapper(<FormTestProvider El={ui} />);
 }
 
 export function renderWithFormAndButtons(
   ui: FunctionComponent<RenderWithFormProps>,
 ) {
-  return render(<FormTestProviderWithButtons El={ui} />);
+  return withRootStoreWrapper(<FormTestProviderWithButtons El={ui} />);
 }
 
 // Placeholder for future enhancement: if components require a form Provider,
@@ -29,7 +28,7 @@ function FormTestProvider({
 }: {
   El: FunctionComponent<RenderWithFormProps>;
 }) {
-  const form = useCreateLabelForm();
+  const { form } = useCreateLabelForm();
   const i18n = initI18n();
 
   return (
@@ -44,13 +43,13 @@ function FormTestProviderWithButtons({
 }: {
   El: FunctionComponent<RenderWithFormProps>;
 }) {
-  const form = useCreateLabelForm();
+  const { form } = useCreateLabelForm();
   const i18n = initI18n();
 
   return (
     <form.AppForm>
       <El form={form} t={i18n.t} />
-      <SaveButton label="Print" />
+      <PrintButton label="Print" onPrintHandler={() => {}} />
     </form.AppForm>
   );
 }

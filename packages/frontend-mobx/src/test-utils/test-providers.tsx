@@ -4,18 +4,18 @@ import { render } from '@testing-library/react';
 
 import { FeedbackProvider } from '../contexts/FeedbackContext';
 import { initI18n } from '../i18n';
+import { RootStoreWrapper } from './mobx-store';
 import { ReactQueryWrapper } from './react-query';
-import { ThemeWrapper } from './theme-test';
 
 const CombinedWrapper = ({ children }: { children: ReactNode }) => {
   initI18n();
 
   return (
-    <ThemeWrapper>
-      <ReactQueryWrapper>
+    <ReactQueryWrapper>
+      <RootStoreWrapper>
         <FeedbackProvider>{children}</FeedbackProvider>
-      </ReactQueryWrapper>
-    </ThemeWrapper>
+      </RootStoreWrapper>
+    </ReactQueryWrapper>
   );
 };
 

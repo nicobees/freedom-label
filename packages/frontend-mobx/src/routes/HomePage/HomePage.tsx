@@ -18,9 +18,8 @@ export default function HomePage() {
         </Link>
 
         <Link
+          aria-label={t('labelsList')}
           className="btn btn--outline"
-          role="button"
-          title={t('labelsList')}
           to="/list"
         >
           {t('labelsList')}

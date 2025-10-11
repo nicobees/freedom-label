@@ -14,6 +14,7 @@ vi.mock('@tanstack/react-router', async (importOriginal) => {
 });
 
 import { shouldBlockNavigation } from '../../../components/CreateLabelForm/FormDirtyChecker';
+import { LABEL_LOCAL_STORAGE_KEY } from '../../../services/localStorage/lenses';
 import { withProviders } from '../../../test-utils/test-providers';
 import { createMemoryAppRouter } from '../../index';
 
@@ -55,34 +56,34 @@ test('should render Create Label form with anagraphic and lens sections', async 
   expect(screen.getByRole('group', { name: 'Lens specs' })).toBeInTheDocument();
 });
 
-test('should render Save (disabled) and Print buttons', async () => {
+test('should have Save and Print buttons disabled at first render', async () => {
   // Arrange
   setup(['/', '/create']);
 
   // Assert
   const save = await screen.findByRole('button', { name: /save/i });
+  expect(save).toBeInTheDocument();
   expect(save).toBeDisabled();
-  expect(save).toHaveAttribute('title', 'Not available yet');
 
-  expect(
-    await screen.findByRole('button', { name: /print/i }),
-  ).toBeInTheDocument();
+  const print = await screen.findByRole('button', { name: /print/i });
+  expect(print).toBeInTheDocument();
+  expect(print).toBeDisabled();
 });
 
-test('should update Print button disable state based on the form validity', async () => {
+test('should update Save button disable state based on the form validity', async () => {
   // Arrange
   const user = userEvent.setup();
   setup(['/create']);
 
-  const print = await screen.findByRole('button', { name: /print/i });
-  expect(print).toBeDisabled();
+  const save = await screen.findByRole('button', { name: /save/i });
+  expect(save).toBeDisabled();
 
   const fillFormTempButton = screen.getByRole('button', {
     name: 'Fill form (temp)',
   });
   await user.click(fillFormTempButton);
 
-  expect(print).toBeEnabled();
+  expect(save).toBeEnabled();
 });
 
 test('should store printed label data into localStorage when Print clicked after filling form', async () => {
@@ -91,25 +92,26 @@ test('should store printed label data into localStorage when Print clicked after
   const user = userEvent.setup();
   setup(['/create']);
 
-  const print = await screen.findByRole('button', { name: /print/i });
+  const save = await screen.findByRole('button', { name: /save/i });
   const fillFormTempButton = screen.getByRole('button', {
     name: 'Fill form (temp)',
   });
 
   // Act
   await user.click(fillFormTempButton); // fills form & enables print
-  expect(print).toBeEnabled();
-  await user.click(print);
+  expect(save).toBeEnabled();
+  await user.click(save);
 
   // Assert
   // The hook uses key 'freedom-label:printed-labels:v1' storing a Map serialized
-  const raw = localStorage.getItem('freedom-label:printed-labels:v1');
+  const raw = localStorage.getItem(LABEL_LOCAL_STORAGE_KEY);
   expect(raw).toBeTruthy();
   // Basic structural checks without depending on full data shape
-  expect(raw).toContain('"dataType":"Map"');
+  expect(raw).toContain('[["');
   // Parse and ensure at least one entry exists
   const parsed = JSON.parse(raw!);
-  expect(parsed.value?.length).toBeGreaterThan(0);
+  console.info('value: ', parsed);
+  expect(parsed.length).toBeGreaterThan(0);
 });
 
 test('should allow navigating away when form is pristine', async () => {

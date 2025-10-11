@@ -5,7 +5,7 @@ import {
   setItemToLocalStorage,
 } from '../../utils/localStorage';
 
-const LABEL_LOCAL_STORAGE_KEY = 'freedom-label:lenses:v1';
+export const LABEL_LOCAL_STORAGE_KEY = 'freedom-label:lenses:v1';
 
 export const GET = (): Array<LensesStoreEntry> => {
   const lenses = getItemFromLocalStorage<Array<LensesStoreEntry>>(
