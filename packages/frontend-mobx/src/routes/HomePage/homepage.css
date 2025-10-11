@@ -14,38 +14,6 @@
   width: min(320px, 90vw);
 }
 
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 44px;
-  padding: 0 16px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  border: 1px solid var(--muted, #e5e7eb);
-  color: var(--fg, #111111);
-  background: var(--bg, #ffffff);
-  cursor: pointer;
-}
-
-.btn-primary {
-  color: #fff;
-  background: var(--primary, #005392);
-  border-color: var(--primary, #005392);
-}
-
-.btn-secondary {
-  background: var(--bg, #ffffff);
-}
-
-.btn.disabled,
-.btn[aria-disabled='true'] {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* Larger screens: stack vertically but center the block */
 @media (min-width: 640px) {
   .home-actions {

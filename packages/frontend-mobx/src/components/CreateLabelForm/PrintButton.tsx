@@ -1,31 +1,43 @@
 import { useFormContext } from '../../hooks/useCreateLabelForm';
+import { useRootStore } from '../../stores';
 
 interface PrintButtonProps {
   label: string;
+  onPrintHandler: (errorMessage?: string, filename?: string) => void;
   variant?: 'filled' | 'outline' | 'text';
 }
 
 export const PrintButton = ({
   label,
+  onPrintHandler,
   variant = 'filled',
 }: PrintButtonProps) => {
   const form = useFormContext();
+  const { lensesStore } = useRootStore();
 
   return (
     <form.Subscribe
       selector={(state) => ({
         canSubmit: state.canSubmit,
+        data: state.values,
         isPristine: state.isPristine,
         isValid: state.isValid,
       })}
     >
-      {({ canSubmit, isPristine, isValid }) => {
+      {({ data }) => {
         return (
           <button
             className={`btn btn--${variant}`}
-            disabled={!canSubmit || !isValid || isPristine}
+            disabled={
+              !data.id ||
+              !lensesStore.lenses.has(data.id) ||
+              lensesStore.loadingPrintApi
+            }
             onClick={() => {
-              void form.handleSubmit();
+              void lensesStore.print({
+                lensId: data.id,
+                onMutationHandler: onPrintHandler,
+              });
             }}
             type="button"
           >

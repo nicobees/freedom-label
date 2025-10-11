@@ -1,12 +1,11 @@
-import type { AnyFieldMeta } from '@tanstack/react-form';
-
 import { getRouteApi } from '@tanstack/react-router';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 
+import './create-label.css';
 import type { LabelDataSubmit } from '../../validation/schema';
 
 import { defaultValuesFilled } from '../../components/CreateLabelForm/defaultValues';
-import './create-label.css';
 import { FormDirtyChecker } from '../../components/CreateLabelForm/FormDirtyChecker';
 import { LensSpecSection } from '../../components/CreateLabelForm/LensSpecSection';
 import { ManufacturingSection } from '../../components/CreateLabelForm/ManufacturingSection';
@@ -14,18 +13,18 @@ import { PatientInfoSection } from '../../components/CreateLabelForm/PatientInfo
 import { LoadingOverlay } from '../../components/Loading/LoadingOverlay';
 import { useFeedback } from '../../contexts/FeedbackContext';
 import { useCreateLabelForm } from '../../hooks/useCreateLabelForm';
-import { useLabelLocalStorage } from '../../hooks/useLabelLocalStorage';
 import { useRouter } from '../../hooks/useRouter';
-import { useCreatePrintMutation } from '../../services/api';
+import { useRootStore } from '../../stores';
 
 const route = getRouteApi('/create');
 
-export default function CreateLabelPage() {
+const CreateLabelPage = () => {
   const { title } = useRouter();
-  const { saveLabel } = useLabelLocalStorage();
   const { showError, showSuccess } = useFeedback();
   const { debug } = route.useSearch();
   const { t } = useTranslation();
+
+  const { lensesStore } = useRootStore();
 
   const onCreatePrintLabelResponse = (
     errorMessage?: string,
@@ -44,16 +43,12 @@ export default function CreateLabelPage() {
     }
   };
 
-  const { loading, mutate: createPrintLabel } = useCreatePrintMutation({
-    onMutationHandler: onCreatePrintLabelResponse,
-  });
-
   const onSubmitHandler = (data: LabelDataSubmit) => {
-    createPrintLabel(data);
-    saveLabel(data);
+    lensesStore.addLens(data);
   };
 
-  const form = useCreateLabelForm(onSubmitHandler);
+  const { form, resetFormWithSpecificData } =
+    useCreateLabelForm(onSubmitHandler);
 
   return (
     <section className="create-label">
@@ -63,33 +58,16 @@ export default function CreateLabelPage() {
           <ManufacturingSection form={form} t={t} />
           <LensSpecSection form={form} t={t} />
           <div className="actions">
-            {debug ? (
-              <button
-                aria-disabled="true"
-                className="btn btn--outline"
-                disabled
-                title={t('notAvailableYet')}
-                type="button"
-              >
-                {t('save')}
-              </button>
-            ) : null}
-            <form.PrintButton label={t('print')} />
+            <form.PrintButton
+              label={t('print')}
+              onPrintHandler={onCreatePrintLabelResponse}
+            />
+            <form.SaveButton label={t('save')} />
             {debug ? (
               <button
                 className="btn btn--text"
                 onClick={() => {
-                  form.reset(defaultValuesFilled(), {
-                    keepDefaultValues: true,
-                  });
-                  const meta = form.getFieldMeta(
-                    'patient_info.name',
-                  ) as AnyFieldMeta;
-                  form.setFieldMeta('patient_info.name', {
-                    ...meta,
-                    isDirty: true,
-                  });
-                  void form.validate('change');
+                  resetFormWithSpecificData(defaultValuesFilled(), form);
                 }}
                 type="button"
               >
@@ -100,7 +78,9 @@ export default function CreateLabelPage() {
           <FormDirtyChecker form={form} />
         </form.AppForm>
       </form>
-      <LoadingOverlay loading={loading} />
+      <LoadingOverlay loading={lensesStore.loadingPrintApi} />
     </section>
   );
-}
+};
+
+export default observer(CreateLabelPage);

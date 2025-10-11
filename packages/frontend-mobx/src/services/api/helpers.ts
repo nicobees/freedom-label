@@ -1,8 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
-
-import type { LabelDataSubmit } from '../validation/schema';
-
-import { ApiError, isApiError } from '../utils/exceptions';
+import { ApiError } from '../../utils/exceptions';
 
 const BASE_URL = import.meta.env?.VITE_BACKEND_URL ?? '';
 const IS_PROD = import.meta.env.PROD;
@@ -24,15 +20,15 @@ export const getFullUrl = (path: string) => {
   return `${base}/${path}`;
 };
 
+export type SuccessResponse = {
+  pdf_filename: string;
+  status: 'ok';
+};
+
 type ApiResponse = ErrorResponse | SuccessResponse;
 
 type ErrorResponse = {
   detail: string;
-};
-
-type SuccessResponse = {
-  pdf_filename: string;
-  status: 'ok';
 };
 
 const isErrorResponse = (data: ApiResponse): data is ErrorResponse => {
@@ -62,39 +58,4 @@ export const apiFetch = async <T extends ApiResponse>(
   }
 
   return data;
-};
-
-export const useCreatePrintMutation = ({
-  onMutationHandler,
-}: {
-  onMutationHandler: (
-    error?: string,
-    filename?: SuccessResponse['pdf_filename'],
-  ) => void;
-}) => {
-  const mutation = useMutation({
-    mutationFn: async (data: LabelDataSubmit) => {
-      const url = getFullUrl('label/create-print');
-
-      return apiFetch<SuccessResponse>(url, {
-        body: JSON.stringify(data),
-        method: 'POST',
-      });
-    },
-    onError: (error) => {
-      console.error(error);
-
-      if (isApiError(error)) {
-        onMutationHandler(error.getMessageDetail());
-        return;
-      }
-
-      onMutationHandler(error.message);
-    },
-    onSuccess: (responseData) => {
-      onMutationHandler(undefined, responseData.pdf_filename);
-    },
-  });
-
-  return { loading: mutation.isPending, mutate: mutation.mutate };
 };

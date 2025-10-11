@@ -3,7 +3,7 @@ import type { FunctionComponent } from 'react';
 
 import { render } from '@testing-library/react';
 
-import { PrintButton } from '../components/CreateLabelForm/SubmitButton';
+import { SaveButton } from '../components/CreateLabelForm/SaveButton';
 import { type FormType, useCreateLabelForm } from '../hooks/useCreateLabelForm';
 import { initI18n } from '../i18n';
 
@@ -50,7 +50,7 @@ function FormTestProviderWithButtons({
   return (
     <form.AppForm>
       <El form={form} t={i18n.t} />
-      <PrintButton label="Print" />
+      <SaveButton label="Print" />
     </form.AppForm>
   );
 }

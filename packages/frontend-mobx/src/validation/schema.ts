@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
 const validationErrorMessages = {
@@ -83,6 +84,7 @@ const dateStringValidationErrorMessage = 'Invalid date format (DD/MM/YYYY)';
 export const LabelDataSchemaBase = z.object({
   description: z.string().min(2).max(24),
   due_date: z.string().regex(dateStringRegex, dateStringValidationErrorMessage),
+  id: z.string().uuid().nullable(),
   lens_specs: LensesSpecsSchema,
   patient_info: PatientInfoSchema,
   production_date: z
@@ -159,6 +161,15 @@ const LensesSpecsSubmitSchema = z.object({
 });
 
 export const LabelDataSubmitSchema = LabelDataSchemaBase.extend({
+  id: z
+    .string()
+    .uuid()
+    .nullable()
+    .transform((value) => {
+      if (value) return value;
+
+      return uuidv4();
+    }),
   lens_specs: LensesSpecsSubmitSchema,
 });
 

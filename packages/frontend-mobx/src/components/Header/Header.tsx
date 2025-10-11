@@ -1,25 +1,25 @@
 import { Link } from '@tanstack/react-router';
+import { observer } from 'mobx-react-lite';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useTheme } from '../../contexts/theme';
 import { useRouter } from '../../hooks/useRouter';
-import { changeLanguage, SUPPORTED_LANGS } from '../../i18n';
 import './header.css';
+import { useRootStore } from '../../stores';
+import { LanguageDropdown } from './LanguageDropdown';
 
 // Pure CSS morphing icon is rendered with spans; see header.css (.morph-icon)
 
-export default function Header() {
+const Header = () => {
   const [langOpen, setLangOpen] = useState(false);
   const groupRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const { isHome, title } = useRouter();
+  const { themeStore } = useRootStore();
   const { i18n, t } = useTranslation('common');
 
   const currentLanguage = i18n.language;
-
-  const { themeIcon, toggle: toggleTheme } = useTheme();
 
   return (
     <header aria-label={t('applicationHeader')} className="toolbar fl-header">
@@ -90,54 +90,20 @@ export default function Header() {
         <button
           aria-label={t('toggleTheme')}
           className="icon-btn"
-          onClick={() => toggleTheme()}
+          onClick={() => themeStore.toggle()}
           type="button"
         >
           {/* Simple icon swap via currentColor, could be improved */}
-          <span aria-hidden="true">{themeIcon}</span>
+          <span aria-hidden="true">{themeStore.themeIcon}</span>
         </button>
-        {langOpen ? (
-          <div
-            aria-label={t('languageSelector')}
-            className="lang-dropdown"
-            role="dialog"
-          >
-            <ul
-              aria-label={t('languages')}
-              className="lang-list"
-              role="listbox"
-            >
-              {SUPPORTED_LANGS.map((lng) => {
-                const selected = i18n.language === lng;
-                const labelKey = lng === 'en' ? 'english' : 'italian';
-                return (
-                  <li
-                    aria-selected={selected}
-                    className="lang-item"
-                    key={lng}
-                    onClick={() => {
-                      changeLanguage(lng);
-                      setLangOpen(false);
-                      buttonRef.current?.focus();
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        changeLanguage(lng);
-                        setLangOpen(false);
-                        buttonRef.current?.focus();
-                      }
-                    }}
-                    role="option"
-                    tabIndex={0}
-                  >
-                    {t(labelKey)}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ) : null}
+        <LanguageDropdown
+          buttonRef={buttonRef}
+          opened={langOpen}
+          setDropdownOpen={setLangOpen}
+        />
       </div>
     </header>
   );
-}
+};
+
+export default observer(Header);

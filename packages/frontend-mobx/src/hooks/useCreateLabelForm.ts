@@ -1,12 +1,18 @@
-import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
+import {
+  type AnyFieldMeta,
+  createFormHook,
+  createFormHookContexts,
+} from '@tanstack/react-form';
 
 import { defaultValues } from '../components/CreateLabelForm/defaultValues';
 import { CheckboxField } from '../components/CreateLabelForm/fields/CheckboxField';
 import { DateField } from '../components/CreateLabelForm/fields/DateField';
 import { FloatNumberField } from '../components/CreateLabelForm/fields/FloatNumberField';
 import { TextField } from '../components/CreateLabelForm/fields/TextField';
-import { PrintButton } from '../components/CreateLabelForm/SubmitButton';
+import { PrintButton } from '../components/CreateLabelForm/PrintButton';
+import { SaveButton } from '../components/CreateLabelForm/SaveButton';
 import {
+  type LabelData,
   LabelDataSchema,
   type LabelDataSubmit,
   LabelDataSubmitSchema,
@@ -25,18 +31,20 @@ export const { useAppForm, withForm } = createFormHook({
   fieldContext,
   formComponents: {
     PrintButton,
+    SaveButton,
   },
   formContext,
 });
 
 const FORM_DEBOUNCE_MS = 200;
 
-export type FormType = ReturnType<typeof useCreateLabelForm>;
+export type FormType = ReturnType<typeof useCreateLabelForm>['form'];
 
-export function useCreateLabelForm(onSubmit?: (data: LabelDataSubmit) => void) {
+export function useCreateLabelForm(onSave?: (data: LabelDataSubmit) => void) {
   const form = useAppForm({
     defaultValues: defaultValues(),
-    onSubmit: ({ value }) => {
+    onSubmit: ({ formApi, value }) => {
+      // validate form data
       const results = LabelDataSchema.safeParse(value);
 
       if (!results.success) {
@@ -48,18 +56,30 @@ export function useCreateLabelForm(onSubmit?: (data: LabelDataSubmit) => void) {
         return;
       }
 
+      // validate data before save: this will also generate id if not present
       const dataToSend = LabelDataSubmitSchema.safeParse(results.data);
 
       if (!dataToSend.success) {
-        const errorMessage = dataToSend.error.errors
-          .map((err) => err.message)
-          .join(', ');
-        console.error('Error in parsing data to submit:', errorMessage);
+        console.error('Error in parsing data to submit:', dataToSend.error);
 
         return;
       }
 
-      onSubmit?.(dataToSend.data);
+      // fill back form with parsed data, so that will include also the id (if it was missing before): this
+      // will allow to update the same form data consistently
+      const fillFormData = { ...results.data, id: dataToSend.data.id };
+      formApi.reset(fillFormData, {
+        keepDefaultValues: true,
+      });
+      // const meta = formApi.getFieldMeta('patient_info.name') as AnyFieldMeta;
+      // form.setFieldMeta('patient_info.name', {
+      //   ...meta,
+      //   isDirty: false,
+      // });
+      // void form.validate('change');
+
+      // save data
+      onSave?.(dataToSend.data);
     },
     onSubmitInvalid: ({ formApi, value }) => {
       console.info('on submit (invalid): ', value);
@@ -72,5 +92,20 @@ export function useCreateLabelForm(onSubmit?: (data: LabelDataSubmit) => void) {
     },
   });
 
-  return form;
+  const resetFormWithSpecificData = (
+    data: LabelData,
+    formApi: typeof form = form,
+  ) => {
+    formApi.reset(data, {
+      keepDefaultValues: true,
+    });
+    const meta = formApi.getFieldMeta('patient_info.name') as AnyFieldMeta;
+    form.setFieldMeta('patient_info.name', {
+      ...meta,
+      isDirty: true,
+    });
+    void form.validate('change');
+  };
+
+  return { form, resetFormWithSpecificData };
 }

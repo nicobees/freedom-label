@@ -30,6 +30,7 @@ export const defaultValues = (todayDate = new Date()): LabelData => {
   return {
     description: '',
     due_date: formattedDueDate,
+    id: null,
     lens_specs: {
       left: {
         data: LensSpecsDataDefaultValue,
@@ -52,6 +53,7 @@ export const defaultValuesFilled = () =>
   ({
     description: 'Lente sclerale F2mid',
     due_date: formatDateToFullDateString(fromDate(new Date())),
+    id: null,
     lens_specs: {
       left: {
         data: {

@@ -5,24 +5,23 @@ import { createRoot } from 'react-dom/client';
 
 import { SnackbarHost } from './components/Feedback/Snackbar';
 import { FeedbackProvider } from './contexts/FeedbackContext';
-import { initTheme, ThemeProvider } from './contexts/theme';
 import { initI18n } from './i18n';
 import { router } from './routes/index';
-import { queryClient } from './services/queryClient';
+import { queryClient } from './services/api/queryClient';
 import './styles/global.css';
-// Initialize theme & i18n (synchronously for now)
-const initialTheme = initTheme();
+import { RootStoreProvider } from './stores';
+// Initialize i18n (synchronously for now)
 initI18n();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider initialTheme={initialTheme}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <RootStoreProvider>
         <FeedbackProvider>
           <RouterProvider router={router} />
           <SnackbarHost />
         </FeedbackProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
+      </RootStoreProvider>
+    </QueryClientProvider>
   </StrictMode>,
 );

@@ -25,7 +25,7 @@
   }
   .btn--filled {
     --_bg: var(--color-button-filled-bg, var(--color-primary));
-    --_color: var(--color-on-primary);
+    --_color: var(--color-on-accent);
     --_border: var(--color-button-filled-bg, var(--color-primary));
     background: var(--_bg);
     color: var(--_color);
@@ -33,6 +33,10 @@
   }
   .btn--outline {
     --_bg: transparent;
+    --_color: var(--color-accent);
+    --_border: var(--color-accent);
+    color: var(--_color);
+    border-color: var(--_border);
   }
   .btn--text {
     --_bg: transparent;
@@ -53,7 +57,8 @@
   .btn:not(:disabled):active {
     transform: translateY(1px);
   }
-  .btn:focus-visible {
-    /* box-shadow: var(--elevation-focus-ring); */
-  }
+  /* Future: add focus-visible styles when elevation tokens are defined */
+  /* .btn:focus-visible {
+    box-shadow: var(--elevation-focus-ring);
+  } */
 }

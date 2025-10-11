@@ -43,10 +43,6 @@ const CreateLabelPage = () => {
     }
   };
 
-  // const { loading, mutate: createPrintLabel } = useCreatePrintMutation({
-  //   onMutationHandler: onCreatePrintLabelResponse,
-  // });
-
   const onSubmitHandler = (data: LabelDataSubmit) => {
     lensesStore.addLens(data);
   };
@@ -62,23 +58,6 @@ const CreateLabelPage = () => {
           <ManufacturingSection form={form} t={t} />
           <LensSpecSection form={form} t={t} />
           <div className="actions">
-            <button
-              aria-disabled="true"
-              className="btn btn--outline"
-              disabled={
-                !form.state.values.id
-                // !lensesStore.lenses.has(form.state.values.id) ||
-                // lensesStore.loadingPrintApi
-              }
-              onClick={() => {
-                console.info('onclick print button: ', form.state.values.id);
-                // onPrintHandler();
-              }}
-              title={t('print')}
-              type="button"
-            >
-              {t('print')}
-            </button>
             <form.PrintButton
               label={t('print')}
               onPrintHandler={onCreatePrintLabelResponse}
