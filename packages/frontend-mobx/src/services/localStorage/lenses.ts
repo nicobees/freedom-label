@@ -1,4 +1,4 @@
-import type { LensesStoreEntry } from '../../stores/lenses';
+import type { LabelStoreEntry } from '../../stores/lenses';
 
 import {
   getItemFromLocalStorage,
@@ -7,14 +7,14 @@ import {
 
 export const LABEL_LOCAL_STORAGE_KEY = 'freedom-label:lenses:v1';
 
-export const GET = (): Array<LensesStoreEntry> => {
-  const lenses = getItemFromLocalStorage<Array<LensesStoreEntry>>(
+export const GET = (): LabelStoreEntry[] => {
+  const labels = getItemFromLocalStorage<LabelStoreEntry[]>(
     LABEL_LOCAL_STORAGE_KEY,
   );
 
-  return lenses ?? [];
+  return labels ?? [];
 };
 
-export const PUT = (lenses: Array<LensesStoreEntry>): void => {
-  setItemToLocalStorage(LABEL_LOCAL_STORAGE_KEY, lenses);
+export const PUT = (labels: LabelStoreEntry[]): void => {
+  setItemToLocalStorage(LABEL_LOCAL_STORAGE_KEY, labels);
 };

@@ -3,12 +3,18 @@ import { createContext, type ReactNode, useContext } from 'react';
 
 import type { RootStore } from './types';
 
-import { LensesStore } from './lenses';
+import { LabelStore } from './lenses';
+import { LabelListStore } from './lensesList';
 import { ThemeStore } from './theme';
 
+const labelsStore = new LabelStore();
+const labelsListStore = new LabelListStore(labelsStore);
+const themeStore = new ThemeStore();
+
 const rootStore: RootStore = {
-  lensesStore: new LensesStore(),
-  themeStore: new ThemeStore(),
+  labelsListStore,
+  labelsStore,
+  themeStore,
 };
 
 const rootStoreContext = createContext<RootStore | undefined>(undefined);

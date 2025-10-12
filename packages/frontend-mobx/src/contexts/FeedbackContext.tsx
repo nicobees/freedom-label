@@ -4,22 +4,23 @@ import {
   type ReactNode,
   useCallback,
   useContext,
+  useMemo,
   useRef,
   useState,
 } from 'react';
+
+import { SnackbarHost } from '../components/Feedback/Snackbar';
+
+export type FeedbackContextValue = {
+  showError: (text: string) => void;
+  showSuccess: (text: string, opts?: { durationMs?: number }) => void;
+};
 
 export type FeedbackMessage = {
   id: number;
   kind: FeedbackKind;
   persistent: boolean;
   text: string;
-};
-
-type FeedbackContextValue = {
-  dismiss: (id: number) => void;
-  messages: FeedbackMessage[];
-  showError: (text: string) => void;
-  showSuccess: (text: string, opts?: { durationMs?: number }) => void;
 };
 
 type FeedbackKind = 'error' | 'success';
@@ -98,16 +99,18 @@ export const FeedbackProvider: FunctionComponent<{
     }, ERROR_MESSAGE_GROUP_DURATION_MS);
   }, []);
 
-  const value: FeedbackContextValue = {
-    dismiss,
-    messages,
-    showError,
-    showSuccess,
-  };
+  const value: FeedbackContextValue = useMemo(
+    () => ({
+      showError,
+      showSuccess,
+    }),
+    [showError, showSuccess],
+  );
 
   return (
     <FeedbackContext.Provider value={value}>
       {children}
+      <SnackbarHost dismiss={dismiss} messages={messages} />
     </FeedbackContext.Provider>
   );
 };

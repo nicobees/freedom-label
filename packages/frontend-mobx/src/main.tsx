@@ -3,7 +3,6 @@ import { RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { SnackbarHost } from './components/Feedback/Snackbar';
 import { FeedbackProvider } from './contexts/FeedbackContext';
 import { initI18n } from './i18n';
 import { router } from './routes/index';
@@ -19,7 +18,6 @@ createRoot(document.getElementById('root')!).render(
       <RootStoreProvider>
         <FeedbackProvider>
           <RouterProvider router={router} />
-          <SnackbarHost />
         </FeedbackProvider>
       </RootStoreProvider>
     </QueryClientProvider>

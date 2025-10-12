@@ -15,7 +15,7 @@ export const PrintButton = ({
   variant = 'filled',
 }: PrintButtonProps) => {
   const form = useFormContext();
-  const { lensesStore } = useRootStore();
+  const { labelsStore } = useRootStore();
 
   return (
     <form.Subscribe
@@ -32,12 +32,12 @@ export const PrintButton = ({
             className={`btn btn--${variant}`}
             disabled={
               !data.id ||
-              !lensesStore.lenses.has(data.id) ||
-              lensesStore.loadingPrintApi
+              !labelsStore.labels.has(data.id) ||
+              labelsStore.loadingPrintApi
             }
             onClick={() => {
-              void lensesStore.print({
-                lensId: data.id,
+              void labelsStore.print({
+                labelId: data.id,
                 onMutationHandler: onPrintHandler,
               });
             }}

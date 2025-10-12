@@ -9,67 +9,63 @@ import {
 } from '../services/api/helpers';
 import { queryClient } from '../services/api/queryClient';
 import {
-  GET as getLensesFromLocalStorage,
-  PUT as updateLensesToLocalStorage,
+  GET as getLabelsFromLocalStorage,
+  PUT as updateLabelsToLocalStorage,
 } from '../services/localStorage/lenses';
 import { isApiError } from '../utils/exceptions';
 
-export type LensesStoreData = Map<string, LensesStoreDataItem>;
-export type LensesStoreEntry = [string, LensesStoreDataItem];
-type LensesStoreDataItem = LabelDataSubmit & { timestamp: number };
+export type LabelStoreData = Map<string, LabelStoreDataItem>;
+export type LabelStoreEntry = [string, LabelStoreDataItem];
+type LabelStoreDataItem = LabelDataSubmit & { timestamp: number };
 
-export class LensesStore {
-  disposeUpdateLenses: () => void;
-  lenses: LensesStoreData;
+export class LabelStore {
+  disposeUpdateLabels: () => void;
+  labels: LabelStoreData;
   loadingPrintApi = false;
-
-  // get themeIcon() {
-  //   return themeIconMapping[this.theme];
-  // }
 
   constructor() {
     makeObservable(this, {
-      addLens: action,
-      lenses: observable,
+      addLabel: action,
+      labels: observable,
       loadingPrintApi: observable,
       print: false,
       setLoadingPrintApi: action,
     });
 
-    this.lenses = this.getStoredLenses();
+    this.labels = this.getStoredLabels();
 
-    this.disposeUpdateLenses = reaction(
-      () => Array.from(this.lenses.entries()).map((item) => item),
+    this.disposeUpdateLabels = reaction(
+      () => Array.from(this.labels.entries()).map((item) => item),
       (lenses) => {
-        updateLensesToLocalStorage(lenses);
+        updateLabelsToLocalStorage(lenses);
       },
     );
   }
 
-  addLens(lens: LabelDataSubmit) {
+  addLabel(lens: LabelDataSubmit) {
     const augmentedLens = {
       ...lens,
       timestamp: Date.now(),
-    } satisfies LensesStoreDataItem;
+    } satisfies LabelStoreDataItem;
 
-    this.lenses.set(lens.id, augmentedLens);
+    this.labels.set(lens.id, augmentedLens);
   }
 
   async print({
-    lensId,
+    labelId,
     onMutationHandler,
   }: {
-    lensId: LensesStoreDataItem['id'] | null;
+    labelId: LabelStoreDataItem['id'] | null;
     onMutationHandler: (errorMessage?: string, filename?: string) => void;
   }) {
-    if (!lensId || !this.lenses.has(lensId)) {
-      onMutationHandler('Lens ID not found');
+    if (!labelId || !this.labels.has(labelId)) {
+      onMutationHandler('Label ID not found');
       return;
     }
 
     this.setLoadingPrintApi(true);
 
-    const data = this.lenses.get(lensId) || ({} as LensesStoreDataItem);
+    const data = this.labels.get(labelId) || ({} as LabelStoreDataItem);
 
     try {
       const url = getFullUrl('label/create-print');
@@ -80,7 +76,7 @@ export class LensesStore {
       });
 
       // Update cache immediately
-      queryClient.setQueryData(['label/create-print', lensId], responseData);
+      queryClient.setQueryData(['label/create-print', labelId], responseData);
 
       // Invalidate user list to reflect changes
       await queryClient.invalidateQueries({ queryKey: ['label/create-print'] });
@@ -115,7 +111,7 @@ export class LensesStore {
   //   this.theme = this.theme === 'light' ? 'dark' : 'light';
   // }
 
-  private getStoredLenses(): LensesStoreData {
-    return new Map(getLensesFromLocalStorage());
+  private getStoredLabels(): LabelStoreData {
+    return new Map(getLabelsFromLocalStorage());
   }
 }

@@ -1,7 +1,9 @@
-import type { LensesStore } from './lenses';
+import type { LabelStore } from './lenses';
+import type { LabelListStore } from './lensesList';
 import type { ThemeStore } from './theme';
 
 export type RootStore = {
-  lensesStore: LensesStore;
+  labelsListStore: LabelListStore;
+  labelsStore: LabelStore;
   themeStore: ThemeStore;
 };
