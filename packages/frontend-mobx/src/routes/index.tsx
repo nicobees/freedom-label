@@ -16,6 +16,7 @@ import { useRouter } from '../hooks/useRouter';
 import { i18n } from '../i18n';
 import { UrlSearchSchema } from '../validation/schema';
 import CreateLabelRoute from './CreateLabelRoute/CreateLabelRoute';
+import EditLabelRoute from './EditLabelRoute/EditLabelRoute';
 import HomePageRoute from './HomePage/HomePageRoute';
 import ListLabelRoute from './ListLabelRoute/ListLabelRoute';
 
@@ -61,8 +62,9 @@ const rootRoute = createRootRouteWithContext<RouterContext>()({
   validateSearch: UrlSearchSchema,
 });
 
-const Paths = {
+export const Paths = {
   create: '/create',
+  edit: '/edit/$id',
   home: '/',
   list: '/list',
 } as const;
@@ -91,6 +93,17 @@ const createLabelRoute = createRoute({
   path: Paths.create,
 });
 
+const editLabelRoute = createRoute({
+  beforeLoad: () => {
+    return {
+      getTitle: () => i18n.t('editLabel'),
+    };
+  },
+  component: EditLabelRoute,
+  getParentRoute: () => rootRoute,
+  path: Paths.edit,
+});
+
 const listLabelRoute = createRoute({
   beforeLoad: () => {
     return {
@@ -105,6 +118,7 @@ const listLabelRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   homeRoute,
   createLabelRoute,
+  editLabelRoute,
   listLabelRoute,
 ]);
 

@@ -1,6 +1,4 @@
-import { action, makeObservable, observable, reaction } from 'mobx';
-
-import type { LabelDataSubmit } from '../validation/schema';
+import { action, makeObservable, observable, reaction, toJS } from 'mobx';
 
 import {
   apiFetch,
@@ -13,6 +11,11 @@ import {
   PUT as updateLabelsToLocalStorage,
 } from '../services/localStorage/labels';
 import { isApiError } from '../utils/exceptions';
+import {
+  type LabelData,
+  LabelDataFromSubmitToOriginalSchema,
+  type LabelDataSubmit,
+} from '../validation/schema';
 
 export type LabelStoreData = Map<string, LabelStoreDataItem>;
 export type LabelStoreEntry = [string, LabelStoreDataItem];
@@ -26,6 +29,7 @@ export class LabelStore {
   constructor() {
     makeObservable(this, {
       addLabel: action,
+      getById: false,
       labels: observable,
       loadingPrintApi: observable,
       print: false,
@@ -49,6 +53,19 @@ export class LabelStore {
     } satisfies LabelStoreDataItem;
 
     this.labels.set(lens.id, augmentedLens);
+  }
+
+  getById(id: LabelStoreDataItem['id']) {
+    if (!id) return undefined;
+
+    const storeData = toJS(this.labels.get(id));
+
+    const parsedResult =
+      LabelDataFromSubmitToOriginalSchema.safeParse(storeData);
+
+    const parsedData = parsedResult.success ? parsedResult.data : undefined;
+
+    return parsedData as LabelData | undefined;
   }
 
   async print({

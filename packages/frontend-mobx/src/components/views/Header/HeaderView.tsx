@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useCanGoBack, useRouter } from '@tanstack/react-router';
 import { observer } from 'mobx-react-lite';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +18,9 @@ const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
   const [langOpen, setLangOpen] = useState(false);
   const groupRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  const router = useRouter();
+  const canGoBackHistory = useCanGoBack();
 
   const { themeStore } = useRootStore();
   const { i18n, t } = useTranslation('common');
@@ -53,6 +56,13 @@ const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
             <Link
               aria-label={t('backToHome')}
               className="icon-btn back"
+              onClick={(e) => {
+                if (canGoBackHistory) {
+                  e.preventDefault();
+                  router.history.back();
+                  return false;
+                }
+              }}
               title={t('backToHome')}
               to="/"
             />

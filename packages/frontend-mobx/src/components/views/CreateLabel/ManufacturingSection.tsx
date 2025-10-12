@@ -3,10 +3,10 @@ import type { TFunction } from 'i18next';
 import { formOptions } from '@tanstack/react-form';
 
 import { withForm } from '../../../hooks/useCreateLabelForm';
-import { defaultValues } from './defaultValues';
+import { getDefaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
-  defaultValues: defaultValues(),
+  defaultValues: getDefaultValues(),
 });
 
 export const ManufacturingSection = withForm({

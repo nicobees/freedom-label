@@ -4,7 +4,7 @@ import {
   createFormHookContexts,
 } from '@tanstack/react-form';
 
-import { defaultValues } from '../components/views/CreateLabel/defaultValues';
+import { getDefaultValues } from '../components/views/CreateLabel/defaultValues';
 import { CheckboxField } from '../components/views/CreateLabel/fields/CheckboxField';
 import { DateField } from '../components/views/CreateLabel/fields/DateField';
 import { FloatNumberField } from '../components/views/CreateLabel/fields/FloatNumberField';
@@ -41,12 +41,16 @@ const FORM_DEBOUNCE_MS = 200;
 export type FormType = ReturnType<typeof useCreateLabelForm>['form'];
 
 export type UseCreateLabelFormProps = {
+  defaultValues?: LabelData;
   onSave?: (data: LabelDataSubmit) => void;
 };
 
-export function useCreateLabelForm({ onSave }: UseCreateLabelFormProps) {
+export function useCreateLabelForm({
+  defaultValues = getDefaultValues(),
+  onSave,
+}: UseCreateLabelFormProps) {
   const form = useAppForm({
-    defaultValues: defaultValues(),
+    defaultValues,
     onSubmit: ({ formApi, value }) => {
       // validate form data
       const results = LabelDataSchema.safeParse(value);

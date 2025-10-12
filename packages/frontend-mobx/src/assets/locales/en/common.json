@@ -8,6 +8,7 @@
   "copy": "Copy",
   "description": "Description",
   "dueDate": "Due Date",
+  "editLabel": "Edit Label",
   "english": "English",
   "errorInPrintingLabel": "Error in printing label",
   "fillFormTemp": "Fill form (temp)",

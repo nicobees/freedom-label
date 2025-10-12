@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { type FormType, withForm } from '../../../hooks/useCreateLabelForm';
-import { defaultValues } from './defaultValues';
+import { getDefaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
-  defaultValues: defaultValues(),
+  defaultValues: getDefaultValues(),
 });
 
 // Using generic form type from hook; runtime shape is sufficient for field rendering.

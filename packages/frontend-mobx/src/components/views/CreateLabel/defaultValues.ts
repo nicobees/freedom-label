@@ -19,7 +19,7 @@ const addOneYearToDate = (date: Date): Date => {
   return date;
 };
 
-export const defaultValues = (todayDate = new Date()): LabelData => {
+export const getDefaultValues = (todayDate = new Date()): LabelData => {
   const formattedProductionDate = formatDateToFullDateString(
     fromDate(todayDate),
   );

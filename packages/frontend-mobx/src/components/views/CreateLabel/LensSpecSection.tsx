@@ -4,11 +4,11 @@ import { formOptions } from '@tanstack/react-form';
 
 import { withForm } from '../../../hooks/useCreateLabelForm';
 import { LensSide } from '../../../validation/schema';
-import { defaultValues } from './defaultValues';
+import { getDefaultValues } from './defaultValues';
 import { LensSpecColumn } from './LensSpecColumn';
 
 const formOptionsObject = formOptions({
-  defaultValues: defaultValues(),
+  defaultValues: getDefaultValues(),
 });
 
 export const LensSpecSection = withForm({

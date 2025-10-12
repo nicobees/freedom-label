@@ -1,29 +1,33 @@
+import { useNavigate } from '@tanstack/react-router';
 import { observer } from 'mobx-react-lite';
 
+import type { LabelListItem } from '../../stores/labelsList';
+
+import { Paths } from '..';
+import { ListLabelView } from '../../components/views/ListLabel/ListLabelView';
+import { usePrintLabelApiResponse } from '../../hooks/usePrintLabelApiResponse';
 import { useRootStore } from '../../stores';
 
 const ListLabelRoute = () => {
-  const { lensesStore } = useRootStore();
+  const { labelsListStore, labelsStore } = useRootStore();
+  const navigate = useNavigate();
+  const handleMessage = usePrintLabelApiResponse();
 
-  const labelsData = Array.from(lensesStore.lenses.entries());
+  const onPrintCallback = (id: LabelListItem['id']) => {
+    void labelsStore.print({ labelId: id, onMutationHandler: handleMessage });
+  };
+
+  const onEditCallback = (id: LabelListItem['id']) => {
+    console.info('inside edit callback: ', id);
+    void navigate({ params: { id }, to: Paths.edit });
+  };
 
   return (
-    <section>
-      <h2 aria-hidden="true">List Label</h2>
-      {labelsData.length === 0 ? (
-        <p title="No labels available">No labels available</p>
-      ) : (
-        <ol>
-          {Array.from(lensesStore.lenses.entries()).map(([, label]) => {
-            const { description, id, patient_info, timestamp } = label;
-
-            const formattedData = new Date(timestamp).toISOString();
-            const dataToShow = `${patient_info.name} ${patient_info.surname} - ${description} (${formattedData})`;
-            return <li key={id}>{dataToShow}</li>;
-          })}
-        </ol>
-      )}
-    </section>
+    <ListLabelView
+      list={labelsListStore.labels}
+      onEditCallback={onEditCallback}
+      onPrintCallback={onPrintCallback}
+    />
   );
 };
 

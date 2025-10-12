@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
 import './create-label.css';
+import type { LabelData } from '../../../validation/schema';
+
 import {
   useCreateLabelForm,
   type UseCreateLabelFormProps,
@@ -19,6 +21,7 @@ export type OnPrintCallbackType = (
 
 type CreateLabelProps = {
   debug?: boolean;
+  labelData?: LabelData;
   loading: boolean;
   onPrintCallback: OnPrintCallbackType;
   onSaveCallback: UseCreateLabelFormProps['onSave'];
@@ -27,6 +30,7 @@ type CreateLabelProps = {
 
 export const CreateLabelView = ({
   debug = false,
+  labelData,
   loading,
   onPrintCallback,
   onSaveCallback,
@@ -35,6 +39,7 @@ export const CreateLabelView = ({
   const { t } = useTranslation();
 
   const { form, resetFormWithSpecificData } = useCreateLabelForm({
+    defaultValues: labelData,
     onSave: onSaveCallback,
   });
 

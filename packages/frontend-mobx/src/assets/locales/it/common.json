@@ -8,6 +8,7 @@
   "copy": "Copia",
   "description": "Descrizione",
   "dueDate": "Data Scadenza",
+  "editLabel": "Modifica Etichetta",
   "english": "Inglese",
   "errorInPrintingLabel": "Errore nella stampa dell'etichetta",
   "fillFormTemp": "Compila modulo (temp)",

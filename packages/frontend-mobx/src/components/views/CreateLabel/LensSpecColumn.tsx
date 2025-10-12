@@ -8,10 +8,10 @@ import {
   withForm,
 } from '../../../hooks/useCreateLabelForm';
 import { LensSide, type LensSpecsData } from '../../../validation/schema';
-import { defaultValues } from './defaultValues';
+import { getDefaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
-  defaultValues: defaultValues(),
+  defaultValues: getDefaultValues(),
 });
 
 const arrowButtonMapping: Record<LensSide, string> = {
