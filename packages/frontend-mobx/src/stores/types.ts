@@ -1,5 +1,5 @@
-import type { LabelStore } from './lenses';
-import type { LabelListStore } from './lensesList';
+import type { LabelStore } from './labels';
+import type { LabelListStore } from './labelsList';
 import type { ThemeStore } from './theme';
 
 export type RootStore = {

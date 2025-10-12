@@ -11,7 +11,7 @@ import { queryClient } from '../services/api/queryClient';
 import {
   GET as getLabelsFromLocalStorage,
   PUT as updateLabelsToLocalStorage,
-} from '../services/localStorage/lenses';
+} from '../services/localStorage/labels';
 import { isApiError } from '../utils/exceptions';
 
 export type LabelStoreData = Map<string, LabelStoreDataItem>;

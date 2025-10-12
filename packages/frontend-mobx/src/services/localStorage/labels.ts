@@ -1,4 +1,4 @@
-import type { LabelStoreEntry } from '../../stores/lenses';
+import type { LabelStoreEntry } from '../../stores/labels';
 
 import {
   getItemFromLocalStorage,
