@@ -35,7 +35,7 @@ const LensSpecCopyData = withForm({
     const lensSpecSideDataName = `${lensSpecSideName}.data` as const;
     const oppositeSide = getOppositeSide(typedSide);
 
-    const onClickHandler = async () => {
+    const onClickHandler = () => {
       const currentSideData = form.getFieldValue(
         lensSpecSideDataName,
       ) as LensSpecsData;
@@ -47,15 +47,24 @@ const LensSpecCopyData = withForm({
 
       form.setFieldValue(lensSpecOppositeSideName, oppositeSideData);
 
-      await Promise.resolve();
-
-      await form.validateField(`lens_specs.${oppositeSide}` as const, 'change');
-      await form.validateField(
-        `lens_specs.${oppositeSide}.data` as const,
-        'change',
+      /**
+       * The above setFieldValue on `lens_specs.[opposite]` does not trigger the
+       * 'change' event at form level, hence the form history does not capture
+       * this change. To workaround this, we trigger a setFieldValue on a field
+       * that is part of the opposite side data (we use `batch` as it is
+       * a string field and it is not required).
+       * The options `dontRunListeners` and `dontValidate` are set to false explicitly
+       * to make it clear the reason of this additional call to setFieldValue: the
+       * form 'change' event is triggered also if they are set to true (default values).
+       */
+      form.setFieldValue(
+        `${lensSpecOppositeSideName}.data.batch`,
+        oppositeSideData.data.batch,
+        {
+          dontRunListeners: false,
+          dontValidate: false,
+        },
       );
-
-      await form.validate('change');
     };
 
     const copyLabel = t('copy');
@@ -72,7 +81,7 @@ const LensSpecCopyData = withForm({
         <button
           aria-label={ariaLabel}
           className="btn btn--filled"
-          onClick={() => void onClickHandler()}
+          onClick={onClickHandler}
           type="button"
         >
           {label}

@@ -3,6 +3,7 @@ import {
   createFormHook,
   createFormHookContexts,
 } from '@tanstack/react-form';
+import { useCallback } from 'react';
 
 import { getDefaultValues } from '../components/views/CreateLabel/defaultValues';
 import { CheckboxField } from '../components/views/CreateLabel/fields/CheckboxField';
@@ -17,6 +18,7 @@ import {
   type LabelDataSubmit,
   LabelDataSubmitSchema,
 } from '../validation/schema';
+import { useCreateLabelFormHistory } from './useCreateLabelFormHistory';
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts();
@@ -37,6 +39,7 @@ export const { useAppForm, withForm } = createFormHook({
 });
 
 const FORM_DEBOUNCE_MS = 200;
+const FORM_HISTORY_DEBOUNCE_MS = 500;
 
 export type FormType = ReturnType<typeof useCreateLabelForm>['form'];
 
@@ -49,8 +52,19 @@ export function useCreateLabelForm({
   defaultValues = getDefaultValues(),
   onSave,
 }: UseCreateLabelFormProps) {
+  const { isRedoEmpty, isUndoEmpty, onFormChange, redo, undo } =
+    useCreateLabelFormHistory({
+      initialSnapshot: defaultValues,
+    });
+
   const form = useAppForm({
     defaultValues,
+    listeners: {
+      onChange: ({ formApi }) => {
+        onFormChange(formApi.state.values);
+      },
+      onChangeDebounceMs: FORM_HISTORY_DEBOUNCE_MS,
+    },
     onSubmit: ({ formApi, value }) => {
       // validate form data
       const results = LabelDataSchema.safeParse(value);
@@ -79,12 +93,12 @@ export function useCreateLabelForm({
       formApi.reset(fillFormData, {
         keepDefaultValues: true,
       });
-      // const meta = formApi.getFieldMeta('patient_info.name') as AnyFieldMeta;
-      // form.setFieldMeta('patient_info.name', {
-      //   ...meta,
-      //   isDirty: false,
-      // });
-      // void form.validate('change');
+      const meta = formApi.getFieldMeta('patient_info.name') as AnyFieldMeta;
+      form.setFieldMeta('patient_info.name', {
+        ...meta,
+        isDirty: false,
+      });
+      void form.validate('change');
 
       // save data
       onSave?.(dataToSend.data);
@@ -100,20 +114,37 @@ export function useCreateLabelForm({
     },
   });
 
-  const resetFormWithSpecificData = (
-    data: LabelData,
-    formApi: typeof form = form,
-  ) => {
-    formApi.reset(data, {
-      keepDefaultValues: true,
-    });
-    const meta = formApi.getFieldMeta('patient_info.name') as AnyFieldMeta;
-    form.setFieldMeta('patient_info.name', {
-      ...meta,
-      isDirty: true,
-    });
-    void form.validate('change');
-  };
+  const resetFormWithSpecificData = useCallback(
+    (data: LabelData, formApi: typeof form = form) => {
+      formApi.reset(data, {
+        keepDefaultValues: true,
+      });
+      const meta = formApi.getFieldMeta('patient_info.name') as AnyFieldMeta;
+      form.setFieldMeta('patient_info.name', {
+        ...meta,
+        isDirty: true,
+      });
+      void form.validate('change');
+    },
+    [form],
+  );
 
-  return { form, resetFormWithSpecificData };
+  const undoHistory = useCallback(() => {
+    const newSnapshot = undo();
+    if (newSnapshot) resetFormWithSpecificData(newSnapshot);
+  }, [undo, resetFormWithSpecificData]);
+
+  const redoHistory = useCallback(() => {
+    const newSnapshot = redo();
+    if (newSnapshot) resetFormWithSpecificData(newSnapshot);
+  }, [redo, resetFormWithSpecificData]);
+
+  return {
+    form,
+    isRedoEmpty,
+    isUndoEmpty,
+    redoHistory,
+    resetFormWithSpecificData,
+    undoHistory,
+  };
 }

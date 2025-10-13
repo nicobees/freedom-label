@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
+import { LensSpecsDataDefaultValue } from '../components/views/CreateLabel/defaultValues';
+
 const validationErrorMessages = {
   add: 'Invalid ADD format',
   ax: 'Invalid AX format',
@@ -180,7 +182,7 @@ export type LabelDataSubmit = z.infer<typeof LabelDataSubmitSchema>;
 /* Schema to convert from *Submit to original */
 const transformFromSubmitToOriginal = (value: LensSpecsData | null) => {
   if (!value) {
-    return { data: null, enabled: false };
+    return { data: LensSpecsDataDefaultValue, enabled: false };
   }
 
   return { data: { ...value }, enabled: true };

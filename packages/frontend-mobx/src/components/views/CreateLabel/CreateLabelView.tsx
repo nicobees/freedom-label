@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import './create-label.css';
 import type { LabelData } from '../../../validation/schema';
 
+import RedoIcon from '../../../assets/icons/redo.svg?react';
+import UndoIcon from '../../../assets/icons/undo.svg?react';
 import {
   useCreateLabelForm,
   type UseCreateLabelFormProps,
@@ -38,13 +40,26 @@ export const CreateLabelView = ({
 }: CreateLabelProps) => {
   const { t } = useTranslation();
 
-  const { form, resetFormWithSpecificData } = useCreateLabelForm({
+  const {
+    form,
+    isRedoEmpty,
+    isUndoEmpty,
+    redoHistory,
+    resetFormWithSpecificData,
+    undoHistory,
+  } = useCreateLabelForm({
     defaultValues: labelData,
     onSave: onSaveCallback,
   });
 
   return (
     <section className="create-label">
+      <button disabled={isUndoEmpty} onClick={undoHistory}>
+        <UndoIcon aria-hidden="true" />
+      </button>
+      <button disabled={isRedoEmpty} onClick={redoHistory}>
+        <RedoIcon aria-hidden="true" />
+      </button>
       <form aria-label={`${title} Form`} className="create-form" role="form">
         <form.AppForm>
           <PatientInfoSection form={form} />

@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import {
   useFieldContext,
   useFormContext,
@@ -13,7 +15,7 @@ export function TextField({
   disabled?: boolean;
   label: string;
 }) {
-  const field = useFieldContext<string>();
+  const field = useFieldContext<null | string | undefined>();
   const form = useFormContext();
 
   const isValid = field.state.meta.isValid;
@@ -23,6 +25,19 @@ export function TextField({
 
   const showError = !isValid && (isTouched || isSubmitted);
 
+  const emit = (value: string) => {
+    if (value === '') {
+      field.handleChange(null);
+      return;
+    }
+
+    field.handleChange(value);
+  };
+
+  const value = useMemo(() => {
+    return field.state.value ?? '';
+  }, [field.state.value]);
+
   return (
     <div className={`field ${showError ? 'is-error' : ''} ${className}`}>
       <label className="field__label">
@@ -31,11 +46,12 @@ export function TextField({
           aria-invalid={!isValid}
           className="field__input"
           disabled={disabled}
+          name={field.name}
           onChange={(e) => {
-            field.handleChange(e.target.value);
+            emit(e.target.value);
           }}
           placeholder={label}
-          value={field.state.value}
+          value={value}
         />
       </label>
       {showError && errors?.length > 0 ? (

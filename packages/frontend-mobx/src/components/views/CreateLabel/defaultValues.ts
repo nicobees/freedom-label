@@ -69,7 +69,7 @@ export const defaultValuesFilled = () =>
         enabled: true,
       },
       right: {
-        data: { batch: '' },
+        data: null,
         enabled: false,
       },
     },
