@@ -36,20 +36,20 @@
     text-decoration: underline;
   }
 
-  h1,
-  h2,
-  h3 {
+  h1:not([class]),
+  h2:not([class]),
+  h3:not([class]) {
     line-height: 1.2;
     font-weight: var(--font-weight-bold);
     margin: 0 0 var(--space-3);
   }
-  h1 {
+  h1:not([class]) {
     font-size: var(--font-size-h1);
   }
-  h2 {
+  h2:not([class]) {
     font-size: var(--font-size-h2);
   }
-  h3 {
+  h3:not([class]) {
     font-size: var(--font-size-h3);
   }
   p {

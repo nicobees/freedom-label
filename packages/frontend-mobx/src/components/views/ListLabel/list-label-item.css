@@ -1,0 +1,114 @@
+@layer components {
+  .label-card {
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    border-radius: var(--radius-m);
+    border: 1px solid var(--color-surface-border, transparent);
+    box-shadow: var(--elevation-card, var(--elevation-1));
+    padding: var(--space-1) var(--space-2);
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .label-card__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'title actions'
+      'badge date';
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .label-card__title {
+    grid-area: title;
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.3;
+  }
+
+  h3.label-card__title {
+    margin-bottom: 0;
+  }
+
+  .label-card__badge {
+    grid-area: badge;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: start;
+    padding-inline: var(--space-2);
+    padding-block: 2px;
+    border-radius: var(--radius-s);
+    background: var(--color-surface-variant);
+    color: var(--color-on-surface);
+    font-size: var(--font-size-sm);
+  }
+
+  .label-card__badge--muted {
+    opacity: 0.6;
+  }
+
+  .label-card__actions {
+    grid-area: actions;
+    display: inline-flex;
+    gap: var(--space-1);
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .label-card__description {
+    display: none;
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-on-surface);
+    opacity: 0.8;
+    flex: 1 1 auto;
+  }
+
+  .label-card__date {
+    grid-area: date;
+    font-size: var(--font-size-sm);
+    color: var(--color-on-surface);
+    opacity: 0.75;
+    white-space: nowrap;
+    justify-self: end;
+  }
+
+  @media (min-width: 640px) {
+    .label-card {
+      padding: var(--space-1) var(--space-3);
+      gap: var(--space-2);
+    }
+
+    .label-card__top {
+      grid-template-columns:
+        minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr)
+        auto;
+      grid-template-areas: 'title badge date actions';
+      column-gap: var(--space-3);
+    }
+
+    .label-card__badge {
+      display: inline-flex;
+      justify-self: center;
+    }
+
+    .label-card__description {
+      display: block;
+    }
+
+    .label-card__date {
+      justify-self: center;
+      text-align: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .label-card,
+    .label-card__actions .btn {
+      transition: none;
+    }
+  }
+}

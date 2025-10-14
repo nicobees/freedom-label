@@ -18,8 +18,8 @@ import {
 } from '../validation/schema';
 
 export type LabelStoreData = Map<string, LabelStoreDataItem>;
+export type LabelStoreDataItem = LabelDataSubmit & { timestamp: number };
 export type LabelStoreEntry = [string, LabelStoreDataItem];
-type LabelStoreDataItem = LabelDataSubmit & { timestamp: number };
 
 export class LabelStore {
   disposeUpdateLabels: () => void;

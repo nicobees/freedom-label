@@ -38,6 +38,18 @@
     color: var(--_color);
     border-color: var(--_border);
   }
+  .btn.btn--icon {
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    min-height: 30px;
+    padding: 0;
+    justify-content: center;
+  }
+  .btn.btn--icon svg {
+    width: 18px;
+    height: 18px;
+  }
   .btn--text {
     --_bg: transparent;
     border-color: transparent;
