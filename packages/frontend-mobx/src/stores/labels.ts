@@ -18,18 +18,22 @@ import {
 } from '../validation/schema';
 
 export type LabelStoreData = Map<string, LabelStoreDataItem>;
-export type LabelStoreDataItem = LabelDataSubmit & { timestamp: number };
+export type LabelStoreDataItem = LabelDataSubmit & {
+  creationDate: number;
+  updateDate: number;
+};
 export type LabelStoreEntry = [string, LabelStoreDataItem];
 
 export class LabelStore {
   disposeUpdateLabels: () => void;
-  labels: LabelStoreData;
+  labels: LabelStoreDataItem[];
   loadingPrintApi = false;
 
   constructor() {
     makeObservable(this, {
       addLabel: action,
       getById: false,
+      hasById: false,
       labels: observable,
       loadingPrintApi: observable,
       print: false,
@@ -39,7 +43,7 @@ export class LabelStore {
     this.labels = this.getStoredLabels();
 
     this.disposeUpdateLabels = reaction(
-      () => Array.from(this.labels.entries()).map((item) => item),
+      () => this.labels.map((item) => item),
       (lenses) => {
         updateLabelsToLocalStorage(lenses);
       },
@@ -47,18 +51,38 @@ export class LabelStore {
   }
 
   addLabel(lens: LabelDataSubmit) {
-    const augmentedLens = {
-      ...lens,
-      timestamp: Date.now(),
-    } satisfies LabelStoreDataItem;
+    const id = lens.id;
 
-    this.labels.set(lens.id, augmentedLens);
+    const labelIndex = this.labels.findIndex((item) => item.id === id);
+
+    const currentTimestamp = Date.now();
+
+    if (labelIndex === -1) {
+      // not existing, then add new
+      this.labels.push({
+        ...lens,
+        creationDate: currentTimestamp,
+        updateDate: currentTimestamp,
+      });
+      return;
+    }
+
+    // existing, then update
+    this.labels[labelIndex] = {
+      ...this.labels[labelIndex],
+      ...lens,
+      updateDate: currentTimestamp,
+    };
   }
 
   getById(id: LabelStoreDataItem['id']) {
     if (!id) return undefined;
 
-    const storeData = toJS(this.labels.get(id));
+    const labelIndex = this.labels.findIndex((item) => item.id === id);
+
+    if (labelIndex === -1) return undefined;
+
+    const storeData = toJS(this.labels[labelIndex]);
 
     const parsedResult =
       LabelDataFromSubmitToOriginalSchema.safeParse(storeData);
@@ -68,6 +92,12 @@ export class LabelStore {
     return parsedData as LabelData | undefined;
   }
 
+  hasById(id: LabelStoreDataItem['id']) {
+    if (!id) return false;
+
+    return this.labels.some((item) => item.id === id);
+  }
+
   async print({
     labelId,
     onMutationHandler,
@@ -75,14 +105,14 @@ export class LabelStore {
     labelId: LabelStoreDataItem['id'] | null;
     onMutationHandler: (errorMessage?: string, filename?: string) => void;
   }) {
-    if (!labelId || !this.labels.has(labelId)) {
+    const data = labelId ? this.getById(labelId) : undefined;
+
+    if (!data) {
       onMutationHandler('Label ID not found');
       return;
     }
 
     this.setLoadingPrintApi(true);
-
-    const data = this.labels.get(labelId) || ({} as LabelStoreDataItem);
 
     try {
       const url = getFullUrl('label/create-print');
@@ -120,6 +150,10 @@ export class LabelStore {
     this.loadingPrintApi = loading;
   }
 
+  private getStoredLabels(): LabelStoreDataItem[] {
+    return getLabelsFromLocalStorage();
+  }
+
   // dispose() {
   //   this.disposeApplyTheme();
   // }
@@ -127,8 +161,4 @@ export class LabelStore {
   // toggle() {
   //   this.theme = this.theme === 'light' ? 'dark' : 'light';
   // }
-
-  private getStoredLabels(): LabelStoreData {
-    return new Map(getLabelsFromLocalStorage());
-  }
 }

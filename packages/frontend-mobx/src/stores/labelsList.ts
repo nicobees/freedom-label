@@ -10,7 +10,7 @@ export type LabelListItem = {
   id: LabelStoreDataItem['id'];
   lensSpecs: string;
   name: string;
-  timestamp: LabelStoreDataItem['timestamp'];
+  timestamp: LabelStoreDataItem['creationDate'];
 };
 
 export type SortOrder = 'asc' | 'desc';
@@ -37,8 +37,8 @@ export class LabelListStore {
   }
 
   get labels(): LabelListItem[] {
-    return Array.from(this.labelsStore.labels.values()).map((label) => {
-      const { description, id, lens_specs, patient_info, timestamp } = label;
+    return this.labelsStore.labels.map((label) => {
+      const { creationDate, description, id, lens_specs, patient_info } = label;
       const { name, surname } = patient_info;
 
       const formattedName = `${surname} ${name}`;
@@ -60,17 +60,17 @@ export class LabelListStore {
         minute: '2-digit',
       });
 
-      const dateObject = new Date(timestamp);
+      const dateObject = new Date(creationDate);
 
-      const creationDate = `${fmtDate.format(dateObject)}-${fmtTime.format(dateObject)}`;
+      const creationDateFormatted = `${fmtDate.format(dateObject)}-${fmtTime.format(dateObject)}`;
 
       return {
-        creationDate,
+        creationDate: creationDateFormatted,
         description: description ?? '',
         id,
         lensSpecs: lensSpecsFormatted,
         name: formattedName,
-        timestamp,
+        timestamp: creationDate,
       };
     });
   }

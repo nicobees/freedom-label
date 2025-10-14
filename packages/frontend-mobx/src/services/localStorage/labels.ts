@@ -1,20 +1,20 @@
-import type { LabelStoreEntry } from '../../stores/labels';
+import type { LabelStoreDataItem } from '../../stores/labels';
 
 import {
   getItemFromLocalStorage,
   setItemToLocalStorage,
 } from '../../utils/localStorage';
 
-export const LABEL_LOCAL_STORAGE_KEY = 'freedom-label:lenses:v1';
+export const LABEL_LOCAL_STORAGE_KEY = 'freedom-label:labels:v1';
 
-export const GET = (): LabelStoreEntry[] => {
-  const labels = getItemFromLocalStorage<LabelStoreEntry[]>(
+export const GET = (): LabelStoreDataItem[] => {
+  const labels = getItemFromLocalStorage<LabelStoreDataItem[]>(
     LABEL_LOCAL_STORAGE_KEY,
   );
 
   return labels ?? [];
 };
 
-export const PUT = (labels: LabelStoreEntry[]): void => {
+export const PUT = (labels: LabelStoreDataItem[]): void => {
   setItemToLocalStorage(LABEL_LOCAL_STORAGE_KEY, labels);
 };

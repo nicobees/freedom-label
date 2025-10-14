@@ -14,7 +14,7 @@ type ListLabelItemProps = {
   onPrintCallback: (id: LabelListItem['id']) => void;
 };
 
-const ListLabelItemTemp = ({
+const ListLabelItemComponent = ({
   item,
   onEditCallback,
   onPrintCallback,
@@ -59,4 +59,4 @@ const ListLabelItemTemp = ({
   );
 };
 
-export const ListLabelItem = memo(ListLabelItemTemp);
+export const ListLabelItem = memo(ListLabelItemComponent);

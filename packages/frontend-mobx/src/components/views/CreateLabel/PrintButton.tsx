@@ -32,7 +32,7 @@ export const PrintButton = ({
             className={`btn btn--${variant}`}
             disabled={
               !data.id ||
-              !labelsStore.labels.has(data.id) ||
+              !labelsStore.hasById(data.id) ||
               labelsStore.loadingPrintApi
             }
             onClick={() => {
