@@ -6,6 +6,7 @@ import RedoIcon from '../../../assets/icons/redo.svg?react';
 import UndoIcon from '../../../assets/icons/undo.svg?react';
 
 type UndoRedoHistoryProps = {
+  buttonClassName?: string;
   onRedoCallback: () => void;
   onUndoCallback: () => void;
   redoDisabled: boolean;
@@ -16,6 +17,7 @@ type UndoRedoHistoryProps = {
 };
 
 export const UndoRedoHistory = ({
+  buttonClassName = 'btn--outline',
   onRedoCallback,
   onUndoCallback,
   redoDisabled,
@@ -35,7 +37,7 @@ export const UndoRedoHistory = ({
       <div className="history-actions">
         <button
           aria-label={t('undo')}
-          className="btn btn--outline history-actions__btn"
+          className={`btn ${buttonClassName} history-actions__btn`}
           disabled={undoDisabled}
           onClick={onUndoCallback}
           title={t('undo')}
@@ -45,7 +47,7 @@ export const UndoRedoHistory = ({
         </button>
         <button
           aria-label={t('redo')}
-          className="btn btn--outline history-actions__btn"
+          className={`btn ${buttonClassName} history-actions__btn`}
           disabled={redoDisabled}
           onClick={onRedoCallback}
           title={t('redo')}

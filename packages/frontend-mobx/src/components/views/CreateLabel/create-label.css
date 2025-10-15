@@ -18,8 +18,7 @@
 }
 
 .history-actions__btn {
-  min-height: 48px; /* slightly larger than default button height */
-  padding-inline: var(--space-5, 16px);
+  border: 3px solid;
 }
 
 .history-actions__btn svg {

@@ -28,13 +28,6 @@
   select {
     font: inherit;
   }
-  a {
-    color: var(--color-primary);
-    text-decoration: none;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
 
   h1:not([class]),
   h2:not([class]),

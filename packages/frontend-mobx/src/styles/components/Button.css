@@ -2,7 +2,6 @@
   .btn {
     --_bg: transparent;
     --bg: var(--_bg);
-    --_color: var(--color-on-surface);
     --_border: var(--color-outline);
     display: inline-flex;
     align-items: center;
@@ -16,8 +15,9 @@
     line-height: 1;
     cursor: pointer;
     border: 1px solid var(--_border);
-    background: var(--_bg);
-    color: var(--_color);
+    background: var(--bg, #ffffff);
+    color: var(--fg, #111111);
+    text-decoration: none;
     transition:
       background 0.15s ease,
       color 0.15s ease,
@@ -25,7 +25,7 @@
   }
   .btn--filled {
     --_bg: var(--color-button-filled-bg, var(--color-primary));
-    --_color: var(--color-on-accent);
+    --_color: var(--color-on-accent-variant, var(--color-on-accent));
     --_border: var(--color-button-filled-bg, var(--color-primary));
     background: var(--_bg);
     color: var(--_color);
@@ -44,6 +44,7 @@
     height: 30px;
     min-height: 30px;
     padding: 0;
+    color: var(--color-accent);
     justify-content: center;
   }
   .btn.btn--icon svg {

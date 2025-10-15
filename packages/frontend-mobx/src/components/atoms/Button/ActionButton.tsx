@@ -16,8 +16,9 @@ export const ActionButton = ({
   return (
     <button
       aria-label={label}
-      className="btn btn--icon"
+      className="btn btn--outline btn--icon"
       onClick={onClickHandler}
+      title={label}
       type="button"
     >
       {icon}

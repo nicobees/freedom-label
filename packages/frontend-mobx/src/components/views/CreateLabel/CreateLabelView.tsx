@@ -82,6 +82,7 @@ const CreateLabelViewComponent = ({
 
   const UndoRedoComponentPortal = (
     <UndoRedoHistory
+      buttonClassName="btn--filled"
       onRedoCallback={redoHistory}
       onUndoCallback={undoHistory}
       redoDisabled={isRedoEmpty}

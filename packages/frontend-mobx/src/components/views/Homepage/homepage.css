@@ -14,6 +14,22 @@
   width: min(320px, 90vw);
 }
 
+.btn-primary {
+  color: #fff;
+  background: var(--primary, #005392);
+  border-color: var(--primary, #005392);
+}
+
+.btn-secondary {
+  background: var(--bg, #ffffff);
+}
+
+.btn.disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Larger screens: stack vertically but center the block */
 @media (min-width: 640px) {
   .home-actions {
