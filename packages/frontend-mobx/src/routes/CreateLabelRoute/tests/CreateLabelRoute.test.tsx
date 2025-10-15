@@ -107,10 +107,10 @@ test('should store printed label data into localStorage when Print clicked after
   const raw = localStorage.getItem(LABEL_LOCAL_STORAGE_KEY);
   expect(raw).toBeTruthy();
   // Basic structural checks without depending on full data shape
-  expect(raw).toContain('[["');
+  expect(raw).toContain('[{"');
   // Parse and ensure at least one entry exists
   const parsed = JSON.parse(raw!);
-  console.info('value: ', parsed);
+
   expect(parsed.length).toBeGreaterThan(0);
 });
 
