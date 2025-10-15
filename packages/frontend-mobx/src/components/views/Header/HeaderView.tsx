@@ -1,6 +1,6 @@
 import { Link, useCanGoBack, useRouter } from '@tanstack/react-router';
 import { observer } from 'mobx-react-lite';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import './header.css';
@@ -22,10 +22,18 @@ const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
   const router = useRouter();
   const canGoBackHistory = useCanGoBack();
 
-  const { themeStore } = useRootStore();
+  const { headerStore, themeStore } = useRootStore();
   const { i18n, t } = useTranslation('common');
 
   const currentLanguage = i18n.language;
+
+  useEffect(() => {
+    const undoRedoPortalElement = document.getElementById(
+      headerStore.portalElementId,
+    );
+
+    headerStore.setUndoRedoPortalElement(undoRedoPortalElement);
+  }, [headerStore]);
 
   return (
     <header aria-label={t('applicationHeader')} className="toolbar fl-header">
@@ -69,10 +77,14 @@ const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
           )}
         </div>
       </div>
+      <div id={headerStore.portalElementId} />
 
       <h1 aria-live="polite" className="fl-header__title toolbar__title">
         {title}
       </h1>
+
+      {/* Spacer to act as the 4th grid item and keep title centered when no buttons on left or right */}
+      <div aria-hidden="true" />
 
       <div
         className="fl-header__right toolbar__actions"
