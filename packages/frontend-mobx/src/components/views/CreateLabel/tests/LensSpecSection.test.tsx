@@ -1,9 +1,19 @@
 import { getRoles, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 
 import { renderWithForm } from '../../../../test-utils/form';
 import { LensSpecSection } from '../LensSpecSection';
+
+vi.mock('../../../../hooks/useCreateLabelFormHistory', () => ({
+  useCreateLabelFormHistory: () => ({
+    isRedoEmpty: true,
+    isUndoEmpty: true,
+    onFormChange: vi.fn(),
+    redo: vi.fn(),
+    undo: vi.fn(),
+  }),
+}));
 
 function setup() {
   renderWithForm(LensSpecSection);
