@@ -12,7 +12,6 @@ export const useEditLabelLock = ({ labelId }: UseEditLabelLockProps) => {
   const { editLabelStore, headerStore } = useRootStore();
 
   useEffect(() => {
-    editLabelStore.updateLocksFromLocalStorage();
     const { lock, ownedLock } = editLabelStore.hasEditLock(labelId);
 
     if (!labelId) return;

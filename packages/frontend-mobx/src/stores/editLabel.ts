@@ -1,5 +1,3 @@
-import { action, makeObservable, observable, reaction } from 'mobx';
-
 import type { LabelStoreDataItem } from './labels';
 
 import {
@@ -21,26 +19,10 @@ export type LockStoreData = LockData & {
 };
 
 export class EditLabelStore {
-  disposeUpdateLocks: () => void;
   locks: Map<string, LockStoreData>;
 
   constructor() {
-    makeObservable(this, {
-      addLock: action,
-      hasEditLock: false,
-      locks: observable,
-      removeLock: action,
-      updateLocksFromLocalStorage: action,
-    });
-
     this.locks = this.getLocksFromLocalStorage();
-
-    this.disposeUpdateLocks = reaction(
-      () => Array.from(this.locks.values()).map((item) => item),
-      (locks) => {
-        updateLocksToLocalStorage(locks);
-      },
-    );
   }
 
   addLock(lock: LockData) {
@@ -50,13 +32,14 @@ export class EditLabelStore {
       this.getUserIdFromSessionStorage() ?? this.createNewUserId(timestamp);
 
     this.addUserIdToSessionStorage(userId);
+
+    this.updateLocksFromLocalStorage();
     this.locks.set(lock.labelId, { ...lock, userId });
+    this.updateLocksToLocalStorage();
   }
 
   hasEditLock(labelId: string): { lock: boolean; ownedLock: boolean } {
-    // this.updateLocksFromLocalStorage();
-
-    // const currentLocks = this.getLocksFromLocalStorage();
+    this.updateLocksFromLocalStorage();
 
     const lock = this.locks.get(labelId);
 
@@ -85,10 +68,7 @@ export class EditLabelStore {
     if (!ownedLock) return;
 
     this.locks.delete(labelId);
-  }
-
-  updateLocksFromLocalStorage() {
-    this.locks = this.getLocksFromLocalStorage();
+    this.updateLocksToLocalStorage();
   }
 
   private addUserIdToSessionStorage(userId: string): void {
@@ -111,5 +91,13 @@ export class EditLabelStore {
 
   private getUserIdFromSessionStorage(): null | string {
     return getUserFromSessionStorage();
+  }
+
+  private updateLocksFromLocalStorage() {
+    this.locks = this.getLocksFromLocalStorage();
+  }
+
+  private updateLocksToLocalStorage(): void {
+    updateLocksToLocalStorage(Array.from(this.locks.values()));
   }
 }
