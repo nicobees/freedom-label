@@ -21,7 +21,6 @@ export const usePrintLabelApiResponse = () => {
         : messageBase;
       const method = errorMessage ? showError : showSuccess;
 
-      console.info('handle message');
       method(fullMessage);
     },
     [showError, showSuccess, t],

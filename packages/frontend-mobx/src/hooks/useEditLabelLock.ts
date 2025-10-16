@@ -36,9 +36,7 @@ export const useEditLabelLock = ({ labelId }: UseEditLabelLockProps) => {
     }
 
     return () => {
-      console.info('cleanup edit lock 1: ', lock, ownedLock, editLock);
       if (lock && ownedLock) {
-        console.info('cleanup edit lock 2: ', lock, ownedLock, editLock);
         editLabelStore.removeLock(labelId);
       }
       if (lock && !ownedLock) {
