@@ -3,6 +3,7 @@ import { createContext, type ReactNode, useContext } from 'react';
 
 import type { RootStore } from './types';
 
+import { EditLabelStore } from './editLabel';
 import { HeaderStore } from './header';
 import { LabelStore } from './labels';
 import { LabelListStore } from './labelsList';
@@ -11,9 +12,11 @@ import { ThemeStore } from './theme';
 const labelsStore = new LabelStore();
 const labelsListStore = new LabelListStore(labelsStore);
 const headerStore = new HeaderStore();
+const editLabelStore = new EditLabelStore();
 const themeStore = new ThemeStore();
 
 const rootStore: RootStore = {
+  editLabelStore,
   headerStore,
   labelsListStore,
   labelsStore,

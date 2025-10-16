@@ -1,11 +1,16 @@
 import { useFormContext } from '../../../hooks/useCreateLabelForm';
 
 interface PrintButtonProps {
+  disabled?: boolean;
   label: string;
   variant?: 'filled' | 'outline' | 'text';
 }
 
-export const SaveButton = ({ label, variant = 'filled' }: PrintButtonProps) => {
+export const SaveButton = ({
+  disabled = false,
+  label,
+  variant = 'filled',
+}: PrintButtonProps) => {
   const form = useFormContext();
 
   return (
@@ -20,8 +25,9 @@ export const SaveButton = ({ label, variant = 'filled' }: PrintButtonProps) => {
         return (
           <button
             className={`btn btn--${variant}`}
-            disabled={!canSubmit || !isValid || isPristine}
+            disabled={disabled || !canSubmit || !isValid || isPristine}
             onClick={() => {
+              if (disabled) return;
               void form.handleSubmit();
             }}
             type="button"

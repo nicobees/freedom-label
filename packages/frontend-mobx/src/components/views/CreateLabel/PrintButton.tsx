@@ -4,12 +4,14 @@ import { useFormContext } from '../../../hooks/useCreateLabelForm';
 import { useRootStore } from '../../../stores';
 
 interface PrintButtonProps {
+  disabled?: boolean;
   label: string;
   onPrintHandler: OnPrintCallbackType;
   variant?: 'filled' | 'outline' | 'text';
 }
 
 export const PrintButton = ({
+  disabled = false,
   label,
   onPrintHandler,
   variant = 'filled',
@@ -31,11 +33,13 @@ export const PrintButton = ({
           <button
             className={`btn btn--${variant}`}
             disabled={
+              disabled ||
               !data.id ||
               !labelsStore.hasById(data.id) ||
               labelsStore.loadingPrintApi
             }
             onClick={() => {
+              if (disabled) return;
               void labelsStore.print({
                 labelId: data.id,
                 onMutationHandler: onPrintHandler,

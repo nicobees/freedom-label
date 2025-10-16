@@ -14,6 +14,30 @@ type HeaderViewProps = {
   title: string;
 };
 
+const MessageBadge = ({
+  viewMessage,
+}: {
+  viewMessage: null | {
+    detail: string;
+    header: string;
+    type: 'info' | 'warning';
+  };
+}) => {
+  if (!viewMessage) return null;
+
+  return (
+    <div
+      aria-atomic="true"
+      aria-live="assertive"
+      className={`fl-header__message-badge fl-header__message-badge--${viewMessage.type}`}
+      role="alert"
+    >
+      <strong>{viewMessage.header}</strong>
+      <div>{viewMessage.detail}</div>
+    </div>
+  );
+};
+
 const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
   const [langOpen, setLangOpen] = useState(false);
   const groupRef = useRef<HTMLDivElement | null>(null);
@@ -84,7 +108,9 @@ const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
       </h1>
 
       {/* Spacer to act as the 4th grid item and keep title centered when no buttons on left or right */}
-      <div aria-hidden="true" />
+      <div>
+        <MessageBadge viewMessage={headerStore.viewMessage} />
+      </div>
 
       <div
         className="fl-header__right toolbar__actions"

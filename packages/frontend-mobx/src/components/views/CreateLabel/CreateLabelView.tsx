@@ -33,15 +33,21 @@ type CreateLabelProps = {
   debug?: boolean;
   labelData?: LabelData;
   loading: boolean;
+  onlyViewMode?: boolean;
   onPrintCallback: OnPrintCallbackType;
   onSaveCallback: UseCreateLabelFormProps['onSave'];
   title: string;
+};
+
+const OverLayer = () => {
+  return <div aria-hidden="true" className="create-label__view-only-overlay" />;
 };
 
 const CreateLabelViewComponent = ({
   debug = false,
   labelData,
   loading,
+  onlyViewMode = false,
   onPrintCallback,
   onSaveCallback,
   title,
@@ -96,6 +102,7 @@ const CreateLabelViewComponent = ({
 
   return (
     <section className="create-label">
+      {onlyViewMode ? <OverLayer /> : null}
       {UndoRedoComponent}
       {headerStore.undoRedoPortalElement
         ? createPortal(
@@ -111,10 +118,11 @@ const CreateLabelViewComponent = ({
           <LensSpecSection form={form} t={t} />
           <div className="actions">
             <form.PrintButton
+              disabled={onlyViewMode}
               label={t('print')}
               onPrintHandler={onPrintCallback}
             />
-            <form.SaveButton label={t('save')} />
+            <form.SaveButton disabled={onlyViewMode} label={t('save')} />
             {debug ? (
               <button
                 className="btn btn--text"

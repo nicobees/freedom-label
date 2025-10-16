@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import type { LabelDataSubmit } from '../../validation/schema';
 
 import { CreateLabelView } from '../../components/views/CreateLabel/CreateLabelView';
+import { useEditLabelLock } from '../../hooks/useEditLabelLock';
 import { usePrintLabelApiResponse } from '../../hooks/usePrintLabelApiResponse';
 import { useRouter } from '../../hooks/useRouter';
 import { useRootStore } from '../../stores';
@@ -21,6 +22,8 @@ const EditLabelRoute = () => {
 
   const labelData = labelsStore.getById(id);
 
+  const { editLock } = useEditLabelLock({ labelId: id ?? '' });
+
   if (!id || !labelData)
     return <div>No label data with the current id: {id}</div>;
 
@@ -33,6 +36,7 @@ const EditLabelRoute = () => {
       debug={debug}
       labelData={labelData}
       loading={labelsStore.loadingPrintApi}
+      onlyViewMode={editLock}
       onPrintCallback={handleMessage}
       onSaveCallback={onSubmitHandler}
       title={title}
