@@ -11,12 +11,14 @@ import {
   RouterProvider,
 } from '@tanstack/react-router';
 
-import Header from '../components/Header/Header';
+import HeaderView from '../components/views/Header/HeaderView';
+import { useRouter } from '../hooks/useRouter';
 import { i18n } from '../i18n';
 import { UrlSearchSchema } from '../validation/schema';
-import CreateLabelPage from './CreateLabelPage/CreateLabelPage';
-import HomePage from './HomePage/HomePage';
-import ListLabelPage from './ListLabelPage/ListLabelPage';
+import CreateLabelRoute from './CreateLabelRoute/CreateLabelRoute';
+import EditLabelRoute from './EditLabelRoute/EditLabelRoute';
+import HomePageRoute from './HomePage/HomePageRoute';
+import ListLabelRoute from './ListLabelRoute/ListLabelRoute';
 
 export type RouterContext = {
   getIsHome?: () => boolean;
@@ -26,9 +28,11 @@ export type RouterContext = {
 export const APPLICATION_NAME = 'Freedom Label';
 
 function Layout({ children }: PropsWithChildren) {
+  const { isHome, title } = useRouter();
+
   return (
     <div className="app-container">
-      <Header />
+      <HeaderView isHome={isHome} title={title} />
       <main className="app-main" role="main">
         {children}
       </main>
@@ -58,8 +62,9 @@ const rootRoute = createRootRouteWithContext<RouterContext>()({
   validateSearch: UrlSearchSchema,
 });
 
-const Paths = {
+export const Paths = {
   create: '/create',
+  edit: '/edit/$id',
   home: '/',
   list: '/list',
 } as const;
@@ -72,7 +77,7 @@ const homeRoute = createRoute({
       getTitle: () => i18n.t('home'),
     };
   },
-  component: HomePage,
+  component: HomePageRoute,
   getParentRoute: () => rootRoute,
   path: Paths.home,
 });
@@ -83,9 +88,20 @@ const createLabelRoute = createRoute({
       getTitle: () => i18n.t('createLabel'),
     };
   },
-  component: CreateLabelPage,
+  component: CreateLabelRoute,
   getParentRoute: () => rootRoute,
   path: Paths.create,
+});
+
+const editLabelRoute = createRoute({
+  beforeLoad: () => {
+    return {
+      getTitle: () => i18n.t('editLabel'),
+    };
+  },
+  component: EditLabelRoute,
+  getParentRoute: () => rootRoute,
+  path: Paths.edit,
 });
 
 const listLabelRoute = createRoute({
@@ -94,7 +110,7 @@ const listLabelRoute = createRoute({
       getTitle: () => i18n.t('labelsList'),
     };
   },
-  component: ListLabelPage,
+  component: ListLabelRoute,
   getParentRoute: () => rootRoute,
   path: Paths.list,
 });
@@ -102,6 +118,7 @@ const listLabelRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   homeRoute,
   createLabelRoute,
+  editLabelRoute,
   listLabelRoute,
 ]);
 

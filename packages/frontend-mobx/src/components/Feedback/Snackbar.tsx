@@ -1,9 +1,13 @@
-import { useFeedback } from '../../contexts/FeedbackContext';
+import type { FeedbackMessage } from '../../contexts/FeedbackContext';
+
 import './snackbar.css';
 
-export const SnackbarHost = () => {
-  const { dismiss, messages } = useFeedback();
+type SnackbarHostProps = {
+  dismiss: (id: number) => void;
+  messages: FeedbackMessage[];
+};
 
+export const SnackbarHost = ({ dismiss, messages = [] }: SnackbarHostProps) => {
   return (
     <div aria-atomic="true" aria-live="polite" className="snackbar-host">
       {messages.map((m) => (

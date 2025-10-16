@@ -3,12 +3,24 @@ import { createContext, type ReactNode, useContext } from 'react';
 
 import type { RootStore } from './types';
 
-import { LensesStore } from './lenses';
+import { EditLabelStore } from './editLabel';
+import { HeaderStore } from './header';
+import { LabelStore } from './labels';
+import { LabelListStore } from './labelsList';
 import { ThemeStore } from './theme';
 
+const labelsStore = new LabelStore();
+const labelsListStore = new LabelListStore(labelsStore);
+const headerStore = new HeaderStore();
+const editLabelStore = new EditLabelStore();
+const themeStore = new ThemeStore();
+
 const rootStore: RootStore = {
-  lensesStore: new LensesStore(),
-  themeStore: new ThemeStore(),
+  editLabelStore,
+  headerStore,
+  labelsListStore,
+  labelsStore,
+  themeStore,
 };
 
 const rootStoreContext = createContext<RootStore | undefined>(undefined);

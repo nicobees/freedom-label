@@ -33,8 +33,6 @@ export const useLabelLocalStorage = () => {
       ) ?? new Map();
 
     if (mapObject.has(hash)) {
-      console.info('existing hash: ', hash);
-
       return;
     }
 

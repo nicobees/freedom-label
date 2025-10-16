@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
+import { LensSpecsDataDefaultValue } from '../components/views/CreateLabel/defaultValues';
+
 const validationErrorMessages = {
   add: 'Invalid ADD format',
   ax: 'Invalid AX format',
@@ -141,6 +143,7 @@ export const LabelDataSchema = LabelDataSchemaBase.extend({}).superRefine(
 
 export type LabelData = z.infer<typeof LabelDataSchema>;
 
+/* Schema to convert from original to *Submit */
 const LensSpecDataTransform = (value: LensSpecsGrid) => {
   const { data, enabled } = value;
 
@@ -174,6 +177,31 @@ export const LabelDataSubmitSchema = LabelDataSchemaBase.extend({
 });
 
 export type LabelDataSubmit = z.infer<typeof LabelDataSubmitSchema>;
+/* Schema to convert from original to *Submit - END */
+
+/* Schema to convert from *Submit to original */
+const transformFromSubmitToOriginal = (value: LensSpecsData | null) => {
+  if (!value) {
+    return { data: LensSpecsDataDefaultValue, enabled: false };
+  }
+
+  return { data: { ...value }, enabled: true };
+};
+
+const LensSpecsGridFromSubmitToOriginalSchema =
+  LensSpecsDataSchema.nullable().transform(transformFromSubmitToOriginal);
+
+const LensesSpecsFromSubmitToOriginalSchema = z.object({
+  [LensSide.Left]: LensSpecsGridFromSubmitToOriginalSchema,
+  [LensSide.Right]: LensSpecsGridFromSubmitToOriginalSchema,
+});
+
+export const LabelDataFromSubmitToOriginalSchema = LabelDataSubmitSchema.extend(
+  {
+    lens_specs: LensesSpecsFromSubmitToOriginalSchema,
+  },
+);
+/* Schema to convert from *Submit to original  - END */
 
 export const UrlSearchSchema = z.object({
   debug: z.boolean().optional(),

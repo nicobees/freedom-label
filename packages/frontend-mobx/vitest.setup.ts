@@ -19,3 +19,25 @@ Object.defineProperty(window, 'matchMedia', {
   }),
   writable: true,
 });
+
+class IntersectionObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  takeRecords() {
+    return [];
+  }
+  unobserve() {}
+}
+
+Object.defineProperty(window, 'IntersectionObserver', {
+  configurable: true,
+  value: IntersectionObserver,
+  writable: true,
+});
+
+Object.defineProperty(globalThis, 'IntersectionObserver', {
+  configurable: true,
+  value: IntersectionObserver,
+  writable: true,
+});
