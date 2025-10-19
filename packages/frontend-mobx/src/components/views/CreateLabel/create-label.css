@@ -213,6 +213,17 @@
   margin-block-end: 0;
 }
 
+@media (max-width: 768px) {
+  .history-actions--clone .history-actions {
+    gap: var(--space-1, 12px);
+  }
+
+  .history-actions--clone .history-actions .btn {
+    min-height: 40px;
+    padding: 0 var(--space-2);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .history-actions--clone {
     transition: none;

@@ -29,11 +29,15 @@ const MessageBadge = ({
     <div
       aria-atomic="true"
       aria-live="assertive"
-      className={`fl-header__message-badge fl-header__message-badge--${viewMessage.type}`}
+      className="fl-header__message-badge medium-screen-size"
       role="alert"
     >
-      <strong>{viewMessage.header}</strong>
-      <div>{viewMessage.detail}</div>
+      <div
+        className={`fl-header__message-badge--content fl-header__message-badge--${viewMessage.type}`}
+      >
+        <div className="fl-header__message-header">{viewMessage.header}</div>
+        <div className="fl-header__message-detail">{viewMessage.detail}</div>
+      </div>
     </div>
   );
 };
@@ -57,11 +61,14 @@ const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
     );
 
     headerStore.setUndoRedoPortalElement(undoRedoPortalElement);
-  }, [headerStore]);
+  }, [headerStore, t]);
 
   return (
     <header aria-label={t('applicationHeader')} className="toolbar fl-header">
-      <div className="fl-header__left toolbar__actions">
+      <div
+        className="fl-header__left toolbar__actions"
+        style={{ '--fl-header-column-count': '1' } as React.CSSProperties}
+      >
         <div className="icon-shell">
           <input
             aria-hidden="true"
@@ -101,17 +108,35 @@ const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
           )}
         </div>
       </div>
-      <div id={headerStore.portalElementId} />
+      <div
+        className="fl-header__spacer"
+        style={{ '--fl-header-column-count': '2' } as React.CSSProperties}
+      ></div>
+      <div
+        className="fl-header__center"
+        style={{ '--fl-header-column-count': '2' } as React.CSSProperties}
+      >
+        <div className="fl-header__portal" id={headerStore.portalElementId} />
+        <div
+          className="fl-header__spacer"
+          style={{ '--fl-header-column-count': '2' } as React.CSSProperties}
+        ></div>
 
-      <h1 aria-live="polite" className="fl-header__title toolbar__title">
-        {title}
-      </h1>
+        <h1 aria-live="polite" className="fl-header__title toolbar__title">
+          {title}
+        </h1>
+        <div
+          className="fl-header__spacer"
+          style={{ '--fl-header-column-count': '4' } as React.CSSProperties}
+        ></div>
 
-      {/* Spacer to act as the 4th grid item and keep title centered when no buttons on left or right */}
-      <div>
+        {/* Spacer to act as the 4th grid item and keep title centered when no buttons on left or right */}
         <MessageBadge viewMessage={headerStore.viewMessage} />
       </div>
-
+      <div
+        className="fl-header__spacer"
+        style={{ '--fl-header-column-count': '4' } as React.CSSProperties}
+      ></div>
       <div
         className="fl-header__right toolbar__actions"
         onBlur={(e) => {
