@@ -27,8 +27,9 @@ export const useEditLabelLock = ({ labelId }: UseEditLabelLockProps) => {
         headerStore.setViewMessage({
           detail: messageDetail,
           header: messageHeader,
-          type: 'warning',
+          type: 'info',
         });
+
         setEditLock(true);
       } else {
         setEditLock(false);
