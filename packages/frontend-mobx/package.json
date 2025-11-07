@@ -29,7 +29,8 @@
     "react-dom": "^19.1.0",
     "react-i18next": "^15.0.0",
     "uuid": "^13.0.0",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.24.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
@@ -37,6 +38,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/dom-chromium-ai": "^0.0.10",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
     "@types/uuid": "^10.0.0",
