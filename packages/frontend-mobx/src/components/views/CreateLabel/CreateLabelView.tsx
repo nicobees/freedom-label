@@ -15,6 +15,7 @@ import {
   CUSTOM_THRESHOLD_ARRAY,
   useIntersectionObserver,
 } from '../../../hooks/useIntersectionObserver';
+import { useWorker } from '../../../hooks/useWorker';
 import { useRootStore } from '../../../stores';
 import { LoadingOverlay } from '../../Loading/LoadingOverlay';
 import { defaultValuesFilled } from './defaultValues';
@@ -62,6 +63,14 @@ const CreateLabelViewComponent = ({
     threshold: CUSTOM_THRESHOLD_ARRAY,
   });
 
+  const callback = (e) => {
+    // console.info('inside create label view: ', e);
+  };
+  const { postMessage } = useWorker({
+    onMessageCallback: callback,
+    workerFileName: 'llm.ts',
+  });
+
   const {
     form,
     isRedoEmpty,
@@ -103,6 +112,15 @@ const CreateLabelViewComponent = ({
   return (
     <section className="create-label">
       {onlyViewMode ? <OverLayer /> : null}
+      <button
+        onClick={() => {
+          postMessage(
+            'I want to create only-left contact lens for patience John Doe. It has a power deficit of 2.25. Also custom sagittal of 1234 and toric sagittal of 1248. Batch number is 10-2025. Due date is on 31st of next January',
+          );
+        }}
+      >
+        test prompt
+      </button>
       {UndoRedoComponent}
       {headerStore.undoRedoPortalElement
         ? createPortal(

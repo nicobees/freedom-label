@@ -16,6 +16,7 @@
     "type-check": "tsc -b"
   },
   "dependencies": {
+    "@huggingface/transformers": "^3.7.6",
     "@tanstack/history": "^1.81.8",
     "@tanstack/react-form": "^1.23.7",
     "@tanstack/react-query": "^5.85.5",
