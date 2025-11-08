@@ -81,21 +81,12 @@ export class AutoFillChromeBuiltIn {
         // },
       );
 
-      console.info(result);
-      // Step 5: Parse guaranteed-valid JSON
-      // const parsed = result.replace('```json', '').replace('```', '');
-      // const extracted = JSON.parse(parsed) as Record<string, unknown>;
+      // console.info(result);
 
-      // console.log('Extracted data:', extracted);
-
-      // const parsedJson = await this.sessionJson.prompt(`${parsed}`);
-
-      // console.info('parsed json: ', parsedJson, this.session, this.sessionJson);
-
-      // return extracted;
       const endTime = performance.now();
       console.info(`LLM inference time: ${endTime - initTime}`);
-      console.info('result: ', result);
+
+      return result;
     } catch (error) {
       console.error('LLM chrome built in error:', error);
     }

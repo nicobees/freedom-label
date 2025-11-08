@@ -1,4 +1,5 @@
 {
+  "activateAiMode": "Activate AI mode",
   "applicationHeader": "Application header",
   "backToHome": "Back to Home",
   "batch": "Batch",
@@ -50,6 +51,7 @@
   "rightLensSpecs": "Right Lens Specs",
   "rightLensSpecsData": "Right Lens Specs Data",
   "save": "Save",
+  "send": "Send",
   "surname": "Surname",
   "to": "to",
   "toggleTheme": "Toggle theme",

@@ -1,0 +1,16 @@
+.ai-modal-container {
+  position: fixed;
+  right: 20px;
+  z-index: 1000;
+}
+
+.ai-modal-chat {
+  width: 350px;
+  height: 400px;
+  font-size: 10px;
+  overflow: auto;
+}
+
+.activate-button {
+  position: relative;
+}

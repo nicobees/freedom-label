@@ -1,4 +1,5 @@
 {
+  "activateAiMode": "Attiva modalità AI",
   "applicationHeader": "Testata applicazione",
   "backToHome": "Torna alla Home",
   "batch": "Lotto",
@@ -50,6 +51,7 @@
   "rightLensSpecs": "Specifiche Lente Destra",
   "rightLensSpecsData": "Dati Specifiche Lente Destra",
   "save": "Salva",
+  "send": "Invia",
   "surname": "Cognome",
   "to": "a",
   "toggleTheme": "Cambia tema",
