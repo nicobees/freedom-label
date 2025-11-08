@@ -1,36 +1,36 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-import { LlmService } from '../services/llm';
+import { AutoFillChromeBuiltIn } from '../services/auto-fill-form/chromeBuiltIn';
 
 type UseAutoFillProps = {
   enabled: boolean;
 };
 
-const llmService = new LlmService();
+export const useAutoFill = (
+  { enabled }: UseAutoFillProps = { enabled: true },
+) => {
+  const initialised = useRef<boolean>(false);
 
-export const useAutoFill = ({ enabled }: UseAutoFillProps) => {
-  const initialised = useRef<LanguageModel | null>(null);
-
-  const init = useCallback(async () => {
-    if (!enabled || initialised.current) {
+  useEffect(() => {
+    if (!enabled) {
+      initialised.current = false;
       return;
     }
 
-    try {
-      await llmService.createSession();
-      initialised.current = llmService.session;
-    } catch (error) {
-      console.error('LLM initialization failed:', error);
-    }
+    const init = async function () {
+      await AutoFillChromeBuiltIn.getInstance();
+      initialised.current = true;
+    };
+
+    void init();
   }, [enabled]);
 
   const prompt = useCallback(async (userPrompt: string) => {
-    if (!initialised.current) {
-      return;
-    }
-
     try {
-      const result = await llmService.prompt(userPrompt);
+      if (!initialised.current) {
+        return;
+      }
+      const result = await AutoFillChromeBuiltIn.prompt(userPrompt);
 
       return result;
     } catch (error) {
@@ -38,5 +38,5 @@ export const useAutoFill = ({ enabled }: UseAutoFillProps) => {
     }
   }, []);
 
-  return { init, prompt };
+  return { prompt };
 };

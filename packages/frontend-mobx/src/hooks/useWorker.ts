@@ -22,15 +22,16 @@ export const useWorker = ({
   // We use the `useEffect` hook to setup the worker as soon as the `App` component is mounted.
   useEffect(() => {
     if (!worker.current) {
+      const workerPath = `${RELATIVE_WORKER_FOLDER_PATH}${workerFileName}`;
       // Create the worker if it does not yet exist.
-      const workerUrl = new URL('../workers/llm.ts', import.meta.url);
+      const workerUrl = new URL(workerPath, import.meta.url);
       worker.current = new Worker(workerUrl, {
         type: 'module',
       });
-      console.info('inside worker creation: ', worker.current);
+
       worker.current.onmessage = onMessageCallback;
       worker.current.onerror = (error) => {
-        console.error('Worker error:', error);
+        console.error('Worker error callback:', error);
       };
     }
 

@@ -6,7 +6,98 @@ import {
   LabelDataSchemaBase,
   LensSide,
   LensSpecsDataSchema,
-} from '../../../validation/schema';
+} from '../../validation/schema';
+
+export const initialPrompts = [
+  {
+    content: `
+I want to create scleral lenses in RGP for Jon Doe: power is 1.00 and dia is 14.10.
+Left lens has also base curve of 2.12, while right lens has base curve of 1.00. Batch is temp-prod. Due date is 1st of February of next year.
+`,
+    role: 'user',
+  },
+  {
+    content: `
+- {patient_info.name}: Jon
+- {patient_info.surname}: Doe
+- {description}: scleral lenses in RGP
+- {lens_specs.[left].data.pwr}: 1.00
+- {lens_specs.[right].data.pwr}: 1.00
+- {lens_specs.[left].data.dia}: 14.10
+- {lens_specs.[right].data.dia}: 14.10
+- {lens_specs.[left].data.bc}: 2.12
+- {lens_specs.[right].data.bc}: 1.00
+- {lens_specs.[left].data.batch}: temp-prod
+- {lens_specs.[right].data.batch}: temp-prod
+          `,
+    role: 'assistant',
+  },
+  {
+    content: `
+I want to create contact lenses for patient Brown Tom.
+It has a power deficit of 1.25, with diameter of 1.10. The base curve is 1.12 for the left lens, while is 2.10 for the right lens.
+Batch is temp-prod. These are scleral lens in F2mid. Lens will last in three months.
+`,
+    role: 'user',
+  },
+  {
+    content: `
+- {description}: scleral lens in F2mid
+- {patient_info.name}: Tom
+- {patient_info.surname}: Brown
+- {lens_specs.[left].data.pwr}: -1.25
+- {lens_specs.[right].data.pwr}: -1.25
+- {lens_specs.[left].data.dia}: 1.10
+- {lens_specs.[right].data.dia}: 1.10
+- {lens_specs.[left].data.bc}: 1.12
+- {lens_specs.[right].data.bc}: 2.10
+- {lens_specs.[left].data.batch}: temp-prod
+- {lens_specs.[right].data.batch}: temp-prod
+`,
+    role: 'assistant',
+  },
+  {
+    content: `
+Create single left lens for Mark White, with power deficit of 2.25. Lens due date is on 01/04/2026 and
+the shipment date is 01/02/2026. Shipment address is oxford street 142.
+`,
+    role: 'user',
+  },
+  {
+    content: `
+- {patient_info.name}: Mark
+- {patient_info.surname}: White
+- {lens_specs.[left].data.pwr}: -2.25
+`,
+    role: 'assistant',
+  },
+  {
+    content: `
+We have to create night lenses in F2mid. The lenses needs to be shipped to Tom Brown in UK, oxford street 142, by 15th of March 2026.
+It has power of -1.73, diameter of 3, and left lens has base curve of 2. Axis is 180; it also needs toric saggital of 749 only on right lens.
+Production batch is late-2025.
+    `,
+    role: 'user',
+  },
+  {
+    content: `
+- {description}: night lenses in F2mid
+- {patient_info.name}: Tom
+- {patient_info.surname}: Brown
+- {lens_specs.[left].data.pwr}: -1.73
+- {lens_specs.[left].data.dia}: 3
+- {lens_specs.[left].data.bc}: 2
+- {lens_specs.[left].data.ax}: 180
+- {lens_specs.[right].data.pwr}: -1.73
+- {lens_specs.[right].data.dia}: 3
+- {lens_specs.[right].data.bc}: 2
+- {lens_specs.[right].data.sag_toric}: 749
+- {lens_specs.[left].data.batch}: late-2025
+- {lens_specs.[right].data.batch}: late-2025
+    `,
+    role: 'assistant',
+  },
+] satisfies LanguageModelMessage[];
 
 export const prompts = [
   `
@@ -28,6 +119,20 @@ Diameter is 14.10, base curve is 2.39. Batch is 11-2025 and the due date is from
   `
 I want to create a toric lens in sylicon, a right lens. Patience is Doe John. Power deficit of 1.15, axis value of 45, cylinder correction
 of -2, diameter of 14.22, and additional power as deficit of 0.25. The lens will last in 3 months.
+`,
+  `
+Mario Rossi needs a left scleral lens in F2mid. The lenses needs to be shipped in UK, oxford street 142, by 15th of March 2026. It has power of -1.73, diameter of 3, base curve of 2. Axis is 180 and it also needs toric saggital of 749.
+Production batch is late-2025.
+`,
+  `
+We have to create night lenses in F2mid. The lenses needs to be shipped to Tom Brown in UK, oxford street 142, by 15th of March 2026.
+It has power of -1.73, diameter of 3, and left lens has base curve of 2. Axis is 180; it also needs toric saggital of 749 only on right lens.
+Production batch is late-2025.
+`,
+  `
+Marco Verdi needs right lens, material is F2mid and it is a scleral lens. The lenses needs to be ready by 15th of March 2026.
+It has power of -1.73, diameter of 3. It also needs a toric base curve of 2.1, while axis is 180. It also needs toric saggital of 749 only on right lens.
+Production batch is late-2025.
 `,
 ];
 
