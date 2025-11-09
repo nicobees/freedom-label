@@ -1,0 +1,25 @@
+.manifacturing-info-container {
+  grid-column: 2 / 2;
+}
+
+.manifacturing-fields {
+  grid-template-columns: 1fr; /* mobile/tablet default */
+  gap: 0px;
+}
+
+.manifacturing-fields .field {
+  margin-bottom: 0px;
+}
+
+/* Manufacturing section layout */
+.manufacturing-fields {
+}
+/* ≥ desktop breakpoint (min-width: var(--bp-desktop) = 1024px) */
+@media (min-width: 1024px) {
+  .manufacturing-fields > .description-field {
+    grid-column: 1 / 2;
+  }
+  .manufacturing-fields > .batch-field {
+    grid-column: 2 / 3;
+  }
+}

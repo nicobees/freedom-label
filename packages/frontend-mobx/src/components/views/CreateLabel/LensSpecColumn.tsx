@@ -2,6 +2,7 @@ import type { TFunction } from 'i18next';
 
 import { formOptions, useStore } from '@tanstack/react-form';
 
+import './lensSpecColumn.css';
 import {
   type FormType,
   useFormContext,
@@ -80,7 +81,7 @@ const LensSpecCopyData = withForm({
       <div className="copy-actions">
         <button
           aria-label={ariaLabel}
-          className="btn btn--filled"
+          className="btn btn--filled btn-small"
           onClick={onClickHandler}
           type="button"
         >
@@ -255,16 +256,18 @@ export const LensSpecColumn = withForm({
 
     return (
       <fieldset aria-label={groupLabel} className="lens-col" role="group">
-        <form.AppField name={`${base}.enabled` as const}>
-          {(field) => <field.CheckboxField label={checkboxLabel} />}
-        </form.AppField>
+        <div className="lens-col-title">
+          <form.AppField name={`${base}.enabled` as const}>
+            {(field) => <field.CheckboxField label={checkboxLabel} />}
+          </form.AppField>
+          <LensSpecColumnCopyData
+            form={form as unknown as FormType}
+            side={typedSide}
+            t={t}
+          />
+        </div>
 
         <LensSpecColumnGridDataWrapper
-          form={form as unknown as FormType}
-          side={typedSide}
-          t={t}
-        />
-        <LensSpecColumnCopyData
           form={form as unknown as FormType}
           side={typedSide}
           t={t}

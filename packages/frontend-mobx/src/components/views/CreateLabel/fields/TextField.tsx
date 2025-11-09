@@ -38,8 +38,12 @@ export function TextField({
     return field.state.value ?? '';
   }, [field.state.value]);
 
+  const inputClassName = className ? ` ${className}` : '';
+  const showErrorClassName = showError ? ' is-error' : '';
+  const parsedClassName = `field${showErrorClassName}${inputClassName}`;
+
   return (
-    <div className={`field ${showError ? 'is-error' : ''} ${className}`}>
+    <div className={parsedClassName}>
       <label className="field__label">
         {label}
         <input

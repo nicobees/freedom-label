@@ -112,50 +112,44 @@ const CreateLabelViewComponent = ({
   return (
     <div className="create-label-container">
       <aside className="left-sidebar-create-label"></aside>
-      <section className="create-label">
+      <section className="central-create-label">
         {onlyViewMode ? <OverLayer /> : null}
-        <div>
-          {UndoRedoComponent}
-          {headerStore.undoRedoPortalElement
-            ? createPortal(
-                UndoRedoComponentPortal,
-                headerStore.undoRedoPortalElement,
-              )
-            : null}
+        {UndoRedoComponent}
+        {headerStore.undoRedoPortalElement
+          ? createPortal(
+              UndoRedoComponentPortal,
+              headerStore.undoRedoPortalElement,
+            )
+          : null}
 
-          <form
-            aria-label={`${title} Form`}
-            className="create-form"
-            role="form"
-          >
-            <form.AppForm>
-              <PatientInfoSection form={form} />
-              <ManufacturingSection form={form} t={t} />
-              <LensSpecSection form={form} t={t} />
-              <div className="actions">
-                <form.PrintButton
-                  disabled={onlyViewMode}
-                  label={t('print')}
-                  onPrintHandler={onPrintCallback}
-                />
-                <form.SaveButton disabled={onlyViewMode} label={t('save')} />
-                {debug ? (
-                  <button
-                    className="btn btn--text"
-                    onClick={() => {
-                      resetFormWithSpecificData(defaultValuesFilled(), form);
-                    }}
-                    type="button"
-                  >
-                    {t('fillFormTemp')}
-                  </button>
-                ) : null}
-              </div>
-              <FormDirtyChecker form={form} />
-            </form.AppForm>
-          </form>
-          <LoadingOverlay loading={loading} />
-        </div>
+        <form aria-label={`${title} Form`} className="create-form" role="form">
+          <form.AppForm>
+            <PatientInfoSection form={form} />
+            <ManufacturingSection form={form} t={t} />
+            <LensSpecSection form={form} t={t} />
+            <div className="actions">
+              <form.PrintButton
+                disabled={onlyViewMode}
+                label={t('print')}
+                onPrintHandler={onPrintCallback}
+              />
+              <form.SaveButton disabled={onlyViewMode} label={t('save')} />
+              {debug ? (
+                <button
+                  className="btn btn--text"
+                  onClick={() => {
+                    resetFormWithSpecificData(defaultValuesFilled(), form);
+                  }}
+                  type="button"
+                >
+                  {t('fillFormTemp')}
+                </button>
+              ) : null}
+            </div>
+            <FormDirtyChecker form={form} />
+          </form.AppForm>
+        </form>
+        <LoadingOverlay loading={loading} />
       </section>
       <aside className="right-sidebar-create-label">
         <AiModal

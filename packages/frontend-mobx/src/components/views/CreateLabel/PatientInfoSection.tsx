@@ -2,6 +2,7 @@ import { formOptions } from '@tanstack/react-form';
 import { useTranslation } from 'react-i18next';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import './patientInfoSection.css';
 import { type FormType, withForm } from '../../../hooks/useCreateLabelForm';
 import { getDefaultValues } from './defaultValues';
 
@@ -15,8 +16,16 @@ function PatientInfoSectionRender({ form }: { form: FormType }) {
   const label = t('patientInfo');
 
   return (
-    <div aria-label={label} className="card" role="group">
-      <div aria-level={2} className="card__title" role="heading">
+    <div
+      aria-label={label}
+      className="patient-info-container card"
+      role="group"
+    >
+      <div
+        aria-level={2}
+        className="patient-info-title card__title"
+        role="heading"
+      >
         {label}
       </div>
       <div className="card__section field-group patient-info-fields">
