@@ -1,7 +1,8 @@
+import merge from 'lodash/merge';
 import { observer } from 'mobx-react-lite';
 
 import './create-label.css';
-import { useRef } from 'react';
+import { useRef, useTransition } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -19,7 +20,7 @@ import { useRootStore } from '../../../stores';
 import { AiModal } from '../../AiModal/AiModal';
 import { Button } from '../../atoms/Button/Button';
 import { LoadingOverlay } from '../../Loading/LoadingOverlay';
-import { defaultValuesFilled } from './defaultValues';
+import { defaultValuesFilled, getDefaultValues } from './defaultValues';
 import { FormDirtyChecker } from './FormDirtyChecker';
 import { LensSpecSection } from './LensSpecSection';
 import { ManufacturingSection } from './ManufacturingSection';
@@ -55,6 +56,7 @@ const CreateLabelViewComponent = ({
   title,
 }: CreateLabelProps) => {
   const { t } = useTranslation();
+  const [, startTransition] = useTransition();
 
   const { headerStore } = useRootStore();
   const undoRedoRef = useRef<HTMLDivElement | null>(null);
@@ -63,14 +65,6 @@ const CreateLabelViewComponent = ({
     targetRef: undoRedoRef,
     threshold: CUSTOM_THRESHOLD_ARRAY,
   });
-
-  // const callback = (e) => {
-  //   console.info('inside create label view: ', e);
-  // };
-  // const { postMessage } = useWorker({
-  //   onMessageCallback: callback,
-  //   workerFileName: 'llm.ts',
-  // });
 
   const {
     form,
@@ -139,7 +133,12 @@ const CreateLabelViewComponent = ({
                 <Button
                   label={t('fillFormTemp')}
                   onClick={() => {
-                    resetFormWithSpecificData(defaultValuesFilled(), form);
+                    startTransition(async () => {
+                      await resetFormWithSpecificData(
+                        defaultValuesFilled(),
+                        form,
+                      );
+                    });
                   }}
                   variant="text"
                 />
@@ -152,7 +151,12 @@ const CreateLabelViewComponent = ({
       </section>
       <aside className="right-sidebar-create-label">
         <AiModal
-          autoFillFormCallback={(data) => resetFormWithSpecificData(data, form)}
+          autoFillFormCallback={(data) => {
+            startTransition(async () => {
+              const result = merge(getDefaultValues(), data);
+              await resetFormWithSpecificData(result, form);
+            });
+          }}
         />
       </aside>
     </section>

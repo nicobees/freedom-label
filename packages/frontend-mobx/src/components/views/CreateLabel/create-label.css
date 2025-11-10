@@ -253,4 +253,5 @@
 }
 
 .right-sidebar-create-label {
+  height: calc(100vh - var(--header-height, 56px));
 }

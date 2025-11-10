@@ -3,7 +3,7 @@ import {
   createFormHook,
   createFormHookContexts,
 } from '@tanstack/react-form';
-import { useCallback } from 'react';
+import { useCallback, useTransition } from 'react';
 
 import { getDefaultValues } from '../components/views/CreateLabel/defaultValues';
 import { CheckboxField } from '../components/views/CreateLabel/fields/CheckboxField';
@@ -52,6 +52,7 @@ export function useCreateLabelForm({
   defaultValues = getDefaultValues(),
   onSave,
 }: UseCreateLabelFormProps) {
+  const [, startTransition] = useTransition();
   const { isRedoEmpty, isUndoEmpty, onFormChange, redo, undo } =
     useCreateLabelFormHistory({
       initialSnapshot: defaultValues,
@@ -61,6 +62,7 @@ export function useCreateLabelForm({
     defaultValues,
     listeners: {
       onChange: ({ formApi }) => {
+        console.info('on form change: ', formApi.state.isFormValid);
         onFormChange(formApi.state.values);
       },
       onChangeDebounceMs: FORM_HISTORY_DEBOUNCE_MS,
@@ -115,14 +117,17 @@ export function useCreateLabelForm({
   });
 
   const resetFormWithSpecificData = useCallback(
-    (data: LabelData, formApi: typeof form = form) => {
+    async (data: LabelData, formApi: typeof form = form) => {
       formApi.reset(data, {
         keepDefaultValues: true,
       });
+      await formApi.validateAllFields('change');
+
       const meta = formApi.getFieldMeta('patient_info.name') as AnyFieldMeta;
       form.setFieldMeta('patient_info.name', {
         ...meta,
         isDirty: true,
+        isTouched: true,
       });
       void form.validate('change');
     },
@@ -131,12 +136,20 @@ export function useCreateLabelForm({
 
   const undoHistory = useCallback(() => {
     const newSnapshot = undo();
-    if (newSnapshot) resetFormWithSpecificData(newSnapshot);
+    if (newSnapshot) {
+      startTransition(async () => {
+        await resetFormWithSpecificData(newSnapshot);
+      });
+    }
   }, [undo, resetFormWithSpecificData]);
 
   const redoHistory = useCallback(() => {
     const newSnapshot = redo();
-    if (newSnapshot) resetFormWithSpecificData(newSnapshot);
+    if (newSnapshot) {
+      startTransition(async () => {
+        await resetFormWithSpecificData(newSnapshot);
+      });
+    }
   }, [redo, resetFormWithSpecificData]);
 
   return {

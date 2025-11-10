@@ -1,5 +1,12 @@
 import { initialPrompts, prompts, systemPrompt } from '../constants';
 
+type GetInstanceProps = Pick<InitProps, 'initProgressCallback'>;
+
+type InitProps = {
+  initProgressCallback?: (progress: number) => void;
+  options?: LlmOptions;
+};
+
 type LlmOptions = {
   temperature: number;
   topK: number;
@@ -15,15 +22,10 @@ export class AutoFillChromeBuiltIn {
     role: 'system',
   } satisfies LanguageModelSystemMessage;
 
-  // constructor(options: LlmOptions = { temperature: 0.0, topK: 1 }) {
-  //   // setup main options for the model
-  //   this.options = options;
-  // }
-
-  static async getInstance() {
+  static async getInstance({ initProgressCallback }: GetInstanceProps = {}) {
     try {
       if (!this.session) {
-        this.session = await this.init();
+        this.session = await this.init({ initProgressCallback });
       }
 
       return this.session;
@@ -32,7 +34,10 @@ export class AutoFillChromeBuiltIn {
     }
   }
 
-  static async init(options: LlmOptions = { temperature: 0.0, topK: 2 }) {
+  static async init({
+    initProgressCallback,
+    options = { temperature: 0.0, topK: 2 },
+  }: InitProps = {}) {
     if (!('LanguageModel' in self)) {
       throw new Error('LanguageModel API not available in the browser');
     }
@@ -54,6 +59,7 @@ export class AutoFillChromeBuiltIn {
       monitor(m) {
         m.addEventListener('downloadprogress', (e) => {
           console.info('Chrome built-in model download progress: ', e.loaded);
+          initProgressCallback?.(100 * e.loaded);
         });
       },
       ...options,
@@ -86,9 +92,20 @@ export class AutoFillChromeBuiltIn {
       const endTime = performance.now();
       console.info(`LLM inference time: ${endTime - initTime}`);
 
-      return result;
+      if (!result) {
+        return { error: 'No result from LLM' };
+      }
+
+      return { result };
     } catch (error) {
-      console.error('LLM chrome built in error:', error);
+      const message = 'Error in LLM';
+      const errorMessage =
+        error instanceof Error
+          ? `LLM chrome built-in error: ${error.message}`
+          : String(error);
+      console.error(errorMessage, error);
+
+      return { error: message };
     }
   }
 }

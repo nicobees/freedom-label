@@ -1,6 +1,9 @@
+import type { JSX } from 'react';
+
 type ButtonProps = {
   ariaLabel?: string;
   disabled?: boolean;
+  icon?: JSX.Element;
   label: string;
   onClick: () => void;
   size?: 'big' | 'small';
@@ -10,12 +13,13 @@ type ButtonProps = {
 export const Button = ({
   ariaLabel,
   disabled,
+  icon,
   label,
   onClick,
   size,
-  variant,
+  variant = 'filled',
 }: ButtonProps) => {
-  const variantClassName = variant ? ` btn--${variant}` : '';
+  const variantClassName = ` btn--${variant}`;
   const sizeClassName = size ? `btn-${size}` : '';
 
   return (
@@ -27,7 +31,7 @@ export const Button = ({
       title={label}
       type="button"
     >
-      {label}
+      {icon || label}
     </button>
   );
 };
