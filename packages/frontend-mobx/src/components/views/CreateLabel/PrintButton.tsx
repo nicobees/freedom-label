@@ -2,6 +2,7 @@ import type { OnPrintCallbackType } from './CreateLabelView';
 
 import { useFormContext } from '../../../hooks/useCreateLabelForm';
 import { useRootStore } from '../../../stores';
+import { Button } from '../../atoms/Button/Button';
 
 interface PrintButtonProps {
   disabled?: boolean;
@@ -30,14 +31,14 @@ export const PrintButton = ({
     >
       {({ data }) => {
         return (
-          <button
-            className={`btn btn--${variant}`}
+          <Button
             disabled={
               disabled ||
               !data.id ||
               !labelsStore.hasById(data.id) ||
               labelsStore.loadingPrintApi
             }
+            label={label}
             onClick={() => {
               if (disabled) return;
               void labelsStore.print({
@@ -45,10 +46,8 @@ export const PrintButton = ({
                 onMutationHandler: onPrintHandler,
               });
             }}
-            type="button"
-          >
-            {label}
-          </button>
+            variant={variant}
+          />
         );
       }}
     </form.Subscribe>

@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 import './button.css';
 
 type ActionButtonProps = {
-  icon: JSX.Element;
+  icon?: JSX.Element;
   label: string;
   onClickHandler: () => void;
 };
@@ -21,7 +21,7 @@ export const ActionButton = ({
       title={label}
       type="button"
     >
-      {icon}
+      {icon || label}
     </button>
   );
 };

@@ -9,6 +9,7 @@ import {
   withForm,
 } from '../../../hooks/useCreateLabelForm';
 import { LensSide, type LensSpecsData } from '../../../validation/schema';
+import { Button } from '../../atoms/Button/Button';
 import { getDefaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
@@ -79,14 +80,13 @@ const LensSpecCopyData = withForm({
 
     return (
       <div className="copy-actions">
-        <button
-          aria-label={ariaLabel}
-          className="btn btn--filled btn-small"
+        <Button
+          ariaLabel={ariaLabel}
+          label={label}
           onClick={onClickHandler}
-          type="button"
-        >
-          {label}
-        </button>
+          size="small"
+          variant="filled"
+        />
       </div>
     );
   },

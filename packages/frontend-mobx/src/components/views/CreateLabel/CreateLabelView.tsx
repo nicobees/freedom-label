@@ -17,6 +17,7 @@ import {
 } from '../../../hooks/useIntersectionObserver';
 import { useRootStore } from '../../../stores';
 import { AiModal } from '../../AiModal/AiModal';
+import { Button } from '../../atoms/Button/Button';
 import { LoadingOverlay } from '../../Loading/LoadingOverlay';
 import { defaultValuesFilled } from './defaultValues';
 import { FormDirtyChecker } from './FormDirtyChecker';
@@ -110,7 +111,7 @@ const CreateLabelViewComponent = ({
   );
 
   return (
-    <div className="create-label-container">
+    <section className="create-label-container">
       <aside className="left-sidebar-create-label"></aside>
       <section className="central-create-label">
         {onlyViewMode ? <OverLayer /> : null}
@@ -135,15 +136,13 @@ const CreateLabelViewComponent = ({
               />
               <form.SaveButton disabled={onlyViewMode} label={t('save')} />
               {debug ? (
-                <button
-                  className="btn btn--text"
+                <Button
+                  label={t('fillFormTemp')}
                   onClick={() => {
                     resetFormWithSpecificData(defaultValuesFilled(), form);
                   }}
-                  type="button"
-                >
-                  {t('fillFormTemp')}
-                </button>
+                  variant="text"
+                />
               ) : null}
             </div>
             <FormDirtyChecker form={form} />
@@ -156,7 +155,7 @@ const CreateLabelViewComponent = ({
           autoFillFormCallback={(data) => resetFormWithSpecificData(data, form)}
         />
       </aside>
-    </div>
+    </section>
   );
 };
 

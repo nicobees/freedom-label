@@ -2,6 +2,7 @@
 .create-label-container {
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
+  min-height: 100%;
 }
 
 .central-create-label {
@@ -249,4 +250,7 @@
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
+}
+
+.right-sidebar-create-label {
 }
