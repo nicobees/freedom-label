@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import SpeechRecognition, {
   useSpeechRecognition,
 } from 'react-speech-recognition';
@@ -13,14 +13,14 @@ export const useSpeechService = () => {
 
   const startListening = useCallback(() => {
     resetTranscript();
-    SpeechRecognition.startListening({
+    void SpeechRecognition.startListening({
       continuous: true,
       language: 'en-US',
     });
   }, [resetTranscript]);
 
   const stopListening = useCallback(() => {
-    SpeechRecognition.stopListening();
+    void SpeechRecognition.stopListening();
     resetTranscript();
   }, [resetTranscript]);
 

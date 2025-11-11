@@ -1,4 +1,4 @@
-import { initialPrompts, prompts, systemPrompt } from '../constants';
+import { initialPrompts, systemPrompt } from '../constants';
 
 type GetInstanceProps = Pick<InitProps, 'initProgressCallback'>;
 
@@ -12,11 +12,27 @@ type LlmOptions = {
   topK: number;
 };
 
+type PromptReturnType =
+  | {
+      error: string;
+      result?: never;
+    }
+  | {
+      error?: never;
+      result: string;
+    };
+
+export const isErrorReturnType = (
+  obj: PromptReturnType,
+): obj is { error: string } => {
+  return 'error' in obj;
+};
+
 export class AutoFillChromeBuiltIn {
+  private static abortController: AbortController = new AbortController();
   private static initialUserPrompts = initialPrompts;
   private static session: LanguageModel | null = null;
-  private static sessionJson: LanguageModel | null = null;
-  // options: LlmOptions;
+
   private static systemPrompt = {
     content: systemPrompt,
     role: 'system',
@@ -68,9 +84,9 @@ export class AutoFillChromeBuiltIn {
     return this.session;
   }
 
-  static async prompt(userPrompt: string) {
+  static async prompt(userPrompt: string): Promise<PromptReturnType> {
     try {
-      const prompt = userPrompt || prompts[7];
+      const prompt = userPrompt;
       console.info('inside chrome built in prompt: ', prompt);
 
       const agent = await AutoFillChromeBuiltIn.getInstance();
@@ -82,6 +98,9 @@ export class AutoFillChromeBuiltIn {
       const initTime = performance.now();
       const result = await agent.prompt(
         prompt,
+        {
+          signal: this.abortController.signal,
+        },
         // {
         //   responseConstraint: responseSchema,
         // },
@@ -107,5 +126,9 @@ export class AutoFillChromeBuiltIn {
 
       return { error: message };
     }
+  }
+
+  static resetPrompt() {
+    this.abortController.abort();
   }
 }

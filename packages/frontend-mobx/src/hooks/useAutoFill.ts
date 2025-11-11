@@ -1,11 +1,14 @@
 import isEmpty from 'lodash/isEmpty';
 import set from 'lodash/set';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { LabelData } from '../validation/schema';
 
-import { AutoFillChromeBuiltIn } from '../services/auto-fill-form/chromeBuiltIn';
+import {
+  AutoFillChromeBuiltIn,
+  isErrorReturnType,
+} from '../services/auto-fill-form/chromeBuiltIn';
 
 const fieldMapping = {
   ax: 'axis',
@@ -30,6 +33,7 @@ const parseKeyAndValue = (keyPath: string, value: string) => {
   }
   if (keyPath.includes('lens_specs')) {
     const keyPathParts = keyPath.split('.');
+    // eslint-disable-next-line sonarjs/single-character-alternation
     const lensSide = keyPathParts[1].replace(/\[|\]/g, '');
     const field = keyPathParts[
       keyPathParts.length - 1
@@ -46,6 +50,7 @@ const parseResult = (
   parsed: LabelData;
   parsedAsStrings: string[];
 } => {
+  // eslint-disable-next-line sonarjs/slow-regex
   const regex = /\{([^}]+)\}:\s*([^\n\r]+)/g;
 
   const output = {};
@@ -86,115 +91,107 @@ const parseResult = (
     set(output, 'lens_specs.right.data', null);
   }
 
-  /**
-   * - {patient_info.name}: Marco
-      - {patient_info.surname}: Verdi
-      - {lens_specs.[right].data.pwr}: -1.73
-      - {lens_specs.[right].data.dia}: 3
-      - {lens_specs.[right].data.bc}: 2.1
-      - {lens_specs.[right].data.ax}: 180
-      - {lens_specs.[right].data.batch}: late-2025
-      - {lens_specs.[right].data.sag_toric}: 749
-   */
-  // const data = {
-  //   lens_specs: {
-  //     left: { data: null, enabled: false },
-  //     right: {
-  //       data: {
-  //         ax: '180',
-  //         batch: 'late-2025',
-  //         bc: '2.1',
-  //         dia: '3',
-  //         pwr: '-1.73',
-  //         sag_toric: '749',
-  //       },
-  //       enabled: true,
-  //     },
-  //   },
-  //   patient_info: {
-  //     name: 'Marco',
-  //     surname: 'Verdi',
-  //   },
-  // };
-
   return { parsed: output as LabelData, parsedAsStrings };
 };
 
-export type UseAutoFillProps = {
-  autoFillFormCallback?: (data: LabelData) => void;
-  enabled: boolean;
+export type AiMessage<T extends AiMessageVariants = AiMessageVariants> = {
+  content: string;
+  type: T;
 };
 
-export const useAutoFill = (
-  { autoFillFormCallback, enabled }: UseAutoFillProps = { enabled: false },
-) => {
+export type AiMessageVariants =
+  | 'error'
+  | 'example'
+  | 'match'
+  | 'transcript'
+  | 'user';
+
+export type UseAutoFillProps = {
+  autoFillFormCallback?: (data: LabelData) => void;
+};
+
+export const useAutoFill = ({ autoFillFormCallback }: UseAutoFillProps) => {
   const { t } = useTranslation();
-  const initialisedRef = useRef<boolean>(false);
+
   const [initialised, setInitialised] = useState<boolean>(false);
   const [initProgress, setInitProgress] = useState<null | number>(null);
   const [loading, setLoading] = useState<null | string>(null);
 
-  useEffect(() => {
-    if (!enabled) {
-      initialisedRef.current = false;
+  const initAiModeLabel = t('initAiMode');
+
+  const deactivate = useCallback(() => {
+    if (initialised) {
       setInitialised(false);
+      AutoFillChromeBuiltIn.resetPrompt();
+    }
+  }, [initialised]);
+
+  const init = useCallback(async () => {
+    if (initialised) {
       return;
     }
 
-    const init = async function () {
-      setLoading(t('initAiMode'));
-      await AutoFillChromeBuiltIn.getInstance({
-        initProgressCallback: (progress) => {
-          setInitProgress(progress);
-        },
-      });
-      initialisedRef.current = true;
-      setInitialised(true);
-      setLoading(null);
-    };
+    setLoading(initAiModeLabel);
+    await AutoFillChromeBuiltIn.getInstance({
+      initProgressCallback: (progress) => {
+        setInitProgress(progress);
+      },
+    });
 
-    void init();
-  }, [enabled, initialised, setLoading, t]);
+    setInitialised(true);
+    setLoading(null);
+  }, [initAiModeLabel, initialised]);
 
   const prompt = useCallback(
-    async (userPrompt: string) => {
+    async (userPrompt: string): Promise<AiMessage[]> => {
       try {
-        if (!initialisedRef.current || !initialised) {
-          return;
+        if (!initialised) {
+          return [{ content: t('aiModeNotInitialised'), type: 'error' }];
         }
         setLoading(t('processingRequest'));
-        const { error, result } =
-          await AutoFillChromeBuiltIn.prompt(userPrompt);
+        const promptResult = await AutoFillChromeBuiltIn.prompt(userPrompt);
 
-        if (error || !result) {
+        if (isErrorReturnType(promptResult)) {
+          const { error } = promptResult;
           setLoading(null);
-          return error;
+          return [{ content: error, type: 'error' }];
         }
 
+        const { result } = promptResult;
         const { parsed, parsedAsStrings } = parseResult(result);
-
-        // console.info('in useAutoFill: ', result, parsed, parsedAsStrings);
 
         if (isEmpty(parsed) || !parsedAsStrings.length) {
           setLoading(null);
-          return 'No match found in your instructions. Try again following this format and examples (TODO)';
+          const infoMessageHeader =
+            'No matches found in your instructions. Please try again.';
+          return [
+            {
+              content: `${infoMessageHeader}`,
+              type: 'error',
+            },
+          ];
         }
 
         autoFillFormCallback?.(parsed);
 
-        const matchMessage =
-          'I found a match and I filled the form accordingly.';
-        const detailMessage = 'Check below the matching details';
-        const resultMessage = `${matchMessage}\n${detailMessage}\n\n${parsedAsStrings.join('\n')}`;
+        const matchMessage = `${t('successfullyFoundMatchesAndFilledForm')}.`;
+        const detailMessage = t('checkBelowForMatchingDetails');
+        const resultMessage = {
+          content: `${matchMessage}\n${detailMessage}\n\n${parsedAsStrings.join('\n')}`,
+          type: 'match',
+        } as const;
 
         setLoading(null);
-        return resultMessage;
+        return [resultMessage];
       } catch (error) {
-        console.error('LLM prompt failed:', error);
+        console.error('Error in AI handler:', error);
+
+        setLoading(null);
+        return [{ content: t('errorInAiHandler'), type: 'error' }];
       }
     },
     [autoFillFormCallback, initialised, t],
   );
 
-  return { initialised, initProgress, loading, prompt };
+  return { deactivate, init, initialised, initProgress, loading, prompt };
 };

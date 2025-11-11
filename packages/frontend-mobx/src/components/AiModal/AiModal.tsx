@@ -1,39 +1,99 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import './aiModal.css';
 import ArrowRightIcon from '../../assets/icons/arrow-right.svg?react';
 import MicrophoneIcon from '../../assets/icons/microphone.svg?react';
-import { useAutoFill, type UseAutoFillProps } from '../../hooks/useAutoFill';
-import { i18n } from '../../i18n';
-import { Button } from '../atoms/Button/Button';
 import {
-  ChatMessage,
-  type ChatMessageType,
-  createChatMessage,
-} from './ChatMessage';
+  type AiMessage,
+  useAutoFill,
+  type UseAutoFillProps,
+} from '../../hooks/useAutoFill';
+import { i18n } from '../../i18n';
+import { examplePrompts } from '../../services/auto-fill-form/constants';
+import { Button, type ButtonProps } from '../atoms/Button/Button';
+import { ChatMessage } from './ChatMessage';
 import { useSpeechService } from './useSpeechService';
+
+const ActivateSection = ({
+  disabled,
+  loadingMessage,
+  onClick,
+}: {
+  disabled: boolean;
+  loadingMessage: null | string;
+  onClick: () => void;
+}) => {
+  const { t } = useTranslation();
+  const label = i18n.format(t('ai'), 'uppercase');
+
+  return (
+    <div className="activate-button">
+      <Button disabled={disabled} label={label} onClick={onClick} />
+      {loadingMessage ? <div>{`${loadingMessage}`}</div> : null}
+    </div>
+  );
+};
+
+type MicrophoneButtonProps = Pick<ButtonProps, 'disabled'> & {
+  browserSupported: boolean;
+  disabled: boolean;
+  isListening: boolean;
+  onStartListening: () => void;
+  onStopListening: () => void;
+};
+
+const MicrophoneButton = ({
+  browserSupported,
+  disabled,
+  isListening,
+  onStartListening,
+  onStopListening,
+}: MicrophoneButtonProps) => {
+  const { t } = useTranslation();
+  const MicrophoneIconButton = isListening ? (
+    <span>X</span>
+  ) : (
+    <MicrophoneIcon aria-hidden="true" />
+  );
+
+  const label = browserSupported
+    ? `${t('record')} :)`
+    : t('notSupportedInYourBrowser');
+
+  return (
+    <Button
+      disabled={disabled}
+      icon={MicrophoneIconButton}
+      label={label}
+      onClick={() => {
+        if (isListening) {
+          void onStopListening();
+          return;
+        }
+        void onStartListening();
+      }}
+    />
+  );
+};
 
 type AiModalProps = Pick<UseAutoFillProps, 'autoFillFormCallback'>;
 
-// const filterBoolean = <T,>(item: null | T | undefined): item is T => {
-//   return !!item;
-// };
-
-// const temp2 = `Marco Verdi needs right lens, material is F2mid and it is a scleral lens. The lenses needs to be ready by 15th of March 2026.
-// It has power of -1.73, diameter of 3. It also needs a toric base curve of 2.1, while axis is 180. It also needs toric saggital of 749 only on right lens.
-// Production batch is late-2025.`;
-// const temp3 = `I want left lens for A Rossi. It has base curve of 1.24 and diameter of 2.24. Batch is late 2025`;
-
 export const AiModal = ({ autoFillFormCallback }: AiModalProps) => {
   const { t } = useTranslation();
-  const [aiModeActive, setAiModeActive] = useState(false);
   const [userInput, setUserInput] = useState('');
-  const [chatMessages, setChatMessages] = useState<ChatMessageType[]>([]);
-  const { initialised, initProgress, loading, prompt } = useAutoFill({
-    autoFillFormCallback,
-    enabled: aiModeActive,
-  });
+  const [chatMessages, setChatMessages] = useState<AiMessage[]>([]);
+
+  const { deactivate, init, initialised, initProgress, loading, prompt } =
+    useAutoFill({
+      autoFillFormCallback,
+    });
+
+  useEffect(() => {
+    return () => {
+      deactivate();
+    };
+  }, [deactivate]);
 
   const {
     listening,
@@ -43,107 +103,82 @@ export const AiModal = ({ autoFillFormCallback }: AiModalProps) => {
     transcript,
   } = useSpeechService();
 
-  const onMicrophoneClick = useCallback(() => {
-    if (listening) {
-      stopListening();
-      return;
-    }
-
-    void startListening();
-  }, [listening, startListening, stopListening]);
-
-  // const onTranscriptSend = useCallback(async () => {
-  //   stopListening();
-
-  //   if (!transcript) {
-  //     const newSystemInput = createChatMessage(
-  //       'No audio to transcribe',
-  //       'system',
-  //     );
-  //     setChatMessages((prev) => [newSystemInput, ...prev]);
-  //     return;
-  //   }
-
-  //   const newUserInput = createChatMessage(transcript, 'transcript');
-  //   setChatMessages((prev) => [newUserInput, ...prev]);
-
-  //   const llmAnswer = await prompt(newUserInput.content);
-  //   const newSystemInput = createChatMessage(
-  //     llmAnswer || 'No answer from llm',
-  //     'system',
-  //   );
-  //   setChatMessages((prev) => [newSystemInput, ...prev]);
-  // }, [prompt, setChatMessages, stopListening, transcript]);
-
   const onChatSend = useCallback(
     async (input: string) => {
       if (!input) {
         return;
       }
-      const newUserInput = createChatMessage(input, 'user');
-      setChatMessages((prev) => [newUserInput, ...prev]);
+      const userMessageType = listening ? 'transcript' : 'user';
+      setChatMessages((prev) => [
+        { content: input, type: userMessageType },
+        ...prev,
+      ]);
       setUserInput('');
 
       if (listening) {
         stopListening();
       }
 
-      const llmAnswer = await prompt(input);
-      const newSystemInput = createChatMessage(
-        llmAnswer || 'No answer from llm',
-        'system',
-      );
-      setChatMessages((prev) => [newSystemInput, ...prev]);
+      const aiMessages = await prompt(input);
+      const reversedAiMessages = aiMessages.toReversed();
+      setChatMessages((prev) => [...reversedAiMessages, ...prev]);
     },
-    [listening, prompt, setChatMessages, stopListening],
+    [listening, prompt, stopListening],
   );
 
-  const activateButton = (
-    <Button
-      disabled={!!loading || initialised}
-      label={i18n.format(t('ai'), 'uppercase')}
-      onClick={() => setAiModeActive(true)}
-    />
-  );
+  const addExamplePromptsMessage = useCallback(() => {
+    const infoMessagesExamples = [
+      `- ${examplePrompts[0]}`,
+      `- ${examplePrompts[1]}`,
+      `- ${examplePrompts[7]}`,
+    ].join('\n');
+
+    const message = { content: infoMessagesExamples, type: 'example' } as const;
+
+    setChatMessages((prev) => [message, ...prev]);
+  }, []);
+
+  const computedPlaceholder = useMemo(() => {
+    const placeholderPromptMatching = loading ? `${loading}...` : null;
+    const placeholderDictation = listening ? 'Listening...' : null;
+
+    return (
+      placeholderPromptMatching ||
+      placeholderDictation ||
+      t('typeInstructionsToFillTheForm')
+    );
+  }, [listening, loading, t]);
+
+  const computedInitLoadingMessage = useMemo(() => {
+    const initProgressMessage =
+      initProgress !== null && !!loading ? `(${initProgress}%)` : '';
+    return !initialised && !!loading
+      ? `${loading}...${initProgressMessage}`
+      : null;
+  }, [initialised, initProgress, loading]);
 
   const containerActivatedClassName = initialised ? ` initialised` : '';
-  const initProgressMessage =
-    initProgress !== null && !!loading ? `(${initProgress}%)` : '';
-  const loadingInitMessage =
-    !initialised && !!loading ? `${loading}...${initProgressMessage}` : '';
-  const LoadingInit = loading ? <div>{`${loadingInitMessage}`}</div> : null;
-
-  const placeholderPromptMatching = loading ? `${loading}...` : null;
-  const placeholderDictation = listening ? 'Listening...' : null;
-  const placeholder =
-    placeholderPromptMatching ||
-    placeholderDictation ||
-    t('typeInstructionsToFillTheForm');
-
-  const MicrophoneIconButton = listening ? (
-    <span>X</span>
-  ) : (
-    <MicrophoneIcon aria-hidden="true" />
-  );
-  const microphoneLabel = speechSupported
-    ? `${t('record')} :)`
-    : 'Not supported in your browser';
-
   const textAreaValue = listening ? transcript : userInput;
 
   return (
     <div className={`ai-modal-container ${containerActivatedClassName}`}>
       {!initialised ? (
-        <div className="activate-button">
-          {activateButton}
-          {LoadingInit}
-        </div>
+        <ActivateSection
+          disabled={!!loading || initialised}
+          loadingMessage={computedInitLoadingMessage}
+          onClick={() => void init()}
+        />
       ) : (
         <>
           <div className="chat-content">
             {chatMessages.map((message, index) => {
               return (
-                <ChatMessage chatMessage={message} index={index} key={index} />
+                <ChatMessage
+                  errorHandler={() => addExamplePromptsMessage()}
+                  index={index}
+                  key={index}
+                  message={message}
+                />
               );
             })}
           </div>
@@ -151,32 +186,21 @@ export const AiModal = ({ autoFillFormCallback }: AiModalProps) => {
             <div className="input-wrapper">
               <textarea
                 className="field__input input-text"
-                // disabled={!!loading || !initialised}
                 name="ai-modal-prompt"
                 onChange={(e) => {
                   setUserInput(e.target.value);
                 }}
-                placeholder={placeholder}
+                placeholder={computedPlaceholder}
                 value={textAreaValue}
               />
               <div className="buttons-wrapper">
-                <Button
+                <MicrophoneButton
+                  browserSupported={speechSupported}
                   disabled={!initialised || !!loading || !speechSupported}
-                  icon={MicrophoneIconButton}
-                  label={microphoneLabel}
-                  onClick={() => {
-                    void onMicrophoneClick();
-                  }}
+                  isListening={listening}
+                  onStartListening={() => void startListening()}
+                  onStopListening={() => void stopListening()}
                 />
-                {/* <Button
-                  disabled={!initialised || !!loading}
-                  icon={<ArrowRightIcon aria-hidden="true" />}
-                  label={t('send')}
-                  onClick={() => {
-                    void onTranscriptSend();
-                  }}
-                  visible={!!listening}
-                /> */}
                 <Button
                   disabled={!initialised || !!loading || !textAreaValue}
                   icon={<ArrowRightIcon aria-hidden="true" />}
@@ -184,7 +208,6 @@ export const AiModal = ({ autoFillFormCallback }: AiModalProps) => {
                   onClick={() => {
                     void onChatSend(textAreaValue);
                   }}
-                  visible={true}
                 />
               </div>
             </div>

@@ -1,6 +1,5 @@
 import {
   initialPrompts,
-  prompts,
   systemPrompt,
 } from '../services/auto-fill-form/constants';
 import { AutoFillTransformers } from '../services/auto-fill-form/transformersjs';
@@ -22,7 +21,7 @@ self.onmessage = async function (event: MessageEvent<string>) {
     const newPrompt = [
       { content: systemPrompt, role: 'system' },
       ...initialPrompts.slice(0, 2),
-      { content: data || prompts[4], role: 'user' },
+      { content: data, role: 'user' },
     ];
     const initTime = performance.now();
     const result = await agent(

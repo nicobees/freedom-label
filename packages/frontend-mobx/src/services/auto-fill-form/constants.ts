@@ -99,41 +99,15 @@ Production batch is late-2025.
   },
 ] satisfies LanguageModelMessage[];
 
-export const prompts = [
-  `
-I want to create only-left contact lens for patience John Doe. It has a power deficit of 2.25.
-Also custom sagittal of 1234 and toric sagittal of 1248. Batch number is 10-2025. Due date is on 31st of next January
-`,
-  `
-I want to create contact lenses for patient Tom First. It has a power deficit of 1.25, with diameter of 1.10.
-The base curve is 1.12 for the left lens, while is 2.10 for the right lens. Batch is temp-prod
-`,
-  `
-I want to create only-left contact lens for patience John Doe. It has a power deficit of 2.25.
-Also custom sagittal of 1234 and toric sagittal of 1248. Batch number is 10-2025. Due date is on 31st of next January
-`,
-  `
-Create toric lenses in RGP for patience Doe John. Left lens has power of 0.25, right lens a deficit of 1.75.
-Diameter is 14.10, base curve is 2.39. Batch is 11-2025 and the due date is from today in 6 months.
-`,
-  `
-I want to create a toric lens in sylicon, a right lens. Patience is Doe John. Power deficit of 1.15, axis value of 45, cylinder correction
-of -2, diameter of 14.22, and additional power as deficit of 0.25. The lens will last in 3 months.
-`,
-  `
-Mario Rossi needs a left scleral lens in F2mid. The lenses needs to be shipped in UK, oxford street 142, by 15th of March 2026. It has power of -1.73, diameter of 3, base curve of 2. Axis is 180 and it also needs toric saggital of 749.
-Production batch is late-2025.
-`,
-  `
-We have to create night lenses in F2mid. The lenses needs to be shipped to Tom Brown in UK, oxford street 142, by 15th of March 2026.
-It has power of -1.73, diameter of 3, and left lens has base curve of 2. Axis is 180; it also needs toric saggital of 749 only on right lens.
-Production batch is late-2025.
-`,
-  `
-Marco Verdi needs right lens, material is F2mid and it is a scleral lens. The lenses needs to be ready by 15th of March 2026.
-It has power of -1.73, diameter of 3. It also needs a toric base curve of 2.1, while axis is 180. It also needs toric saggital of 749 only on right lens.
-Production batch is late-2025.
-`,
+export const examplePrompts = [
+  `I want to create only-left contact lens for patience John Doe. It has a power deficit of 2.25. Also custom sagittal of 1234 and toric sagittal of 1248. Batch number is 10-2025.`,
+  `I want to create contact lenses for patient Tom White. It has a power deficit of 1.25, with diameter of 1.10. The base curve is 1.12 for the left lens, while is 2.10 for the right lens. Batch is temp-prod`,
+  `I want to create only-left contact lens for patience John Doe. It has a power deficit of 2.25. Also custom sagittal of 1234 and toric sagittal of 1248. Batch number is 10-2025. Due date is on 31st of next January`,
+  `Create toric lenses in RGP for patience Doe John. Left lens has power of 0.25, right lens a deficit of 1.75. Diameter is 14.10, base curve is 2.39. Batch is 11-2025 and the due date is from today in 6 months.`,
+  `I want to create a toric lens in sylicon, a right lens. Patience is Doe John. Power deficit of 1.15, axis value of 45, cylinder correction of -2, diameter of 14.22, and additional power as deficit of 0.25. The lens will last in 3 months.`,
+  `Mario Rossi needs a left scleral lens in F2mid. The lenses needs to be shipped in UK, oxford street 142, by 15th of March 2026. It has power of -1.73, diameter of 3, base curve of 2. Axis is 180 and it also needs toric saggital of 749. Production batch is late-2025.`,
+  `We have to create night lenses in F2mid. The lenses needs to be shipped to Tom Brown in UK, oxford street 142, by 15th of March 2026. It has power of -1.73, diameter of 3, and left lens has base curve of 2. Axis is 180; it also needs toric saggital of 749 only on right lens. Production batch is late-2025.`,
+  `Marco Verdi needs right lens, material is F2mid and it is a scleral lens. It has power of -1.73, diameter of 3. It also needs a toric base curve of 2.1, while axis is 180. It also needs toric saggital of 749 only on right lens. Production batch is late-2025.`,
 ];
 
 const PromptLensSpecsDataSchema = LensSpecsDataSchema.extend({

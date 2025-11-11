@@ -1,4 +1,5 @@
 .chat-message {
+  position: relative;
   font-size: var(--font-size-sm);
   line-height: 1.3;
   padding: var(--space-2);
@@ -11,10 +12,32 @@
   background: #00f7f563;
 }
 
-.chat-message-system {
-  background: #f7a50063;
+.chat-message-match {
+  background: #27db108f;
+}
+
+.chat-message-error {
+  border: 3px solid #ff000091;
+  background: #ff8d8b4d;
 }
 
 .chat-message-transcript {
-  background: #0cf70063;
+  background: #00f7f52b;
+}
+
+.chat-message-example {
+  font-size: var(--font-size-xsm);
+  border: 2px solid #ff000091;
+  background: blanchedalmond;
+}
+
+.chat-message-icon {
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+}
+
+.chat-message-show-examples-action {
+  cursor: pointer;
+  text-decoration: underline;
 }

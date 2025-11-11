@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-type ButtonProps = {
+export type ButtonProps = {
   ariaLabel?: string;
   disabled?: boolean;
   icon?: JSX.Element;
