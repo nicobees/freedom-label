@@ -1,0 +1,176 @@
+{
+  "description": {
+    "type": "string",
+    "minLength": 2,
+    "maxLength": 24
+  },
+  "due_date": {
+    "type": "string",
+    "pattern": "^\\d{2}\\/\\d{2}\\/\\d{4}$"
+  },
+  "id": {
+    "anyOf": [
+      {
+        "type": "string",
+        "format": "uuid"
+      },
+      {
+        "type": "null"
+      }
+    ]
+  },
+  "lens_specs": {
+    "type": "object",
+    "properties": {
+      "left": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "add": {
+                    "type": "string",
+                    "pattern": "^[+-]?\\d{1,2}\\.\\d{2}$"
+                  },
+                  "ax": {
+                    "type": "string",
+                    "pattern": "^\\d{1,3}$"
+                  },
+                  "batch": {
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "not": {}
+                          },
+                          {
+                            "type": "string",
+                            "pattern": "^.{0,7}$"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bc": {
+                    "type": "string",
+                    "pattern": "^\\d{1,2}\\.\\d{2}$"
+                  },
+                  "bc_toric": {
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "not": {}
+                          },
+                          {
+                            "type": "string",
+                            "pattern": "^\\d{1,2}\\.\\d{2}$"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "cyl": {
+                    "type": "string",
+                    "pattern": "^[+-]?\\d{1,2}\\.\\d{2}$"
+                  },
+                  "dia": {
+                    "type": "string",
+                    "pattern": "^\\d{1,2}\\.\\d{2}$"
+                  },
+                  "pwr": {
+                    "type": "string",
+                    "pattern": "^[+-]?\\d{1,2}\\.\\d{2}$"
+                  },
+                  "sag": {
+                    "type": "string",
+                    "pattern": "^\\d{1,4}$"
+                  },
+                  "sag_toric": {
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "not": {}
+                          },
+                          {
+                            "type": "string",
+                            "pattern": "^\\d{1,4}$"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": ["add", "ax", "bc", "cyl", "dia", "pwr", "sag"],
+                "additionalProperties": false
+              },
+              "enabled": {
+                "type": "boolean",
+                "const": true
+              }
+            },
+            "required": ["data", "enabled"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "anyOf": [
+                  {},
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "enabled": {
+                "type": "boolean",
+                "const": false
+              }
+            },
+            "required": ["enabled"],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "right": {
+        "$ref": "#/definitions/LabelDataSchema/properties/lens_specs/properties/left"
+      }
+    },
+    "required": ["left", "right"],
+    "additionalProperties": false
+  },
+  "patient_info": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 30
+      },
+      "surname": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 30
+      }
+    },
+    "required": ["name", "surname"],
+    "additionalProperties": false
+  },
+  "production_date": {
+    "type": "string",
+    "pattern": "^\\d{2}\\/\\d{2}\\/\\d{4}$"
+  }
+}

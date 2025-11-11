@@ -37,7 +37,15 @@ export function initI18n() {
     void i18n.use(initReactI18next).init({
       defaultNS: 'common',
       fallbackLng: DEFAULT_LANG,
-      interpolation: { escapeValue: false },
+      interpolation: {
+        escapeValue: false,
+        format: function (value: string, format): string {
+          if (format === 'uppercase') return value.toUpperCase();
+          if (format === 'lowercase') return value.toLowerCase();
+
+          return value;
+        },
+      },
       lng: detectInitialLanguage(),
       ns: ['common'],
       resources,

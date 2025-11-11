@@ -1,4 +1,5 @@
 import { useFormContext } from '../../../hooks/useCreateLabelForm';
+import { Button } from '../../atoms/Button/Button';
 
 interface PrintButtonProps {
   disabled?: boolean;
@@ -23,17 +24,15 @@ export const SaveButton = ({
     >
       {({ canSubmit, isPristine, isValid }) => {
         return (
-          <button
-            className={`btn btn--${variant}`}
+          <Button
             disabled={disabled || !canSubmit || !isValid || isPristine}
+            label={label}
             onClick={() => {
               if (disabled) return;
               void form.handleSubmit();
             }}
-            type="button"
-          >
-            {label}
-          </button>
+            variant={variant}
+          />
         );
       }}
     </form.Subscribe>

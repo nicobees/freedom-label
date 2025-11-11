@@ -1,0 +1,29 @@
+.patient-info-container {
+  grid-column: 1 / 1;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.5fr auto;
+}
+
+.patient-info-title {
+  grid-column-end: span 2;
+}
+
+/* Patient Info specific responsive layout */
+.patient-info-fields {
+  grid-template-rows: auto auto;
+  gap: 0px;
+}
+
+.patient-info-fields .field {
+  /* margin-bottom: 0px; */
+  /* margin-block-end: 0px; */
+}
+
+/* ≥ desktop breakpoint (min-width: var(--bp-desktop) = 1024px) */
+/* @media (min-width: 1024px) {
+  .patient-info-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+} */

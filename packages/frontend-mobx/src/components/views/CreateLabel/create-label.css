@@ -1,5 +1,11 @@
 /* Create Label layout */
-.create-label {
+.create-label-container {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  min-height: 100%;
+}
+
+.central-create-label {
   position: relative;
   padding: 8px;
   margin-inline: auto;
@@ -20,6 +26,8 @@
 
 .create-form {
   display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
   gap: 12px; /* reduced vertical spacing between main sections */
   width: 100%;
 }
@@ -32,6 +40,13 @@
 
 .history-actions__btn {
   border: 3px solid;
+}
+
+.history-actions__btn.small {
+  width: 34px;
+  height: 34px;
+  min-height: 20px;
+  padding: 0px;
 }
 
 .history-actions__btn svg {
@@ -84,6 +99,7 @@
 }
 
 .actions {
+  grid-column: 1 / span 2;
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -234,4 +250,8 @@
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
+}
+
+.right-sidebar-create-label {
+  height: calc(100vh - var(--header-height, 56px));
 }

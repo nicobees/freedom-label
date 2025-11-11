@@ -2,12 +2,14 @@ import type { TFunction } from 'i18next';
 
 import { formOptions, useStore } from '@tanstack/react-form';
 
+import './lensSpecColumn.css';
 import {
   type FormType,
   useFormContext,
   withForm,
 } from '../../../hooks/useCreateLabelForm';
 import { LensSide, type LensSpecsData } from '../../../validation/schema';
+import { Button } from '../../atoms/Button/Button';
 import { getDefaultValues } from './defaultValues';
 
 const formOptionsObject = formOptions({
@@ -78,14 +80,13 @@ const LensSpecCopyData = withForm({
 
     return (
       <div className="copy-actions">
-        <button
-          aria-label={ariaLabel}
-          className="btn btn--filled"
+        <Button
+          ariaLabel={ariaLabel}
+          label={label}
           onClick={onClickHandler}
-          type="button"
-        >
-          {label}
-        </button>
+          size="small"
+          variant="filled"
+        />
       </div>
     );
   },
@@ -255,16 +256,18 @@ export const LensSpecColumn = withForm({
 
     return (
       <fieldset aria-label={groupLabel} className="lens-col" role="group">
-        <form.AppField name={`${base}.enabled` as const}>
-          {(field) => <field.CheckboxField label={checkboxLabel} />}
-        </form.AppField>
+        <div className="lens-col-title">
+          <form.AppField name={`${base}.enabled` as const}>
+            {(field) => <field.CheckboxField label={checkboxLabel} />}
+          </form.AppField>
+          <LensSpecColumnCopyData
+            form={form as unknown as FormType}
+            side={typedSide}
+            t={t}
+          />
+        </div>
 
         <LensSpecColumnGridDataWrapper
-          form={form as unknown as FormType}
-          side={typedSide}
-          t={t}
-        />
-        <LensSpecColumnCopyData
           form={form as unknown as FormType}
           side={typedSide}
           t={t}

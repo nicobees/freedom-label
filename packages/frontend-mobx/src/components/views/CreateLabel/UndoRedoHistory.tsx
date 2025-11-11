@@ -37,7 +37,7 @@ export const UndoRedoHistory = ({
       <div className="history-actions">
         <button
           aria-label={t('undo')}
-          className={`btn ${buttonClassName} history-actions__btn`}
+          className={`btn ${buttonClassName} history-actions__btn small`}
           disabled={undoDisabled}
           onClick={onUndoCallback}
           title={t('undo')}
@@ -47,7 +47,7 @@ export const UndoRedoHistory = ({
         </button>
         <button
           aria-label={t('redo')}
-          className={`btn ${buttonClassName} history-actions__btn`}
+          className={`btn ${buttonClassName} history-actions__btn small`}
           disabled={redoDisabled}
           onClick={onRedoCallback}
           title={t('redo')}

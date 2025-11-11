@@ -8,7 +8,8 @@
     "types": [
       "vitest/globals",
       "vitest/jsdom",
-      "@testing-library/jest-dom/vitest"
+      "@testing-library/jest-dom/vitest",
+      "@types/dom-chromium-ai"
     ]
   }
 }

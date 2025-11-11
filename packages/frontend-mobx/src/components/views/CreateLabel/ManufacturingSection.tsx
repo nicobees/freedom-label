@@ -4,6 +4,7 @@ import { formOptions } from '@tanstack/react-form';
 
 import { withForm } from '../../../hooks/useCreateLabelForm';
 import { getDefaultValues } from './defaultValues';
+import './manifacturingInfo.css';
 
 const formOptionsObject = formOptions({
   defaultValues: getDefaultValues(),
@@ -18,7 +19,11 @@ export const ManufacturingSection = withForm({
     const label = t('manufacturingInfo');
 
     return (
-      <div aria-label={label} className="card" role="group">
+      <div
+        aria-label={label}
+        className="manifacturing-info-container card"
+        role="group"
+      >
         <div aria-level={2} className="card__title" role="heading">
           {label}
         </div>

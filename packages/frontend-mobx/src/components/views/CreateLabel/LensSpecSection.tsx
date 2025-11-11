@@ -2,6 +2,7 @@ import type { TFunction } from 'i18next';
 
 import { formOptions } from '@tanstack/react-form';
 
+import './lensSpecsSection.css';
 import { withForm } from '../../../hooks/useCreateLabelForm';
 import { LensSide } from '../../../validation/schema';
 import { getDefaultValues } from './defaultValues';
@@ -18,7 +19,11 @@ export const LensSpecSection = withForm({
   },
   render: ({ form, t }) => {
     return (
-      <div aria-label={t('lensSpecs')} className="card" role="group">
+      <div
+        aria-label={t('lensSpecs')}
+        className="lens-specs-container card"
+        role="group"
+      >
         <div aria-level={2} className="card__title" role="heading">
           {t('lensSpecs')}
         </div>

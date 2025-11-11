@@ -1,7 +1,8 @@
+import merge from 'lodash/merge';
 import { observer } from 'mobx-react-lite';
 
 import './create-label.css';
-import { useRef } from 'react';
+import { useRef, useTransition } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -16,8 +17,10 @@ import {
   useIntersectionObserver,
 } from '../../../hooks/useIntersectionObserver';
 import { useRootStore } from '../../../stores';
+import { AiModal } from '../../AiModal/AiModal';
+import { Button } from '../../atoms/Button/Button';
 import { LoadingOverlay } from '../../Loading/LoadingOverlay';
-import { defaultValuesFilled } from './defaultValues';
+import { defaultValuesFilled, getDefaultValues } from './defaultValues';
 import { FormDirtyChecker } from './FormDirtyChecker';
 import { LensSpecSection } from './LensSpecSection';
 import { ManufacturingSection } from './ManufacturingSection';
@@ -53,6 +56,7 @@ const CreateLabelViewComponent = ({
   title,
 }: CreateLabelProps) => {
   const { t } = useTranslation();
+  const [, startTransition] = useTransition();
 
   const { headerStore } = useRootStore();
   const undoRedoRef = useRef<HTMLDivElement | null>(null);
@@ -101,44 +105,60 @@ const CreateLabelViewComponent = ({
   );
 
   return (
-    <section className="create-label">
-      {onlyViewMode ? <OverLayer /> : null}
-      {UndoRedoComponent}
-      {headerStore.undoRedoPortalElement
-        ? createPortal(
-            UndoRedoComponentPortal,
-            headerStore.undoRedoPortalElement,
-          )
-        : null}
+    <section className="create-label-container">
+      <aside className="left-sidebar-create-label"></aside>
+      <section className="central-create-label">
+        {onlyViewMode ? <OverLayer /> : null}
+        {UndoRedoComponent}
+        {headerStore.undoRedoPortalElement
+          ? createPortal(
+              UndoRedoComponentPortal,
+              headerStore.undoRedoPortalElement,
+            )
+          : null}
 
-      <form aria-label={`${title} Form`} className="create-form" role="form">
-        <form.AppForm>
-          <PatientInfoSection form={form} />
-          <ManufacturingSection form={form} t={t} />
-          <LensSpecSection form={form} t={t} />
-          <div className="actions">
-            <form.PrintButton
-              disabled={onlyViewMode}
-              label={t('print')}
-              onPrintHandler={onPrintCallback}
-            />
-            <form.SaveButton disabled={onlyViewMode} label={t('save')} />
-            {debug ? (
-              <button
-                className="btn btn--text"
-                onClick={() => {
-                  resetFormWithSpecificData(defaultValuesFilled(), form);
-                }}
-                type="button"
-              >
-                {t('fillFormTemp')}
-              </button>
-            ) : null}
-          </div>
-          <FormDirtyChecker form={form} />
-        </form.AppForm>
-      </form>
-      <LoadingOverlay loading={loading} />
+        <form aria-label={`${title} Form`} className="create-form" role="form">
+          <form.AppForm>
+            <PatientInfoSection form={form} />
+            <ManufacturingSection form={form} t={t} />
+            <LensSpecSection form={form} t={t} />
+            <div className="actions">
+              <form.PrintButton
+                disabled={onlyViewMode}
+                label={t('print')}
+                onPrintHandler={onPrintCallback}
+              />
+              <form.SaveButton disabled={onlyViewMode} label={t('save')} />
+              {debug ? (
+                <Button
+                  label={t('fillFormTemp')}
+                  onClick={() => {
+                    startTransition(async () => {
+                      await resetFormWithSpecificData(
+                        defaultValuesFilled(),
+                        form,
+                      );
+                    });
+                  }}
+                  variant="text"
+                />
+              ) : null}
+            </div>
+            <FormDirtyChecker form={form} />
+          </form.AppForm>
+        </form>
+        <LoadingOverlay loading={loading} />
+      </section>
+      <aside className="right-sidebar-create-label">
+        <AiModal
+          autoFillFormCallback={(data) => {
+            startTransition(async () => {
+              const result = merge(getDefaultValues(), data);
+              await resetFormWithSpecificData(result, form);
+            });
+          }}
+        />
+      </aside>
     </section>
   );
 };

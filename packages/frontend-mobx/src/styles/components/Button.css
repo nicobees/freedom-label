@@ -31,6 +31,9 @@
     color: var(--_color);
     border-color: var(--_border);
   }
+  .btn--filled.btn-small {
+    min-height: auto;
+  }
   .btn--outline {
     --_bg: transparent;
     --_color: var(--color-accent);

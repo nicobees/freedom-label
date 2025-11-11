@@ -1,0 +1,131 @@
+{
+  "dataType": "Map",
+  "value": [
+    [
+      "c867b811",
+      {
+        "hash": "c867b811",
+        "payload": {
+          "description": "f2HIGT",
+          "due_date": "19/09/2026",
+          "lens_specs": {
+            "left": {
+              "add": "+0.00",
+              "ax": "0",
+              "batch": "01-0001",
+              "bc": "7.83",
+              "bc_toric": "7.83",
+              "cyl": "-0.00",
+              "dia": "9.80",
+              "pwr": "-9.00",
+              "sag": "1850",
+              "sag_toric": "1950"
+            },
+            "right": {
+              "add": "+0.00",
+              "ax": "0",
+              "batch": "01-0001",
+              "bc": "7.83",
+              "bc_toric": "7.83",
+              "cyl": "-0.00",
+              "dia": "9.80",
+              "pwr": "-9.00",
+              "sag": "1850",
+              "sag_toric": "1950"
+            }
+          },
+          "patient_info": {
+            "name": "andrea",
+            "surname": "cara"
+          },
+          "production_date": "19/09/2025"
+        },
+        "timestamp": 1758268657449
+      }
+    ],
+    [
+      "cebc097a",
+      {
+        "hash": "cebc097a",
+        "payload": {
+          "description": "rgp-F2High-Blu-Violet",
+          "due_date": "19/09/2026",
+          "lens_specs": {
+            "left": {
+              "add": "+0.00",
+              "ax": "0",
+              "batch": "0A-001",
+              "bc": "8.02",
+              "bc_toric": "8.02",
+              "cyl": "-0.00",
+              "dia": "10.40",
+              "pwr": "-7.50",
+              "sag": "1770",
+              "sag_toric": "1740"
+            },
+            "right": {
+              "add": "+0.00",
+              "ax": "0",
+              "batch": "0A-002",
+              "bc": "8.02",
+              "bc_toric": "8.02",
+              "cyl": "-0.00",
+              "dia": "10.40",
+              "pwr": "-7.00",
+              "sag": "1730",
+              "sag_toric": "1700"
+            }
+          },
+          "patient_info": {
+            "name": "Degosciu",
+            "surname": "Tommaso"
+          },
+          "production_date": "19/09/2025"
+        },
+        "timestamp": 1758533179857
+      }
+    ],
+    [
+      "502c4463",
+      {
+        "hash": "502c4463",
+        "payload": {
+          "description": "rgp-F2High-Blu-Violet",
+          "due_date": "24/09/2026",
+          "lens_specs": {
+            "left": {
+              "add": "+0.00",
+              "ax": "0",
+              "batch": "0A-003",
+              "bc": "7.30",
+              "bc_toric": null,
+              "cyl": "-0.00",
+              "dia": "9.30",
+              "pwr": "-8.25",
+              "sag": "1490",
+              "sag_toric": null
+            },
+            "right": {
+              "add": "+0.00",
+              "ax": "0",
+              "batch": "0A-004",
+              "bc": "7.50",
+              "bc_toric": null,
+              "cyl": "-0.00",
+              "dia": "9.30",
+              "pwr": "-8.00",
+              "sag": "1450",
+              "sag_toric": null
+            }
+          },
+          "patient_info": {
+            "name": "Roberta",
+            "surname": "Mastropaolo"
+          },
+          "production_date": "24/09/2025"
+        },
+        "timestamp": 1758703456535
+      }
+    ]
+  ]
+}

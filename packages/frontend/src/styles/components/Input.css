@@ -1,7 +1,7 @@
 @layer components {
   .field {
     /* neutral base; layout handled by parent grouping containers */
-    margin-block-end: var(--space-2); /* compact vertical spacing */
+    /* margin-block-end: var(--space-2); compact vertical spacing */
     display: block;
   }
   .field-group {
