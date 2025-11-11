@@ -177,7 +177,7 @@ export const useAutoFill = (
 
         if (isEmpty(parsed) || !parsedAsStrings.length) {
           setLoading(null);
-          return 'No match found in your instrunctions. Try again following this format and examples (TODO)';
+          return 'No match found in your instructions. Try again following this format and examples (TODO)';
         }
 
         autoFillFormCallback?.(parsed);
