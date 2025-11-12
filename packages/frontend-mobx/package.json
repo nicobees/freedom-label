@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "private": true,
+  "homepage": "https://nicobees.github.io/freedom-label",
   "license": "Apache-2.0",
   "author": "Nicola Abis (https://github.com/nicobees)",
   "version": "0.0.0",
@@ -8,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build-gh-pages": "tsc -b && vite build --base=$VITE_BASE_PATH",
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
