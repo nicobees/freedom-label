@@ -2,6 +2,16 @@
 
 📋 A modern web application for creating and printing custom eyewear prescription labels with a mobile-first design approach.
 
+Here is a Demo where you can try it out: https://nicobees.github.io/freedom-label
+
+> Have a look at the AI-based auto-fill form feature 😎
+>
+> ⚠️ This requires Chrome version 140+ and the following flags to be "Enabled"
+>
+> chrome://flags/#prompt-api-for-gemini-nano
+>
+> chrome://flags/#prompt-api-for-gemini-nano-multimodal-input
+
 ## 📝 Project Description
 
 Freedom Label © is a comprehensive solution for eyewear prescription label management, built as a modern web application with React frontend and FastAPI backend. The application provides an intuitive interface for creating detailed prescription labels including patient information, lens specifications, and manufacturing details.
@@ -13,11 +23,12 @@ Freedom Label © is a comprehensive solution for eyewear prescription label mana
 - 📅 Manufacturing date tracking
 - 🖨️ Direct label printing via CUPS integration
 - 🌓 Light/dark theme support
-- 📱 Mobile-first responsive design
+- 📱 Mobile-first responsive design (to be fixed)
 - 💾 Local storage for printed labels history
 - ♿ Accessibility-focused design with ARIA support
 - 🌍 Internationalization ready
-- 🔄 [TODO]Undo/redo functionality for form editing
+- 🔄 Undo/redo history in the lens form
+- !!! AI !!! Auto-fill lens form using natural language prompts, with both text and voice input (uses Chrome built-in Gemini nano model)
 
 ## 🏗️ Architecture
 
