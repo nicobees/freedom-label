@@ -62,7 +62,6 @@ export function useCreateLabelForm({
     defaultValues,
     listeners: {
       onChange: ({ formApi }) => {
-        console.info('on form change: ', formApi.state.isFormValid);
         onFormChange(formApi.state.values);
       },
       onChangeDebounceMs: FORM_HISTORY_DEBOUNCE_MS,
