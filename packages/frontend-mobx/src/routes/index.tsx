@@ -20,6 +20,9 @@ import EditLabelRoute from './EditLabelRoute/EditLabelRoute';
 import HomePageRoute from './HomePage/HomePageRoute';
 import ListLabelRoute from './ListLabelRoute/ListLabelRoute';
 
+const BASE_PATH = (String(import.meta.env?.VITE_BASE_PATH) || '/') as
+  | '/'
+  | '/freedom-label/';
 const IS_DEMO_MODE = import.meta.env?.VITE_DEMO_MODE === 'true';
 
 export type RouterContext = {
@@ -129,7 +132,7 @@ const routeTree = rootRoute.addChildren([
 ]);
 
 function createAppRouter(history?: RouterHistory) {
-  return createRouter({ history, routeTree });
+  return createRouter({ basepath: BASE_PATH, history, routeTree });
 }
 
 export const router = createAppRouter();
