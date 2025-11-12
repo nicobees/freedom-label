@@ -20,6 +20,8 @@ import EditLabelRoute from './EditLabelRoute/EditLabelRoute';
 import HomePageRoute from './HomePage/HomePageRoute';
 import ListLabelRoute from './ListLabelRoute/ListLabelRoute';
 
+const IS_DEMO_MODE = import.meta.env?.VITE_DEMO_MODE === 'true';
+
 export type RouterContext = {
   getIsHome?: () => boolean;
   getTitle?: () => string;
@@ -84,8 +86,12 @@ const homeRoute = createRoute({
 
 const createLabelRoute = createRoute({
   beforeLoad: () => {
+    const baseTitle = i18n.t('createLabel');
+    const demoTitle = IS_DEMO_MODE ? ` (${String(i18n.t('demoMode'))})` : '';
+    const title = `${baseTitle}${demoTitle}`;
+
     return {
-      getTitle: () => i18n.t('createLabel'),
+      getTitle: () => title,
     };
   },
   component: CreateLabelRoute,

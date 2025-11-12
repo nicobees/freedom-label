@@ -27,6 +27,8 @@ import { ManufacturingSection } from './ManufacturingSection';
 import { PatientInfoSection } from './PatientInfoSection';
 import { UndoRedoHistory } from './UndoRedoHistory';
 
+const IS_DEMO_MODE = import.meta.env?.VITE_DEMO_MODE === 'true';
+
 export type OnPrintCallbackType = (
   errorMessage?: string,
   filename?: string,
@@ -104,6 +106,10 @@ const CreateLabelViewComponent = ({
     />
   );
 
+  const printButtonTooltip = IS_DEMO_MODE
+    ? `${t('print')} ${String(t('disabledInDemoMode'))}`
+    : t('print');
+
   return (
     <section className="create-label-container">
       <aside className="left-sidebar-create-label"></aside>
@@ -124,9 +130,10 @@ const CreateLabelViewComponent = ({
             <LensSpecSection form={form} t={t} />
             <div className="actions">
               <form.PrintButton
-                disabled={onlyViewMode}
+                disabled={onlyViewMode || IS_DEMO_MODE}
                 label={t('print')}
                 onPrintHandler={onPrintCallback}
+                tooltip={printButtonTooltip}
               />
               <form.SaveButton disabled={onlyViewMode} label={t('save')} />
               {debug ? (

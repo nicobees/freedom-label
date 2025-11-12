@@ -7,6 +7,7 @@ export type ButtonProps = {
   label: string;
   onClick: () => void;
   size?: 'big' | 'small';
+  tooltip?: string;
   variant?: 'filled' | 'outline' | 'text';
   visible?: boolean;
 };
@@ -18,6 +19,7 @@ export const Button = ({
   label,
   onClick,
   size,
+  tooltip,
   variant = 'filled',
   visible = true,
 }: ButtonProps) => {
@@ -32,7 +34,7 @@ export const Button = ({
       className={`btn ${variantClassName} ${sizeClassName}`}
       disabled={disabled}
       onClick={onClick}
-      title={label}
+      title={tooltip || label}
       type="button"
     >
       {icon || label}
