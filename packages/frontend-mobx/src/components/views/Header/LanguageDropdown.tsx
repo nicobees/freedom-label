@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 import { changeLanguage, SUPPORTED_LANGS } from '../../../i18n';
 
+const IS_DEMO_MODE = import.meta.env?.VITE_DEMO_MODE === 'true';
+
 type LanguageDropdownProps = {
   buttonRef: RefObject<HTMLButtonElement | null>;
   opened: boolean;
@@ -19,6 +21,10 @@ export const LanguageDropdown = ({
 
   if (!opened) return null;
 
+  const filteredLanguages = IS_DEMO_MODE
+    ? SUPPORTED_LANGS.filter((lang) => lang === 'en')
+    : SUPPORTED_LANGS;
+
   return (
     <div
       aria-label={t('languageSelector')}
@@ -26,7 +32,7 @@ export const LanguageDropdown = ({
       role="dialog"
     >
       <ul aria-label={t('languages')} className="lang-list" role="listbox">
-        {SUPPORTED_LANGS.map((lng) => {
+        {filteredLanguages.map((lng) => {
           const selected = i18n.language === lng;
           const labelKey = lng === 'en' ? 'english' : 'italian';
           return (

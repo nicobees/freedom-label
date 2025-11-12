@@ -9,6 +9,8 @@ import { LanguageDropdown } from './LanguageDropdown';
 
 // Pure CSS morphing icon is rendered with spans; see header.css (.morph-icon)
 
+const IS_DEMO_MODE = import.meta.env?.VITE_DEMO_MODE === 'true';
+
 type HeaderViewProps = {
   isHome?: boolean;
   title: string;
@@ -62,6 +64,13 @@ const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
 
     headerStore.setUndoRedoPortalElement(undoRedoPortalElement);
   }, [headerStore, t]);
+
+  const themeTooltip = IS_DEMO_MODE
+    ? `${t('toggleTheme')} ${String(t('disabledInDemoMode'))}`
+    : t('toggleTheme');
+  const themeSwitchOnClick = IS_DEMO_MODE
+    ? () => {}
+    : () => themeStore.toggle();
 
   return (
     <header aria-label={t('applicationHeader')} className="toolbar fl-header">
@@ -166,7 +175,8 @@ const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
         <button
           aria-label={t('toggleTheme')}
           className="icon-btn"
-          onClick={() => themeStore.toggle()}
+          onClick={() => themeSwitchOnClick()}
+          title={themeTooltip}
           type="button"
         >
           {/* Simple icon swap via currentColor, could be improved */}

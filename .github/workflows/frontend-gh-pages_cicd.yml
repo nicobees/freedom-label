@@ -1,0 +1,93 @@
+name: Frontend GitHub pages CI/CD
+
+on:
+  push:
+    branches:
+      - "rc-gh-pages"
+    paths:
+      - "packages/frontend-mobx/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+env:
+  WORKDIR: ./packages/frontend-mobx
+  NODE_VERSION: "22"
+  VITE_DEMO_MODE: "true"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKDIR }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node + deps (cached)
+        uses: ./.github/actions/setup-npm-typescript
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          working-directory: ${{ env.WORKDIR }}
+          upload-node-modules-artifact: "true"
+          artifact-name: frontend-mobx-node_modules
+
+      - name: Lint
+        run: npm run lint --silent
+
+      - name: Type check
+        run: npm run type-check --silent
+
+  build-chrome-built-in-ai:
+    runs-on: ubuntu-latest
+    needs: [verify, test]
+    env:
+      VITE_BASE_PATH: "/freedom-label/built-in"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build with chrome built-in ai
+        run: npm run build-gh-pages
+      - name: Deploy to Subdirectory
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: built-in # Deploys to /rc subdirectory
+          keep_files: true # Preserves other subdirectories
+
+  build-transformers-ai:
+    runs-on: ubuntu-latest
+    needs: [verify, test]
+    env:
+      VITE_BASE_PATH: "/freedom-label/transformers"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build with transformers ai
+        run: npm run build-gh-pages
+      - name: Deploy to Subdirectory
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: transformers # Deploys to /rc subdirectory
+          keep_files: true # Preserves other subdirectories
+

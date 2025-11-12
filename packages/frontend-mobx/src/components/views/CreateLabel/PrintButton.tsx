@@ -8,6 +8,7 @@ interface PrintButtonProps {
   disabled?: boolean;
   label: string;
   onPrintHandler: OnPrintCallbackType;
+  tooltip?: string;
   variant?: 'filled' | 'outline' | 'text';
 }
 
@@ -15,6 +16,7 @@ export const PrintButton = ({
   disabled = false,
   label,
   onPrintHandler,
+  tooltip,
   variant = 'filled',
 }: PrintButtonProps) => {
   const form = useFormContext();
@@ -46,6 +48,7 @@ export const PrintButton = ({
                 onMutationHandler: onPrintHandler,
               });
             }}
+            tooltip={tooltip}
             variant={variant}
           />
         );
