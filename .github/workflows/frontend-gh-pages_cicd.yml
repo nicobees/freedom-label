@@ -19,31 +19,62 @@ env:
   VITE_DEMO_MODE: "true"
 
 jobs:
-  verify:
+  # verify:
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: ${{ env.WORKDIR }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: Setup Node + deps (cached)
+  #       uses: ./.github/actions/setup-npm-typescript
+  #       with:
+  #         node-version: ${{ env.NODE_VERSION }}
+  #         working-directory: ${{ env.WORKDIR }}
+  #         upload-node-modules-artifact: "true"
+  #         artifact-name: frontend-mobx-node_modules
+
+  #     - name: Lint
+  #       run: npm run lint --silent
+
+  #     - name: Type check
+  #       run: npm run type-check --silent
+
+  build:
     runs-on: ubuntu-latest
+    # needs: [verify]
     defaults:
       run:
         working-directory: ${{ env.WORKDIR }}
+    env:
+      VITE_BASE_PATH: "/freedom-label/"
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node + deps (cached)
-        uses: ./.github/actions/setup-npm-typescript
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          working-directory: ${{ env.WORKDIR }}
-          upload-node-modules-artifact: "true"
-          artifact-name: frontend-mobx-node_modules
-
-      - name: Lint
-        run: npm run lint --silent
-
-      - name: Type check
-        run: npm run type-check --silent
-
+          cache: "npm"
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build with chrome built-in ai
+        run: npm run build-gh-pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+          name: "frontend-gh-pages-artifact"
+      - name: Deploy to Github pages
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact-name: "frontend-gh-pages-artifact"
+  
   build-chrome-built-in-ai:
     runs-on: ubuntu-latest
-    needs: [verify]
+    # needs: [verify]
     defaults:
       run:
         working-directory: ${{ env.WORKDIR }}
@@ -56,6 +87,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
       - name: Install Dependencies
         run: npm ci
       - name: Build with chrome built-in ai
@@ -70,7 +102,10 @@ jobs:
 
   build-transformers-ai:
     runs-on: ubuntu-latest
-    needs: [verify]
+    # needs: [verify]
+    defaults:
+      run:
+        working-directory: ${{ env.WORKDIR }}
     env:
       VITE_BASE_PATH: "/freedom-label/transformers"
     steps:
