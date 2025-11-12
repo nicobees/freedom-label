@@ -87,7 +87,6 @@ export class AutoFillChromeBuiltIn {
   static async prompt(userPrompt: string): Promise<PromptReturnType> {
     try {
       const prompt = userPrompt;
-      console.info('inside chrome built in prompt: ', prompt);
 
       const agent = await AutoFillChromeBuiltIn.getInstance();
 
