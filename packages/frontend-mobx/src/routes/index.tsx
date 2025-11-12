@@ -20,7 +20,7 @@ import EditLabelRoute from './EditLabelRoute/EditLabelRoute';
 import HomePageRoute from './HomePage/HomePageRoute';
 import ListLabelRoute from './ListLabelRoute/ListLabelRoute';
 
-const BASE_PATH = (String(import.meta.env?.VITE_BASE_PATH) || '/') as
+const BASE_PATH = (import.meta.env?.VITE_BASE_PATH || '/') as
   | '/'
   | '/freedom-label/';
 const IS_DEMO_MODE = import.meta.env?.VITE_DEMO_MODE === 'true';
