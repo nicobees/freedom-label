@@ -10,3 +10,5 @@ dist
 .env
 
 .vite/
+
+dist_*
