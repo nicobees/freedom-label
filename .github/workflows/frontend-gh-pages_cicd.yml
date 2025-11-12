@@ -61,6 +61,8 @@ jobs:
         run: npm ci
       - name: Build with chrome built-in ai
         run: npm run build-gh-pages
+      - name: Check dist exists
+        run: ls -l dist
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
