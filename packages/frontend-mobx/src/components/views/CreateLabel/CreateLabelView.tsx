@@ -106,9 +106,11 @@ const CreateLabelViewComponent = ({
     />
   );
 
-  const printButtonTooltip = IS_DEMO_MODE
-    ? `${t('print')} ${String(t('disabledInDemoMode'))}`
-    : t('print');
+  const printButtonLabel = t('print');
+  const printButtonDemoLabel = IS_DEMO_MODE
+    ? ` ${String(t('disabledInDemoMode'))}`
+    : '';
+  const printButtonTooltip = `${printButtonLabel}${printButtonDemoLabel}`;
 
   return (
     <section className="create-label-container">
