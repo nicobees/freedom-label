@@ -14,7 +14,7 @@ permissions:
   id-token: write
 
 env:
-  WORKDIR: ./packages/frontend-mobx
+  WORKDIR: packages/frontend-mobx
   NODE_VERSION: "22"
   VITE_DEMO_MODE: "true"
 
@@ -62,11 +62,11 @@ jobs:
       - name: Build with chrome built-in ai
         run: npm run build-gh-pages
       - name: Check dist exists
-        run: ls -l dist
+        run: ls -l ${{ env.WORKDIR }}/dist
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: ${{ env.WORKDIR }}/dist
           name: "frontend-gh-pages-artifact"
       - name: Deploy to Github pages
         uses: actions/deploy-pages@v4
@@ -98,7 +98,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ${{ env.WORKDIR }}/dist
           destination_dir: built-in # Deploys to /rc subdirectory
           keep_files: true # Preserves other subdirectories
 
@@ -126,7 +126,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ${{ env.WORKDIR }}/dist
           destination_dir: transformers # Deploys to /rc subdirectory
           keep_files: true # Preserves other subdirectories
 
