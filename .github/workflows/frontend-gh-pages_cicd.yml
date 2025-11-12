@@ -72,7 +72,7 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifact-name: "frontend-gh-pages-artifact"
+          artifact_name: "frontend-gh-pages-artifact"
   
   # build-chrome-built-in-ai:
   #   runs-on: ubuntu-latest
