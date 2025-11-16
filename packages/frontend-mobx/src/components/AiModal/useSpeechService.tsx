@@ -11,16 +11,16 @@ export const useSpeechService = () => {
     transcript,
   } = useSpeechRecognition();
 
-  const startListening = useCallback(() => {
+  const startListening = useCallback(async () => {
     resetTranscript();
-    void SpeechRecognition.startListening({
+    await SpeechRecognition.startListening({
       continuous: true,
       language: 'en-US',
     });
   }, [resetTranscript]);
 
-  const stopListening = useCallback(() => {
-    void SpeechRecognition.stopListening();
+  const stopListening = useCallback(async () => {
+    await SpeechRecognition.stopListening();
     resetTranscript();
   }, [resetTranscript]);
 
@@ -33,8 +33,8 @@ export const useSpeechService = () => {
   } as {
     listening: boolean;
     speechSupported: boolean;
-    startListening: () => void;
-    stopListening: () => void;
+    startListening: () => Promise<void>;
+    stopListening: () => Promise<void>;
     transcript: string;
   };
 };
