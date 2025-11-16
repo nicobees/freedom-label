@@ -65,9 +65,11 @@ const HeaderView = ({ isHome = false, title }: HeaderViewProps) => {
     headerStore.setUndoRedoPortalElement(undoRedoPortalElement);
   }, [headerStore, t]);
 
-  const themeTooltip = IS_DEMO_MODE
-    ? `${t('toggleTheme')} ${String(t('disabledInDemoMode'))}`
-    : t('toggleTheme');
+  const themeToggleLabel = t('toggleTheme');
+  const themeToggleDemoModeLabel = IS_DEMO_MODE
+    ? ` ${String(t('disabledInDemoMode'))}`
+    : '';
+  const themeTooltip = `${themeToggleLabel}${themeToggleDemoModeLabel}`;
   const themeSwitchOnClick = IS_DEMO_MODE
     ? () => {}
     : () => themeStore.toggle();
