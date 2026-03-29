@@ -57,6 +57,14 @@ const MicrophoneButton = ({
     <MicrophoneIcon aria-hidden="true" />
   );
 
+  const handleClick = useCallback(() => {
+    if (isListening) {
+      void onStopListening();
+      return;
+    }
+    void onStartListening();
+  }, [isListening, onStartListening, onStopListening]);
+
   const label = browserSupported
     ? `${t('record')} :)`
     : t('notSupportedInYourBrowser');
@@ -66,13 +74,7 @@ const MicrophoneButton = ({
       disabled={disabled}
       icon={MicrophoneIconButton}
       label={label}
-      onClick={() => {
-        if (isListening) {
-          void onStopListening();
-          return;
-        }
-        void onStartListening();
-      }}
+      onClick={handleClick}
     />
   );
 };
@@ -116,7 +118,7 @@ export const AiModal = ({ autoFillFormCallback }: AiModalProps) => {
       setUserInput('');
 
       if (listening) {
-        stopListening();
+        void stopListening();
       }
 
       const aiMessages = await prompt(input);
